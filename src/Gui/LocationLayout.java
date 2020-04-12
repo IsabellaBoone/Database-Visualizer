@@ -1,6 +1,8 @@
 package Gui;
 
-public class LocationLayout {
+import javax.swing.JPanel;
+
+public class LocationLayout extends JPanel{
   public LocationLayout() {
     
   }

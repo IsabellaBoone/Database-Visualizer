@@ -1,6 +1,8 @@
 package Gui;
 
-public class ItemsLayout {
+import javax.swing.JPanel;
+
+public class ItemsLayout extends JPanel{
   public ItemsLayout() {
     
   }

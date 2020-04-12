@@ -1,6 +1,8 @@
 package Gui;
 
-public class PlayersLayout {
+import javax.swing.JPanel;
+
+public class PlayersLayout extends JPanel{
   public PlayersLayout() {
     
   }
