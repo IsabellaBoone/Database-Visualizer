@@ -3,6 +3,8 @@ package Gui;
 import java.awt.*;
 import javax.swing.*;
 
+import Buttons.*;
+
 public class Gui {
   
   JFrame jf;
@@ -10,16 +12,16 @@ public class Gui {
   GridBagConstraints gbc = new GridBagConstraints(); 
   Container one;
   JLabel items = new JLabel();
-  JButton itemLayout = new JButton("Items");
-  JButton charactersLayout = new JButton("Characters");
-  JButton playersLayout = new JButton("Players");
-  JButton locationLayout = new JButton("Locations");
+  JButton itemLayout = new ItemsButton("Items");
+  JButton charactersLayout = new CharactersButton("Characters");
+  JButton playersLayout = new PlayersButton("Players");
+  JButton locationLayout = new LocationsButton("Locations");
   
   public Gui() {
     
     initJFrame();
     setButtons();
-    //drawLayout();
+    drawLayout();
     
     jf.setVisible(true);
   }
@@ -59,7 +61,6 @@ public class Gui {
     jf.add(buttons, BorderLayout.NORTH);
     
   }
-  
   
   private void drawLayout() {
     
