@@ -1,4 +1,4 @@
-import Gui.*;
+import Gui.Gui;
 
 public class Runner {
 

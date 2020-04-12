@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import Gui.Gui;
+
 public class ItemsButton extends JButton implements ActionListener{
   public ItemsButton(String s) {
     super(s);

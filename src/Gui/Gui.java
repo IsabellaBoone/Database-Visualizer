@@ -5,9 +5,8 @@ import javax.swing.*;
 
 import Buttons.*;
 
-public class Gui {
-  
-  JFrame jf;
+public class Gui extends JFrame{
+
   JPanel buttons;
   GridBagConstraints gbc = new GridBagConstraints(); 
   JButton itemLayout = new ItemsButton("Items");
@@ -15,21 +14,19 @@ public class Gui {
   JButton playersLayout = new PlayersButton("Players");
   JButton locationLayout = new LocationsButton("Locations");
   
-  public Gui() {
+  public Gui(){
     initJFrame();
     setButtons();
-    drawLayout();
-    
-    jf.setVisible(true);
+    setVisible(true);
   }
   
   private void initJFrame() {
-    jf = new JFrame();
-    jf.setLayout(new BorderLayout());
-    jf.setBackground(Color.BLACK);
-    jf.setSize(1000, 750); 
-    jf.setResizable(false);
-    jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
+    setLayout(new BorderLayout());
+    setBackground(Color.BLACK);
+    setSize(1000, 750); 
+    setResizable(false);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
   private void setButtons() {
@@ -55,12 +52,15 @@ public class Gui {
     gbc.gridy = 0;
     buttons.add(locationLayout, gbc);
     
-    jf.add(buttons, BorderLayout.NORTH);
+    add(buttons, BorderLayout.NORTH);
     
   }
-  
-  private void drawLayout() {
-    
+
+  public void setItemsView() {
+    JPanel items = new ItemsLayout();
+    System.out.println("Items View");
+    add(items, BorderLayout.SOUTH);
+    update(getGraphics());
   }
   
 }
