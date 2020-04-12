@@ -22,7 +22,6 @@ public class Gui {
     initJFrame();
     setButtons();
     drawLayout();
-    
     jf.setVisible(true);
   }
   
