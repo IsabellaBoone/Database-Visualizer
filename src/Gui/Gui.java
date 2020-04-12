@@ -10,18 +10,16 @@ public class Gui {
   JFrame jf;
   JPanel buttons;
   GridBagConstraints gbc = new GridBagConstraints(); 
-  Container one;
-  JLabel items = new JLabel();
   JButton itemLayout = new ItemsButton("Items");
   JButton charactersLayout = new CharactersButton("Characters");
   JButton playersLayout = new PlayersButton("Players");
   JButton locationLayout = new LocationsButton("Locations");
   
   public Gui() {
-    
     initJFrame();
     setButtons();
     drawLayout();
+    
     jf.setVisible(true);
   }
   
