@@ -57,6 +57,7 @@ public class Gui extends JFrame{
       }
     });
     buttons = new JPanel(new GridBagLayout());
+    gbc.insets = new Insets(0,0,0,0);
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.weightx = 1;
     gbc.gridx = 0;
@@ -91,6 +92,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
+    gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
@@ -103,6 +105,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
+    gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
@@ -115,6 +118,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
+    gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
@@ -127,6 +131,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
+    gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
