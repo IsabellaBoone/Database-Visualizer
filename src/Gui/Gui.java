@@ -11,6 +11,7 @@ import Buttons.*;
 public class Gui extends JFrame{
 
   JPanel buttons;
+  JPanel view = new ItemsLayout();
   GridBagConstraints gbc = new GridBagConstraints(); 
   JButton itemLayout = new JButton("Items");
   JButton characterLayout = new JButton("Characters");
@@ -36,25 +37,25 @@ public class Gui extends JFrame{
     itemLayout.addActionListener( new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-        System.out.println("Items Button");
+        setItemView();
       }
     });
     characterLayout.addActionListener( new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-        System.out.println("Characters Button");
+        setCharacterView();
       }
     });
     playerLayout.addActionListener( new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-        System.out.println("Players Button");
+        setPlayerView();
       }
     });
     locationLayout.addActionListener( new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
-        System.out.println("Locations Button");
+        setLocationView();
       }
     });
     buttons = new JPanel(new GridBagLayout());
@@ -81,11 +82,36 @@ public class Gui extends JFrame{
     
   }
 
-  public void setItemsView() {
-    JPanel items = new ItemsLayout();
-    System.out.println("Items View");
-    add(items, BorderLayout.SOUTH);
-    update(getGraphics());
+  public void setItemView() {
+    remove(view);
+    view = new ItemsLayout();
+    System.out.println("Item View");
+    add(view, BorderLayout.WEST);
+    SwingUtilities.updateComponentTreeUI(this);
+  }
+  
+  public void setCharacterView() {
+    remove(view);
+    view = new CharactersLayout();
+    System.out.println("Character View");
+    add(view, BorderLayout.WEST);
+    SwingUtilities.updateComponentTreeUI(this);
+  }
+  
+  public void setPlayerView() {
+    remove(view);
+    view = new PlayersLayout();
+    System.out.println("Player View");
+    add(view, BorderLayout.WEST);
+    SwingUtilities.updateComponentTreeUI(this);
+  }
+  
+  public void setLocationView() {
+    remove(view);
+    view = new LocationLayout();
+    System.out.println("Location View");
+    add(view, BorderLayout.NORTH);
+    SwingUtilities.updateComponentTreeUI(this);
   }
   
 }
