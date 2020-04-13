@@ -5,7 +5,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +22,7 @@ public class ItemsLayout extends JPanel{
   
 
   JScrollPane item = new JScrollPane();
+  JLabel selected = null;
   
   public ItemsLayout() {
     setLayout(new BorderLayout());
@@ -45,10 +51,21 @@ public class ItemsLayout extends JPanel{
     data.setLayout(new GridLayout(rows, 1));
     for(int i = 0; i < rows; i++) {
       JLabel x = new JLabel(buildHtml());
+      x.addMouseListener( new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+              x.setIcon(getIcon());
+              selected = x;
+          }
+      });
       x.setPreferredSize(new Dimension(20,50));
       data.add(x);
     }
     return data;
+  }
+  
+  private Icon getIcon() {
+    return new ImageIcon();
   }
   
   private String buildHtml() {
