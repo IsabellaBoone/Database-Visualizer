@@ -24,7 +24,7 @@ public class Gui extends JFrame{
   
   private void initJFrame() {
     
-    setLayout(new BorderLayout());
+    setLayout(new GridBagLayout());
     setBackground(Color.BLACK);
     setSize(1000, 750); 
     setResizable(false);
@@ -58,8 +58,7 @@ public class Gui extends JFrame{
     });
     buttons = new JPanel(new GridBagLayout());
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    
-    gbc.weightx = 0.5;
+    gbc.weightx = 1;
     gbc.gridx = 0;
     gbc.gridy = 0;
     buttons.add(itemLayout, gbc);
@@ -76,7 +75,12 @@ public class Gui extends JFrame{
     gbc.gridy = 0;
     buttons.add(locationLayout, gbc);
     
-    add(buttons, BorderLayout.NORTH);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.NORTHWEST;
+    gbc.weighty = 1;
+    buttons.setBackground(Color.GRAY);
+    add(buttons, gbc);
     
   }
 
@@ -84,7 +88,11 @@ public class Gui extends JFrame{
     remove(view);
     view = new ItemsLayout();
     System.out.println("Item View");
-    add(view, BorderLayout.WEST);
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.weighty = 1;
+    gbc.ipady = 675;
+    add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
   
@@ -92,7 +100,11 @@ public class Gui extends JFrame{
     remove(view);
     view = new CharactersLayout();
     System.out.println("Character View");
-    add(view, BorderLayout.WEST);
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.weighty = 1;
+    gbc.ipady = 675;
+    add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
   
@@ -100,7 +112,11 @@ public class Gui extends JFrame{
     remove(view);
     view = new PlayersLayout();
     System.out.println("Player View");
-    add(view, BorderLayout.WEST);
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.weighty = 1;
+    gbc.ipady = 675;
+    add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
   
@@ -108,7 +124,11 @@ public class Gui extends JFrame{
     remove(view);
     view = new LocationLayout();
     System.out.println("Location View");
-    add(view, BorderLayout.NORTH);
+    gbc.gridx = 0;
+    gbc.gridy = 1;
+    gbc.weighty = 1;
+    gbc.ipady = 675;
+    add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
   
