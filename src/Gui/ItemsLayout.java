@@ -40,7 +40,7 @@ public class ItemsLayout extends JPanel{
   }
   
   private JLabel Label(){
-    JLabel x = new JLabel("<html><p style = \"color:white;\">THIS IS A LABEL</p></html>", SwingConstants.CENTER);
+    JLabel x = new JLabel("<html><p style = \"color:white; font-size:15px\">Items</p></html>", SwingConstants.CENTER);
     x.setBackground(Color.WHITE);
     x.setPreferredSize(new Dimension(100,20));
     return x;
@@ -54,7 +54,8 @@ public class ItemsLayout extends JPanel{
       x.addMouseListener( new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-              x.setIcon(getIcon());
+              removeSelectedBackground();
+              x.setText("<html><p style=\"color:black; background-color: yellow;\">Hi</p></html>");
               selected = x;
           }
       });
@@ -63,13 +64,14 @@ public class ItemsLayout extends JPanel{
     }
     return data;
   }
-  
-  private Icon getIcon() {
-    return new ImageIcon();
-  }
-  
+
   private String buildHtml() {
     return "<html><p style=\"color:black;\">Hi</p></html>";
+  }
+  
+  private void removeSelectedBackground() {
+    if(selected != null)
+      selected.setText("<html><p style=\"color:black;\">Hi</p></html>");
   }
   
 }
