@@ -1,6 +1,9 @@
 package Gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 import Buttons.*;
@@ -9,7 +12,7 @@ public class Gui extends JFrame{
 
   JPanel buttons;
   GridBagConstraints gbc = new GridBagConstraints(); 
-  JButton itemLayout = new ItemsButton("Items");
+  JButton itemLayout = new JButton("Items");
   JButton charactersLayout = new CharactersButton("Characters");
   JButton playersLayout = new PlayersButton("Players");
   JButton locationLayout = new LocationsButton("Locations");
@@ -30,8 +33,18 @@ public class Gui extends JFrame{
   }
   
   private void setButtons() {
-    
-    
+    itemLayout.addActionListener( new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+          System.out.println("Items Button");
+        }
+        });
+    charactersLayout.addActionListener( new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Characters Button");
+      }
+      });
     buttons = new JPanel(new GridBagLayout());
     gbc.fill = GridBagConstraints.HORIZONTAL;
     
