@@ -10,6 +10,5 @@ public class CharactersLayout extends JPanel{
     setLayout(new BorderLayout());
     JLabel s = new JLabel("Bye");
     add(s);
-    setVisible(true);
   }
 }
