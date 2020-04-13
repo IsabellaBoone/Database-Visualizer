@@ -208,8 +208,15 @@ public class insertInfo {
    * Insert data into all tables.
    */
   public void populateTables() {
-    generatePlayers(); 
-    generateLocation(); 
+//    for(int i = 0; i < tableNames.length; i++) {
+//      int numEntries = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
+//      for(int j = 0; j < numEntries; j++) {
+//        func(); 
+//      }
+//    }
+    
+	generatePlayers(); // generate ENTIRE player table
+	generateLocations(); // generate ENTIRE location table
     
     
   }
@@ -275,59 +282,96 @@ public class insertInfo {
 		return true;
 	}
 
+	
+	//
 	// Generation Methods
+	//
+	
+	/**
+	 * Generate a random number of players
+	 */
+	public void generatePlayers() {
+		int numPlayers = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
+		System.out.println("Generating " + numPlayers + " players...");
+		for(int i = 0; i < numPlayers; i++) {
+			generatePlayer(); 
+		}
+	}
+	
+	
+	/**
+	 * Generate a single player
+	 */
+	public void generatePlayer() {
+	  generate g = new generate();
+	  // Generate user, email, password
+	  String insert = "INSERT INTO Player (Username, Email, Password) VALUES (?,?,?);", user, email, pass;
+	  user = g.randomUser();
+	  email = g.randomEmail();
+	  pass = g.randomStr((int) Math.floor(Math.random() * 8 + 8));
+	  
+	  try {
+		  PreparedStatement statement = m_dbConn.prepareStatement(insert);
+		// Print data and add it
+		  System.out.println(user + " | " + email + " | " + pass);
+		  statement.setString(1, user);
+		  statement.setString(2, email);
+		  statement.setString(3, pass);
+		  try {
+			  statement.execute();
+		  } catch(SQLException e) {
+			  System.out.println("Duplicate entry. Calling generatePlayer() again. ");
+			  generatePlayer(); 
+		  }
+	  } catch (SQLException e) {
+		  e.printStackTrace();
+		  System.out.println("Failure");
+	  }
+  }
+  
+	
+	/**
+	 * Generate a random number of locations. 
+	 */
+	public void generateLocations() {
+		int numLocations = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
+		System.out.println("Generating " + numLocations + " locations...");
+		for(int i = 0; i < numLocations; i++) {
+		  generateLocation(); 
+		}
+	}
+	
+	/**
+	 * TODO: Implement
+	 * Generate a single location. 
+	 */
+	public void generateLocation() {
+	  generate g = new generate(); 
+	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", IdNumber, Size, AreaType;
 
-	  /**
-   * Generate a random number of players
-   */
-  public void generatePlayers() {
-    // We do a random number of entries between the min and max number given to us
-    int numEntries = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-    
-    generate g = new generate();
-    String insert = "INSERT INTO Moderator (Username, Email, Password) VALUES (?,?,?);", user, email, pass;
+    // Generate IdNumber, Size, AreaType
+	  IdNumber = g.randomIdNum();
+	  Size = g.randomSize(); 
+	  AreaType = g.randomAreaType(); 
     
     try {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
-      for (int i = 0; i < numEntries; i++) {
-
-        // Generate user, email, password
-        user = g.randomUser();
-        email = g.randomEmail();
-        pass = g.randomStr((int) Math.floor(Math.random() * 8 + 8));
-
-        // Check primary key already exists against all prev entries
-        for (int j = 0; j < j; j++) {
-          System.out.print(j);
-
-          if ((tableNamePrimary[3][j].equals(user))) {
-            System.out.println(user + "DUPLICATE");
-            user = g.randomUser();
-          }
-        }
-
-        // Print data and add it
-        System.out.println(user + " | " + email + " | " + pass);
-        statement.setString(1, user);
-        statement.setString(2, email);
-        statement.setString(3, pass);
+    // Print data and add it
+      System.out.println(IdNumber + " | " + Size + " | " + AreaType);
+      statement.setString(1, IdNumber);
+      statement.setString(2, Size);
+      statement.setString(3, AreaType);
+      try {
         statement.execute();
+      } catch(SQLException e) {
+        System.out.println("Duplicate entry. Calling generateLocation() again. ");
+        generateLocation(); 
       }
-
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("Invalid command");
+      System.out.println("Failure");
     }
-
-  }
-
-  /**
-   * TODO: Implement
-   * Generate random number of locations
-   */
-  public void generateLocation() {
-    
-  }
+	}
   
   /**
    * TODO: Implement

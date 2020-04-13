@@ -53,13 +53,12 @@ public class generate {
    * @return a string of ints for id numbers
    */
   public String randomIdNum() {
-    String numbers = "1234567890";
-    String idNum = "";
-    for (int i = 0; i < 10; i++) {
-      int rand = (int) (Math.floor(Math.random() * numbers.length()));
-      idNum += numbers.indexOf(rand);
+    String IdNum = ""; 
+    for(int i = 0; i < nums.length(); i++) {
+      int rand = (int) (Math.floor(Math.random() * nums.length()));
+      IdNum += nums.charAt(rand); 
     }
-    return idNum;
+    return IdNum;
   }
 
   /**
@@ -101,5 +100,20 @@ public class generate {
     }
     
     return user;
+  }
+
+  public String randomAreaType() {
+    String[] type = {"Mountain", "Desert", " Forest", "Jungle", "Mesa", "Mushroom", 
+        "Ocean", "Plains", "Swamp", "Taiga", "Tundra" };
+    return type[((int)(Math.floor(Math.random() * type.length)))];
+  }
+
+  public String randomSize() {
+    // I guess we're making up area size? idk, change this however you want
+    int min = 40, max = 10000; 
+    
+    int rand = ((int)(Math.floor(Math.random() * (max - min) + min)));
+    String size = rand + ""; 
+    return size;
   }
 }
