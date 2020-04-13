@@ -27,7 +27,7 @@ public class Gui extends JFrame{
     setLayout(new GridBagLayout());
     setBackground(Color.BLACK);
     setSize(1000, 750); 
-    setResizable(false);
+    setResizable(true);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
@@ -92,7 +92,7 @@ public class Gui extends JFrame{
     System.out.println("Item View");
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.weighty = 1;
+    gbc.weighty = 100000;
     gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
@@ -105,7 +105,7 @@ public class Gui extends JFrame{
     System.out.println("Character View");
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.weighty = 1;
+    gbc.weighty = 100000;
     gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
@@ -118,7 +118,7 @@ public class Gui extends JFrame{
     System.out.println("Player View");
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.weighty = 1;
+    gbc.weighty = 100000;
     gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);
@@ -131,7 +131,7 @@ public class Gui extends JFrame{
     System.out.println("Location View");
     gbc.gridx = 0;
     gbc.gridy = 1;
-    gbc.weighty = 1;
+    gbc.weighty = 100000;
     gbc.fill = GridBagConstraints.BOTH;
     
     add(view,gbc);

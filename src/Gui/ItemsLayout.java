@@ -41,9 +41,10 @@ public class ItemsLayout extends JPanel{
   private JPanel buildItems(int rows) {
     JPanel data = new JPanel();
     data.setLayout(new GridLayout(rows, 1));
-    
-    JLabel x = new JLabel(buildHtml());
-    data.add(x);
+    for(int i = 0; i < rows; i++) {
+      JLabel x = new JLabel(buildHtml());
+      data.add(x);
+    }
     return data;
   }
   
