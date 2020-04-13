@@ -22,10 +22,12 @@ public class ItemsLayout extends JPanel{
     setLayout(new BorderLayout());
     setBackground(Color.GRAY);
     add(Label(),BorderLayout.NORTH);
-    item.add(buildItems(10));
+    //item.add(buildItems(10));
     item.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     item.add(item.createVerticalScrollBar());
     add(item, BorderLayout.CENTER);
+    
+    item.setViewportView(buildItems(50));
     revalidate();
     repaint();
     
@@ -43,6 +45,7 @@ public class ItemsLayout extends JPanel{
     data.setLayout(new GridLayout(rows, 1));
     for(int i = 0; i < rows; i++) {
       JLabel x = new JLabel(buildHtml());
+      x.setPreferredSize(new Dimension(20,50));
       data.add(x);
     }
     return data;
