@@ -1,22 +1,8 @@
 package Gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class ItemsLayout extends JPanel{
   
@@ -58,7 +44,6 @@ public class ItemsLayout extends JPanel{
           @Override
           public void mouseClicked(MouseEvent e) {
               removeSelectedBackground();
-              //label.setText("<html><p style=\"color:white;\">Hi</p></html>");
               label.setBackground(new Color(234, 201, 55));
               selected = label;
           }

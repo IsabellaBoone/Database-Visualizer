@@ -174,6 +174,7 @@ public class insertInfo {
     dropAllTables(); // Drop tables before creating 
     createTable();  // Create tables 
     populateTables(); // Populate the tables
+    
   }
   
   /**
@@ -230,9 +231,10 @@ public class insertInfo {
 	   * we can have foreign keys. Need to start at the end so 
 	   * we can drop constraints and not cause issues.  
 	   */
-	  for(int i = tableNames.length; i < 0; i--) {
+	  for(int i = tableNames.length - 1; i > 0; i--) {
 	    try {
-//	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
+	      stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
+	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
 	      stmt.execute(drop + tableNames[i] + syntax);
 	    } catch (SQLException e) {
 	      e.printStackTrace();
