@@ -13,9 +13,9 @@ public class Gui extends JFrame{
   JPanel buttons;
   GridBagConstraints gbc = new GridBagConstraints(); 
   JButton itemLayout = new JButton("Items");
-  JButton charactersLayout = new CharactersButton("Characters");
-  JButton playersLayout = new PlayersButton("Players");
-  JButton locationLayout = new LocationsButton("Locations");
+  JButton characterLayout = new JButton("Characters");
+  JButton playerLayout = new JButton("Players");
+  JButton locationLayout = new JButton("Locations");
   
   public Gui(){
     initJFrame();
@@ -34,17 +34,29 @@ public class Gui extends JFrame{
   
   private void setButtons() {
     itemLayout.addActionListener( new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-          System.out.println("Items Button");
-        }
-        });
-    charactersLayout.addActionListener( new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Items Button");
+      }
+    });
+    characterLayout.addActionListener( new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
         System.out.println("Characters Button");
       }
-      });
+    });
+    playerLayout.addActionListener( new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Players Button");
+      }
+    });
+    locationLayout.addActionListener( new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Locations Button");
+      }
+    });
     buttons = new JPanel(new GridBagLayout());
     gbc.fill = GridBagConstraints.HORIZONTAL;
     
@@ -55,11 +67,11 @@ public class Gui extends JFrame{
     
     gbc.gridx = 1;
     gbc.gridy = 0;
-    buttons.add(charactersLayout, gbc);
+    buttons.add(characterLayout, gbc);
     
     gbc.gridx = 2;
     gbc.gridy = 0;
-    buttons.add(playersLayout, gbc);
+    buttons.add(playerLayout, gbc);
     
     gbc.gridx = 3;
     gbc.gridy = 0;
