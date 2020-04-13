@@ -31,6 +31,8 @@ public class Gui extends JFrame{
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
+  //puts buttons on the screen at the top and puts actionlisteners on them.
+  
   private void setButtons() {
     itemLayout.addActionListener( new ActionListener() {
       @Override
@@ -57,7 +59,6 @@ public class Gui extends JFrame{
       }
     });
     buttons = new JPanel(new GridBagLayout());
-    gbc.insets = new Insets(0,0,0,0);
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.weightx = 1;
     gbc.gridx = 0;
@@ -84,7 +85,7 @@ public class Gui extends JFrame{
     add(buttons, gbc);
     
   }
-
+  //channges gui to items view
   public void setItemView() {
     remove(view);
     view = new ItemsLayout();
@@ -97,7 +98,7 @@ public class Gui extends JFrame{
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
-  
+  //changes gui to characters view
   public void setCharacterView() {
     remove(view);
     view = new CharactersLayout();
@@ -110,7 +111,7 @@ public class Gui extends JFrame{
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
-  
+  //changes gui to players view
   public void setPlayerView() {
     remove(view);
     view = new PlayersLayout();
@@ -123,7 +124,7 @@ public class Gui extends JFrame{
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
-  
+  //changes the gui to location view
   public void setLocationView() {
     remove(view);
     view = new LocationLayout();
