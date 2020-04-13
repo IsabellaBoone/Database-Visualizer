@@ -6,8 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import Buttons.*;
-
 public class Gui extends JFrame{
 
   JPanel buttons;
