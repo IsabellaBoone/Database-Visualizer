@@ -91,7 +91,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
-    gbc.ipady = 675;
+    
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
@@ -103,7 +103,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
-    gbc.ipady = 675;
+    
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
@@ -115,7 +115,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
-    gbc.ipady = 675;
+    
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
@@ -127,7 +127,7 @@ public class Gui extends JFrame{
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.weighty = 1;
-    gbc.ipady = 675;
+    
     add(view,gbc);
     SwingUtilities.updateComponentTreeUI(this);
   }
