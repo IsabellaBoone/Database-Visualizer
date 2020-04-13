@@ -11,25 +11,24 @@ import java.sql.*;
 
 public class insertInfo {
   // Global Variables 
+  Connection m_dbConn = null; 
   protected final int GEN_MIN = 5; // Min num of entries for each table
   protected final int GEN_MAX = 10; // Max num of entries for each table
-  
-  
   String tableNames[] = { "Moderator", "Manager", "Commands",
-      "Player", "Location", "Character", "Item", "Weapon", 
-      "Creature", "Abilities", "Armor", "Container", "ContainerInventory",  
+      "Player", "Location", "Characters", "Item", "Weapon", 
+      "Abilities", "Creature", "Armor", "Container", "ContainerInventory",  
       "Hated_Players", "Liked_Players", "Hated_Creatures",
       "Liked_Creatures", "Areas_Willing_To_Go"};
   
   // statements TODO: Add NOT NULL where needed, be consistent, triple check with Google Doc
   String statements[] = {
-      "CREATE TABLE IF NOT EXISTS MODERATOR ("
+      "CREATE TABLE IF NOT EXISTS Moderator ("
           + "Username varchar(20), "
           + "Email varchar(100),"
           + "Password varchar(30),"
           + "PRIMARY KEY(Username) );", 
           
-      "CREATE TABLE IF NOT EXISTS MANAGER ("
+      "CREATE TABLE IF NOT EXISTS Manager ("
           + "Username varchar(20), "
           + "Email varchar(100),"
           + "Password varchar(30), "
@@ -49,7 +48,8 @@ public class insertInfo {
           + "Username varchar(20) NOT NULL, "
           + "Email varchar(100),"
           + "Password varchar(30), "
-          + "PRIMARY KEY(Username) );", 
+          + "PRIMARY KEY(Username) "
+          + ");", 
            
       "CREATE TABLE IF NOT EXISTS Location ("
           + "IdNumber char(10) NOT NULL,"
@@ -68,7 +68,8 @@ public class insertInfo {
           + "pUserName varChar(20),"
           + "PRIMARY KEY (Name),"
           + "FOREIGN KEY (pUserName) REFERENCES Player(Username),"
-          + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber) );",
+          + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber) "
+          + ");",
            
       "CREATE TABLE IF NOT EXISTS Item ("
           + "Id char(10) NOT NULL, " 
@@ -86,6 +87,17 @@ public class insertInfo {
           + "PRIMARY KEY(IdNumber) );",
            
           
+      "CREATE TABLE IF NOT EXISTS Abilities ("
+          + "AbilityId char(10), "
+          + "Type varchar(10) NOT NULL,"
+          + "EffectAmount INT UNSIGNED NOT NULL,"
+          + "WeaponId char(10) NOT NULL, "
+          + "CreatureID char(10) NOT NULL,"
+          + "PRIMARY KEY (AbilityId),"
+          + "FOREIGN KEY (WeaponId) REFERENCES Weapon(IdNumber),"
+          + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber)"
+          + "); ",
+          
       "CREATE TABLE IF NOT EXISTS Creature ("
           + "IdNumber char(10),"
           + "CurrentHP INT UNSIGNED NOT NULL,"
@@ -97,17 +109,7 @@ public class insertInfo {
           + "PRIMARY KEY(IdNumber), "
           + "FOREIGN KEY(LocationId) REFERENCES Location(IdNumber)"
           + "); ",
-          
-      "CREATE TABLE IF NOT EXISTS Abilities ("
-          + "AbilityId char(10), "
-          + "Type varchar(10) NOT NULL,"
-          + "EffectAmount INT UNSIGNED NOT NULL,"
-          + "WeaponId char(10) NOT NULL, "
-          + "CreatureID char(10) NOT NULL,"
-          + "PRIMARY KEY (AbilityId),"
-          + "FOREIGN KEY (WeaponId) REFERENCES Weapon(IdNumber),"
-          + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber)"
-          + "); ",
+         
            
       "CREATE TABLE IF NOT EXISTS Armor ("
           + "Id char(10) NOT NULL, "
@@ -119,7 +121,7 @@ public class insertInfo {
           + "Id char(10) NOT NULL,"
           + "MaxWeight INT UNSIGNED NOT NULL,"
           + "Volume INT UNSIGNED NOT NULL,"
-          + "FOREIGN KEY (Id) REFERENCES Item(Id)"
+          + "PRIMARY KEY(Id)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS ContainerInventory ("
@@ -164,40 +166,10 @@ public class insertInfo {
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
   
-  /* Holds all table names and the primary key next it. 
-   * ex, tableNamePrimary[3] = {"Player", "UsernameJeff", "UsernameUrMom"}
-   */
-  String[][] tableNamePrimary = new String[18][GEN_MAX];
   
-  // These credentials are to log into a locally hosted mysql server
-  public static final String DB_LOCATION = "jdbc:mysql://localhost:3306/csc371";
-  public static final String LOGIN_NAME = "root";
-  public static final String PASSWORD = "password";
-  
-  /* If you want to connect to the schools db server, use these while on vpn
-  public static final String DB_LOCATION = "jdbc:mysql://db.cs.ship.edu:3306/csc371_##";   
-  public static final String LOGIN_NAME = "csc371_##";
-  public static final String PASSWORD = "Password##"; */
-  
-  protected static Connection m_dbConn = null; 
 	
-  // temp runner just for testing purposes, constructor is where it really goes down
-  public static void main(String[] args) {
-    new insertInfo(); 
-  }
-  
-  public insertInfo() {
-    // add all table names to [i][0] 
-    for(int i = 0; i < tableNames.length; i++) {
-      tableNamePrimary[i][0] = tableNames[i];
-    }
-    
-    // try to establish a connection 
-    try {
-      m_dbConn = DriverManager.getConnection(DB_LOCATION,LOGIN_NAME,PASSWORD);
-    } catch (SQLException e) {
-      System.out.println("Error - Login attempt failed.  Check credentials and try again.");
-    }
+  public insertInfo(Connection con) {
+    this.m_dbConn = con; 
     
     dropAllTables(); // Drop tables before creating 
     createTable();  // Create tables 
@@ -208,17 +180,8 @@ public class insertInfo {
    * Insert data into all tables.
    */
   public void populateTables() {
-//    for(int i = 0; i < tableNames.length; i++) {
-//      int numEntries = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-//      for(int j = 0; j < numEntries; j++) {
-//        func(); 
-//      }
-//    }
-    
-	generatePlayers(); // generate ENTIRE player table
-	generateLocations(); // generate ENTIRE location table
-    
-    
+    generatePlayers(); 
+    generateLocations();
   }
   
   /**
@@ -233,13 +196,19 @@ public class insertInfo {
       Statement stmt = m_dbConn.createStatement();
       for(int i = 0; i < statements.length; i++) {
 //        System.out.println(statements[i]);
-        stmt.executeUpdate(statements[i]);
-//        System.out.println("Table '" + tableNamePrimary[i][0] + "' Created");
+        try {
+          stmt.executeUpdate(statements[i]);
+        } catch (SQLException e1) {
+          System.out.println("Something went wrong. ");
+          e1.printStackTrace();
+        }
+        
+//        System.out.println("Table '" + tableNames[i] + "' Created");
       }
 		System.out.println("Tables created.");
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("Invalid SQL Statement. Check sytax/statement and try again."); 
+      System.out.println("aaInvalid SQL Statement. Check sytax/statement and try again."); 
     }   
   }
 	
@@ -247,21 +216,28 @@ public class insertInfo {
 	 * Drop all tables
 	 */
 	public void dropAllTables() {
-	  String drop = "DROP TABLE IF EXISTS ", syntax = ";";
+	  String drop = "DROP TABLE ", syntax = ";";
 	  Statement stmt;
 	  try {
 	    stmt = m_dbConn.createStatement();
 	  } catch (SQLException e1) {
-//	    System.out.println("'dropAllTables()' aborted");
+	    System.out.println("'dropAllTables()' aborted");
 	    return;
 	  } 
     
-	  for(int i = 0; i < tableNamePrimary.length; i++) {
+	  /* 
+	   * List of names is in order of being added, and done so
+	   * we can have foreign keys. Need to start at the end so 
+	   * we can drop constraints and not cause issues.  
+	   */
+	  for(int i = tableNames.length; i < 0; i--) {
 	    try {
-	      stmt.execute(drop + tableNamePrimary[i][0] + syntax);
-//	      System.out.println("Table '" + tableNamePrimary[i][0] + "' dropped.");
+//	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
+	      stmt.execute(drop + tableNames[i] + syntax);
 	    } catch (SQLException e) {
-//	      System.out.println("Tried to drop a table that doesn't exist.");
+	      e.printStackTrace();
+	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
+	      System.out.println("Failed to drop " + tableNames[i] + ", it doesn't seem to exist."); 
 	    }
 	    
 	  } 
@@ -342,7 +318,6 @@ public class insertInfo {
 	}
 	
 	/**
-	 * TODO: Implement
 	 * Generate a single location. 
 	 */
 	public void generateLocation() {
@@ -373,6 +348,21 @@ public class insertInfo {
     }
 	}
   
+	/**
+   * Generate random characters for existing players
+   */
+  public void generateCharacters() {
+    // Firstly, get num of existing players. 
+    
+    
+    
+//    int numChars = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
+//    System.out.println("Generating " + numLocations + " locations...");
+//    for(int i = 0; i < numLocations; i++) {
+//      generateLocation(); 
+//    }
+  }
+  
   /**
    * TODO: Implement
    * Generate random moderators
@@ -394,14 +384,6 @@ public class insertInfo {
    * Generate random commands for existing manager/moderator
    */
   public void generateCommands() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random characters for existing players
-   */
-  public void generateCharacters() {
     
   }
   
