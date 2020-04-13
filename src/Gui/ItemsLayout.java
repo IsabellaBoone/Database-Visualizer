@@ -40,10 +40,11 @@ public class ItemsLayout extends JPanel{
   }
   
   private JLabel Label(){
-    JLabel x = new JLabel("<html><p style = \"color:white; font-size:15px\">Items</p></html>", SwingConstants.CENTER);
-    x.setBackground(Color.WHITE);
-    x.setPreferredSize(new Dimension(100,20));
-    return x;
+    JLabel label = new JLabel("<html><p style = \"color:black; font-size:15px\">Items</p></html>", SwingConstants.CENTER);
+    label.setBackground(Color.WHITE);
+    label.setOpaque(true);
+    label.setPreferredSize(new Dimension(100,20));
+    return label;
   }
   
   private JPanel buildItems(int rows) {
@@ -52,13 +53,13 @@ public class ItemsLayout extends JPanel{
     for(int i = 0; i < rows; i++) {
       JLabel label = new JLabel(buildHtml());
       label.setOpaque(true);
-      label.setBackground(Color.black);
+      label.setBackground(new Color(30, 30, 30));
       label.addMouseListener( new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
               removeSelectedBackground();
               //label.setText("<html><p style=\"color:white;\">Hi</p></html>");
-              label.setBackground(Color.yellow);
+              label.setBackground(new Color(234, 201, 55));
               selected = label;
           }
       });
@@ -74,7 +75,7 @@ public class ItemsLayout extends JPanel{
   
   private void removeSelectedBackground() {
     if(selected != null)
-      selected.setBackground(Color.BLACK);
+      selected.setBackground(new Color(30, 30, 30));
   }
   
 }
