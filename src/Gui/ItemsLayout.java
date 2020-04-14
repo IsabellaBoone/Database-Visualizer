@@ -68,8 +68,9 @@ public class ItemsLayout extends JPanel{
     try {
       rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ID = " + primaryKey);
       rs.next();
-      labelText = "<html><p style = \"color:white;\">Id = " + rs.getInt("Id") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
-          "   LocationId = " + (rs.getInt("LocationId") == 0 ? "null" : "" + rs.getInt("LOCATIONID")) + /*"   CharacterName = " + rs.getString("cName") + */"</p></html>";
+      labelText = "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:20px;\">Id = " + rs.getInt("Id") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
+          "   LocationId = " + (rs.getInt("LocationId") == 0 ? "null" : "" + rs.getInt("LOCATIONID")) + 
+          "   CharacterName = " + (rs.getString("cName") == null ? "null" : rs.getString("cName")) + "</p><br style = \"font-size:2px;\"></html>";
       rs.close();
     } catch(SQLException e){
       e.printStackTrace();
