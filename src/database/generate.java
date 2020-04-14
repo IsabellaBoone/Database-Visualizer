@@ -16,12 +16,17 @@ public class generate {
   private String[] prefix = { "Rat", "Cat", "King", "Legend", "The",
       "Black", "White", "Red", "Orange", "Yellow", "Green", "Blue",
       "Navy", "Teal", "Josh", "Chase", "Joel", "Isabella", "Yeet", 
-      "Scotty", "Mayday"},
+      "Scotty", "Mayday", "Razer", "Hydrate", "Listen", "Emo", "Liberty",
+      "Strategic", "Shy", "Rich", "Lazy", "GallonOf", "Mood", "Opposed", 
+      "Elite", "Pyramid", "Respectable", "Defendant", "Welfare", "Thicc",
+      "Thiccc", "Thick"},
       
       suffix = {"Ocean", "Adobe", "Eclipse", "Pewdiepie", "Tim", "Emo",
           "God", "Gary", "Mod", "Valorant", "Strike", "War", "Echo", 
           "Mccree", "Zarya", "Coil", "Snicka", "Banyai", "Jackson", 
-          "Boone", "Station", "Machine", "Parade"},
+          "Boone", "Station", "Machine", "Parade", "Garbage", "Trash",
+          "Java", "Water", "Chicken", "Scheme", "Consumer", "Fish",
+          "Toast", "Bird", "Riot", "Sunday"},
       
       domains = {"OW", "WOW", "yeet", "poptart", "corsair", "amd"};
   String nums = "1234567890";

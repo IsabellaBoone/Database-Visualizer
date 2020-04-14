@@ -10,19 +10,27 @@ import java.sql.*;
  */
 
 public class insertInfo {
+  
   // Global Variables 
-  Connection m_dbConn = null; 
-  protected final int GEN_MIN = 5; // Min num of entries for each table
-  protected final int GEN_MAX = 10; // Max num of entries for each table
-  protected final int MAX_WEIGHT = 80; 
-  protected final int MAX_VOL = 80; 
+  Connection m_dbConn = null;         // Connection to the database 
+  private final int GEN_MIN = 5;      // Min num of entries for each table
+  private final int GEN_MAX = 10;     // Max num of entries for each table
+  private final int MAX_WEIGHT = 80;  // Max weight for items
+  private final int MAX_VOL = 80;     // Max volume for items
+  private final int MAX_STATS = 50; // Max value for stats
+  
+  /**
+   * List of all table names.
+   */
   String tableNames[] = { "Moderator", "Manager", "Commands",
       "Player", "Location", "Characters", "Item", "Weapon", 
       "Abilities", "Creature", "Armor", "Container", "ContainerInventory",  
       "Hated_Players", "Liked_Players", "Hated_Creatures",
       "Liked_Creatures", "Areas_Willing_To_Go"};
   
-  // statements TODO: Add NOT NULL where needed, be consistent, triple check with Google Doc
+  /**
+   * All create table statements. 
+   */
   String statements[] = {
       "CREATE TABLE IF NOT EXISTS Moderator ("
           + "Username varchar(20), "
@@ -168,15 +176,12 @@ public class insertInfo {
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
   
-  
-	
   public insertInfo(Connection con) {
     this.m_dbConn = con; 
     
     dropAllTables();  // Drop tables before creating 
     createTable();    // Create tables 
     populateTables(); // Populate the tables
-    
   }
   
   /**
@@ -186,33 +191,28 @@ public class insertInfo {
     generatePlayers(); 
     generateLocations();
     generateItems(); 
+    generateCharacters(); 
   }
   
   /**
-   * Create all tables needed if they do not already exist. 
-   * 
-   * Used Chase & Joel's HW3P1 for this, but changed a few things
-   *  - changed id numbers from positive ints to char(10)
-   *  - I made it so armor/weapons/etc use a foreign key to refer to item
+   * Create all tables. 
    */
   public void createTable() {
     try {
       Statement stmt = m_dbConn.createStatement();
       for(int i = 0; i < statements.length; i++) {
-//        System.out.println(statements[i]);
         try {
           stmt.executeUpdate(statements[i]);
-        } catch (SQLException e1) {
-          System.out.println("Something went wrong. ");
-          e1.printStackTrace();
-        }
-        
-//        System.out.println("Table '" + tableNames[i] + "' Created");
+//          System.out.println("Table '" + tableNames[i] + "' Created");
+        } catch (SQLException e) {
+          System.out.println("Failed to create " + tableNames[i]);
+          e.printStackTrace();
+        }   
       }
 		System.out.println("Tables created.");
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("Connection failed"); 
+      System.out.println("Connection was closed."); 
     }   
   }
 	
@@ -221,22 +221,13 @@ public class insertInfo {
 	 */
 	public void dropAllTables() {
 	  String drop = "DROP TABLE ", syntax = ";";
-	  Statement stmt;
+	  
 	  try {
-	    stmt = m_dbConn.createStatement();
-	  } catch (SQLException e1) {
-	    System.out.println("'dropAllTables()' aborted");
-	    return;
-	  } 
-    
-	  /* 
-	   * List of names is in order of being added, and done so
-	   * we can have foreign keys. Need to start at the end so 
-	   * we can drop constraints and not cause issues.  
-	   */
-	  for(int i = tableNames.length - 1; i > 0; i--) {
+	    Statement stmt = m_dbConn.createStatement();
+	    
+	    for(int i = tableNames.length - 1; i > 0; i--) {
 	    try {
-	      stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
+	      stmt.execute("SET FOREIGN_KEY_CHECKS = 0;"); // big brain chase, thanks
 //	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
 	      stmt.execute(drop + tableNames[i] + syntax);
 	    } catch (SQLException e) {
@@ -244,30 +235,14 @@ public class insertInfo {
 //	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
 	      System.out.println("Failed to drop " + tableNames[i] + ", it doesn't seem to exist."); 
 	    }
-	    
 	  } 
 	  System.out.println("Tables dropped.");
-	}
-	
-	/**
-	 * Activate JDBC
-	 * @return whether activation was successful
-	 */
-	public static boolean activateJDBC() {
-		try {
-			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-
-		return true;
+	  } catch (SQLException e) {
+	    System.out.println("Connection was closed");
+	    return;
+	  }
 	}
 
-	
-	//
-	// Generation Methods
-	//
-	
 	/**
 	 * Generate a random number of players
 	 */
@@ -294,13 +269,17 @@ public class insertInfo {
 	  try {
 		  PreparedStatement statement = m_dbConn.prepareStatement(insert);
 		// Print data and add it
-		  System.out.println(user + " | " + email + " | " + pass);
+		  System.out.print(user + " | " + email + " | " + pass + "\t");
 		  statement.setString(1, user);
 		  statement.setString(2, email);
 		  statement.setString(3, pass);
 		  try {
 			  statement.execute();
 		  } catch(SQLException e) {
+		    /* The only reason we should get an exception here is if we attempt to
+         * add a primary key that already exists, so in that scenario, we just 
+         * call this function again and hope it doesn't happen again =)
+         */
 			  System.out.println("Duplicate entry. Calling generatePlayer() again. ");
 			  generatePlayer(); 
 		  }
@@ -330,6 +309,7 @@ public class insertInfo {
 	  int IdNumber;
 	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", Size, AreaType;
 //	  System.out.println(insert);
+	  
     // Generate IdNumber, Size, AreaType
 	  IdNumber = g.randomIdNum();
 	  Size = g.randomSize(); 
@@ -337,36 +317,108 @@ public class insertInfo {
     
     try {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
-    // Print data and add it
-      System.out.println(IdNumber + " | " + Size + " | " + AreaType);
+      // Print data and add it to statement
+      System.out.print(IdNumber + " | " + Size + " | " + AreaType + "\t");
       statement.setInt(1, IdNumber);
       statement.setString(2, Size);
       statement.setString(3, AreaType);
-      try {
+      try { 
         statement.execute();
       } catch(SQLException e) {
+        /* The only reason we should get an exception here is if we attempt to
+         * add a primary key that already exists, so in that scenario, we just 
+         * call this function again and hope it doesn't happen again =)
+         */
         System.out.println("Duplicate entry. Calling generateLocation() again. ");
         generateLocation(); 
       }
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("Failure");
+      System.out.println("Connection closed.");
     }
 	}
   
+	
+	
+	
+	
+	
+	
+//	"CREATE TABLE IF NOT EXISTS Characters ("
+//  + "Name varchar(20) NOT NULL,"
+//  + "MaxHP INT UNSIGNED NOT NULL,"
+//  + "CurrentHP INT UNSIGNED NOT NULL,"
+//  + "Strength INT UNSIGNED NOT NULL,"
+//  + "Stamina INT UNSIGNED NOT NULL,"
+//  + "LocationId INT NOT NULL,"
+//  + "pUserName varChar(20),"
+//  + "PRIMARY KEY (Name),"
+//  + "FOREIGN KEY (pUserName) REFERENCES Player(Username),"
+//  + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber) "
+//  + ");",
+	
+	
+	
 	/**
    * Generate random characters for existing players
+   * Side note -- location definitely does not work correctly. 
    */
   public void generateCharacters() {
-    // Firstly, get num of existing players. 
-    
-    
-    
-//    int numChars = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-//    System.out.println("Generating " + numLocations + " locations...");
-//    for(int i = 0; i < numLocations; i++) {
-//      generateLocation(); 
-//    }
+    retrieveInformation r = new retrieveInformation(m_dbConn);
+    String[] player = r.getAllPlayerUsernames(); 
+    for(int i = 0; i < r.getNumPlayers(); i++) {
+      // Generate a random number of characters for every player
+      int randNumChars = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
+      System.out.println("\n\n" + player[i] + " has " + randNumChars + " characters: "); 
+      for(int j = 0; j < randNumChars; j++) {
+        generateCharacter(player[i]); 
+        
+      }
+    }
+  }
+  
+	/**
+   * Generate a single character.
+	 * @param player 
+   */
+  public void generateCharacter(String player) {
+    generate g = new generate(); 
+    // Our insert statements and data being generated. 
+    String insert = "INSERT INTO Characters (Name, MaxHP, CurrentHP, Strength, Stamina, LocationID, pUserName) VALUES (?,?,?,?,?,?,?);", 
+        name  = g.randomName(); 
+    int maxHP = MAX_STATS, 
+        curHP = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
+        str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
+        stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
+
+    int[] loc = new retrieveInformation(m_dbConn).getAllLocationIds();
+    int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
+        
+    try {
+      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
+          str + " Strength, " + loc + " location" + " Player: " + player); 
+      
+      statement.setString(1, name);
+      statement.setInt(2, maxHP);
+      statement.setInt(3, curHP);
+      statement.setInt(4, str);
+      statement.setInt(5, stam);
+      statement.setInt(6, location);
+      statement.setString(7, player);
+      
+      try {
+        statement.execute(); 
+      } catch(SQLException e) {
+        System.out.println(name + ": duplicate. trying again." );
+//        e.printStackTrace();
+        generateCharacter(player); 
+      }
+      
+    } catch(SQLException e) {
+      e.printStackTrace();
+      System.out.print("connection closed prob idk" );
+    }
   }
   
   /**

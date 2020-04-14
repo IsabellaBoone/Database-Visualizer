@@ -22,6 +22,7 @@ public class Runner {
 
   public static boolean establishConnection() {
     try {
+      DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver()); // activate jdbc line
       m_dbConn = DriverManager.getConnection(DB_LOCATION, LOGIN_NAME, PASSWORD);
       return true;
     } catch (SQLException e) {

@@ -18,15 +18,12 @@ public class retrieveInformation {
 
   public retrieveInformation(Connection con) {
     this.m_dbConn = con;
-    
-//    getAllPlayerUsernames();
-//    getAllLocationIds(); 
-//    String[] items = getAllItems();
-//    for(int i = 0; i < items.length; i++) {
-//      System.out.print(items[i] + "\t");
-//    }
   }
 
+  /**
+   * Get the number of all items in database. 
+   * @return int number of all items in DB. 
+   */
   public int getNumItems() {
     try {
       Statement stmt = m_dbConn.createStatement();
@@ -40,6 +37,11 @@ public class retrieveInformation {
     }
   }
   
+  /**
+   * Get the primary key of all items in the DB
+   * @return an int array of all item ids in the 
+   * database at the moment. 
+   */
   public int[] getAllItems() {
     String selectData = new String("SELECT Id FROM Item");
     int[] ids = new int[getNumItems()];
@@ -68,11 +70,34 @@ public class retrieveInformation {
     return ids; 
   }
 
-  // Get information for a single player.
+  /**
+   * Get all attributes of a single player
+   * @param username of the desired player
+   * @return String array of the information, [0] = Username, [1] = Email, [2] = Password
+   */
   public String[] getPlayer(String username) {
-    return null;
+    String[] player = new String[3]; 
+    String selectData = new String("SELECT * FROM Player WHERE Player.Username = '" + username + "';"); 
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(selectData);
+      ResultSet rs = stmt.executeQuery(selectData);
+      
+      while (rs.next()) {
+        for (int i = 1; i <= 3; i++) {
+          player[i - 1] = rs.getString(i) + "";
+        }
+      }
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return player;
   }
 
+  /**
+   * Get the number of all existing players currently in the DB. 
+   * @return number of players in DB. 
+   */
   public int getNumPlayers() {
     try {
       Statement stmt = m_dbConn.createStatement();
@@ -86,12 +111,11 @@ public class retrieveInformation {
     }
   }
 
-  /*
-   * Get a list of all players in a database, including their
-   * username, email, and password in a 2d array. 
-   * (2d array part is not yet working but we're getting there.)
+  /**
+   * Get a list of all player's primary keys in the DB. 
+   * @return all player usernames
    */
-  public void getAllPlayerUsernames() {
+  public String[] getAllPlayerUsernames() {
     String selectData = new String("SELECT Username FROM Player");
     String[] usernames = new String[getNumPlayers()];
 //    System.out.println(getNumPlayers() + " Players in database: ");
@@ -108,13 +132,18 @@ public class retrieveInformation {
 //        System.out.print(rs.getString("Username") + "\t");
         usernames[i] = rs.getString("Username");
       }
-      System.out.println(); 
-
+      System.out.println();
+      
     } catch (SQLException e) {
       e.printStackTrace();
     }
+    return usernames; 
   }
 
+  /**
+   * Get the number of locations currently in the DB. 
+   * @return number of locations in DB
+   */
   public int getNumLocations() {
     try {
       Statement stmt = m_dbConn.createStatement();
@@ -128,10 +157,9 @@ public class retrieveInformation {
     }
   }
   
-  /*
-   * Get a list of all players in a database, including their
-   * username, email, and password in a 2d array. 
-   * (2d array part is not yet working but we're getting there.)
+  /**
+   * Get all Location primary keys currently in the DB
+   * @return int array of all Location ids in DB
    */
   public int[] getAllLocationIds() {
     String selectData = new String("SELECT IdNumber FROM Location");
