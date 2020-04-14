@@ -3,8 +3,14 @@ package Gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.sql.SQLException;
 
 import javax.swing.*;
+
+import database.retrieveInformation;
 
 public class Gui extends JFrame{
 
@@ -28,7 +34,19 @@ public class Gui extends JFrame{
     setBackground(Color.BLACK);
     setSize(1000, 750); 
     setResizable(true);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent arg0) {
+        try {
+          retrieveInformation.getConncetion().close();
+          System.out.println("Connection Closed");
+        } catch (SQLException e) {
+          
+          e.printStackTrace();
+        }
+        System.exit(0);
+      }
+    });
   }
   
   //puts buttons on the screen at the top and puts actionlisteners on them.

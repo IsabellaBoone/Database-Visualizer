@@ -334,7 +334,7 @@ public class insertInfo {
       }
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("Connection closed.");
+      System.out.println("Connection d.");
     }
 	}
   

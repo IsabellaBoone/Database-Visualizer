@@ -4,13 +4,18 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import database.retrieveInformation;
+
 public class ItemsLayout extends JPanel{
   
 
   JScrollPane item = new JScrollPane();
   JLabel selected = null;
+  retrieveInformation ri = new retrieveInformation(retrieveInformation.getConncetion());
+  int[] itemsList = new int[ri.getNumItems()];
   
   public ItemsLayout() {
+    itemsList = ri.getAllItems();
     setLayout(new BorderLayout());
     setBackground(Color.GRAY);
     add(Label(),BorderLayout.NORTH);
@@ -19,7 +24,7 @@ public class ItemsLayout extends JPanel{
     item.add(item.createVerticalScrollBar());
     add(item, BorderLayout.CENTER);
     
-    item.setViewportView(buildItems(50));
+    item.setViewportView(buildItems(ri.getNumItems()));
     revalidate();
     repaint();
     

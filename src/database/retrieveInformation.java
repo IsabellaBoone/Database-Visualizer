@@ -14,12 +14,15 @@ import java.sql.Statement;
  *
  */
 public class retrieveInformation {
-  Connection m_dbConn = null;
+  static Connection m_dbConn = null;
 
   public retrieveInformation(Connection con) {
     this.m_dbConn = con;
   }
-
+  
+  public static Connection getConncetion() {
+    return m_dbConn;
+  }
   /**
    * Get the number of all items in database. 
    * @return int number of all items in DB. 
