@@ -1,5 +1,7 @@
 package database;
 
+import java.util.Random;
+
 /**
  * Just put all of the generation code into it's own 
  * class so it is out of the way. 
@@ -52,13 +54,13 @@ public class generate {
    * TODO not done
    * @return a string of ints for id numbers
    */
-  public String randomIdNum() {
-    String IdNum = ""; 
-    for(int i = 0; i < nums.length(); i++) {
-      int rand = (int) (Math.floor(Math.random() * nums.length()));
-      IdNum += nums.charAt(rand); 
-    }
-    return IdNum;
+  public int randomIdNum() {
+    int id = (new Random()).nextInt();
+    if(id < 0) 
+      return id * -1; 
+    else
+      return id;
+    
   }
 
   /**

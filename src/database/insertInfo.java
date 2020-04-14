@@ -14,6 +14,8 @@ public class insertInfo {
   Connection m_dbConn = null; 
   protected final int GEN_MIN = 5; // Min num of entries for each table
   protected final int GEN_MAX = 10; // Max num of entries for each table
+  protected final int MAX_WEIGHT = 80; 
+  protected final int MAX_VOL = 80; 
   String tableNames[] = { "Moderator", "Manager", "Commands",
       "Player", "Location", "Characters", "Item", "Weapon", 
       "Abilities", "Creature", "Armor", "Container", "ContainerInventory",  
@@ -171,8 +173,8 @@ public class insertInfo {
   public insertInfo(Connection con) {
     this.m_dbConn = con; 
     
-    dropAllTables(); // Drop tables before creating 
-    createTable();  // Create tables 
+    dropAllTables();  // Drop tables before creating 
+    createTable();    // Create tables 
     populateTables(); // Populate the tables
     
   }
@@ -183,6 +185,7 @@ public class insertInfo {
   public void populateTables() {
     generatePlayers(); 
     generateLocations();
+    generateItems(); 
   }
   
   /**
@@ -209,7 +212,7 @@ public class insertInfo {
 		System.out.println("Tables created.");
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("aaInvalid SQL Statement. Check sytax/statement and try again."); 
+      System.out.println("Connection failed"); 
     }   
   }
 	
@@ -234,11 +237,11 @@ public class insertInfo {
 	  for(int i = tableNames.length - 1; i > 0; i--) {
 	    try {
 	      stmt.execute("SET FOREIGN_KEY_CHECKS = 0;");
-	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
+//	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
 	      stmt.execute(drop + tableNames[i] + syntax);
 	    } catch (SQLException e) {
-	      e.printStackTrace();
-	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
+//	      e.printStackTrace();
+//	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
 	      System.out.println("Failed to drop " + tableNames[i] + ", it doesn't seem to exist."); 
 	    }
 	    
@@ -324,8 +327,9 @@ public class insertInfo {
 	 */
 	public void generateLocation() {
 	  generate g = new generate(); 
-	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", IdNumber, Size, AreaType;
-	  System.out.println(insert);
+	  int IdNumber;
+	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", Size, AreaType;
+//	  System.out.println(insert);
     // Generate IdNumber, Size, AreaType
 	  IdNumber = g.randomIdNum();
 	  Size = g.randomSize(); 
@@ -335,7 +339,7 @@ public class insertInfo {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
     // Print data and add it
       System.out.println(IdNumber + " | " + Size + " | " + AreaType);
-      statement.setString(1, IdNumber);
+      statement.setInt(1, IdNumber);
       statement.setString(2, Size);
       statement.setString(3, AreaType);
       try {
@@ -389,12 +393,51 @@ public class insertInfo {
     
   }
   
+  
+  public void generateItems() {
+    int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
+    System.out.println("Generating " + numItems + " items...");
+    for(int i = 0; i < numItems; i++) {
+      generateItem(); 
+    }
+    
+  }
   /**
-   * TODO: Implement
-   * Generate random item in world/on players
+   * * Generate random item in world/on players
+   * TODO: Allow characters to have items. (once characters is implemented)
+   * Current goal: have a randomizer determine either how many characters/locations hold
+   * items, or just do a random number check and take it from there. 
    */
   public void generateItem() {
+    generate g = new generate(); 
+    String insert = "INSERT INTO Item (Id, Weight, Volume, LocationId, cName) VALUES (?,?,?,?,?);";
     
+    try {
+      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      int idNum = g.randomIdNum(), volume = ((int) (Math.floor((Math.random()) * MAX_VOL))),
+        weight = ((int) (Math.floor((Math.random()) * MAX_WEIGHT)));
+      
+      // Choose a random location
+      int[] loc = new retrieveInformation(m_dbConn).getAllLocationIds();
+      int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
+
+      System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
+      statement.setInt(1, idNum);
+      statement.setInt(2, weight);
+      statement.setInt(3, volume);
+      statement.setInt(4, location);
+      statement.setNull(5, java.sql.Types.VARCHAR);
+      try {
+        statement.execute();
+      } catch (SQLException e) {
+        e.printStackTrace();
+        System.out.println("duplicate idnum: " + idNum + ". regenerating.");
+        generateItem();
+      }
+
+    } catch (SQLException e) {
+      e.printStackTrace(); 
+    }
   }
   
   /**
