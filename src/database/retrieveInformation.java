@@ -16,7 +16,7 @@ public class retrieveInformation {
   // These credentials are to log into a locally hosted mysql server
   public static final String DB_LOCATION = "jdbc:mysql://localhost:3306/csc371";
   public static final String LOGIN_NAME = "root";
-  public static final String PASSWORD = "password";
+  public static final String PASSWORD = "Password02";
   
   /* If you want to connect to the schools db server, use these while on vpn
   public static final String DB_LOCATION = "jdbc:mysql://db.cs.ship.edu:3306/csc371_##";   
@@ -58,6 +58,7 @@ public class retrieveInformation {
    */
   public void getAllPlayers() {
     String selectData = new String("SELECT * FROM Player");
+    System.out.println(selectData);
     String[] fetch = {"Username", "Email", "Password" }; 
     System.out.println("Players in database: ");
     try {

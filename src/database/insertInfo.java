@@ -37,7 +37,7 @@ public class insertInfo {
       "CREATE TABLE IF NOT EXISTS Commands ("
           + "ManagerUsername varchar(20),"
           + "ModeratorUsername varchar(20),"
-          + "IdNumber char(10) NOT NULL," 
+          + "IdNumber INT NOT NULL," 
           + "Effect varchar(20),"
           + "PRIMARY KEY (IdNumber), "
           + "FOREIGN KEY (ManagerUserName) REFERENCES Manager(Username),"
@@ -52,7 +52,7 @@ public class insertInfo {
           + ");", 
            
       "CREATE TABLE IF NOT EXISTS Location ("
-          + "IdNumber char(10) NOT NULL,"
+          + "IdNumber INT NOT NULL,"
           + "Size INT UNSIGNED NOT NULL,"
           + "AreaType varChar(10) NOT NULL, "
           + "PRIMARY KEY(IdNumber)"
@@ -64,7 +64,7 @@ public class insertInfo {
           + "CurrentHP INT UNSIGNED NOT NULL,"
           + "Strength INT UNSIGNED NOT NULL,"
           + "Stamina INT UNSIGNED NOT NULL,"
-          + "LocationId char(10) NOT NULL,"
+          + "LocationId INT NOT NULL,"
           + "pUserName varChar(20),"
           + "PRIMARY KEY (Name),"
           + "FOREIGN KEY (pUserName) REFERENCES Player(Username),"
@@ -72,10 +72,10 @@ public class insertInfo {
           + ");",
            
       "CREATE TABLE IF NOT EXISTS Item ("
-          + "Id char(10) NOT NULL, " 
+          + "Id INT NOT NULL, " 
           + "Weight INT UNSIGNED NOT NULL, "
           + "Volume INT UNSIGNED NOT NULL, "
-          + "LocationId char(10),"
+          + "LocationId INT,"
           + "cName varchar(20), "
           + "PRIMARY KEY(Id),"
           + "FOREIGN KEY(LocationId) REFERENCES Location(IdNumber),"
@@ -83,85 +83,85 @@ public class insertInfo {
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Weapon ("
-          + "IdNumber char(10),"
+          + "IdNumber INT,"
           + "PRIMARY KEY(IdNumber) );",
            
           
       "CREATE TABLE IF NOT EXISTS Abilities ("
-          + "AbilityId char(10), "
+          + "AbilityId INT, "
           + "Type varchar(10) NOT NULL,"
           + "EffectAmount INT UNSIGNED NOT NULL,"
-          + "WeaponId char(10) NOT NULL, "
-          + "CreatureID char(10) NOT NULL,"
+          + "WeaponId INT NOT NULL, "
+          + "CreatureID INT NOT NULL,"
           + "PRIMARY KEY (AbilityId),"
           + "FOREIGN KEY (WeaponId) REFERENCES Weapon(IdNumber),"
           + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber)"
           + "); ",
           
       "CREATE TABLE IF NOT EXISTS Creature ("
-          + "IdNumber char(10),"
+          + "IdNumber INT NOT NULL,"
           + "CurrentHP INT UNSIGNED NOT NULL,"
           + "MaxHP INT UNSIGNED NOT NULL,"
           + "Stamina INT UNSIGNED NOT NULL, "
           + "Strength INT UNSIGNED NOT NULL, "
           + "Protection INT UNSIGNED NOT NULL, "
-          + "LocationId char(10),"
+          + "LocationId INT,"
           + "PRIMARY KEY(IdNumber), "
           + "FOREIGN KEY(LocationId) REFERENCES Location(IdNumber)"
           + "); ",
          
            
       "CREATE TABLE IF NOT EXISTS Armor ("
-          + "Id char(10) NOT NULL, "
+          + "Id INT NOT NULL, "
           + "ArmorLocation char(10) NOT NULL," 
           + "FOREIGN KEY(Id) REFERENCES Item(Id)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Container ("
-          + "Id char(10) NOT NULL,"
+          + "Id INT NOT NULL,"
           + "MaxWeight INT UNSIGNED NOT NULL,"
           + "Volume INT UNSIGNED NOT NULL,"
           + "PRIMARY KEY(Id)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS ContainerInventory ("
-          + "ContainerId char(10) NOT NULL,"
-          + "ItemId char(10) NOT NULL,"
+          + "ContainerId INT NOT NULL,"
+          + "ItemId INT NOT NULL,"
           + "FOREIGN KEY(ContainerId) REFERENCES Container(Id),"
           + "FOREIGN KEY(ItemId) REFERENCES Item(Id)"
           + ");",
            
       "CREATE TABLE IF NOT EXISTS Hated_Players ( "
-          + "CreatureIdHates char(10) NOT NULL, " 
-          + "PlayerHated varchar(20) NOT NULL, " 
+          + "CreatureIdHates INT NOT NULL, " 
+          + "PlayerHated varChar(20) NOT NULL, " 
           + "FOREIGN KEY (CreatureIdHates) REFERENCES Creature(IdNumber), " 
           + "FOREIGN KEY (PlayerHated) REFERENCES Player(Username) " 
           + ");", 
             
       "CREATE TABLE IF NOT EXISTS Liked_Players ( "
-          + "CreatureIdLikes char(10) NOT NULL, " 
-          + "PlayerLiked varchar(20) NOT NULL, " 
+          + "CreatureIdLikes INT NOT NULL, " 
+          + "PlayerLiked varChar(20) NOT NULL, " 
           + "FOREIGN KEY (CreatureIdLikes) REFERENCES Creature(IdNumber), " 
           + "FOREIGN KEY (PlayerLiked) REFERENCES Player(Username) " 
           + ");",     
                  
       "CREATE TABLE IF NOT EXISTS Hated_Creatures ("
-          + "hateeCreatureId char(10) NOT NULL, "
-          + "HatedCreatureId char(10) NOT NULL, "
+          + "hateeCreatureId INT NOT NULL, "
+          + "HatedCreatureId INT NOT NULL, "
           + "FOREIGN KEY (hateeCreatureId) REFERENCES Creature(IdNumber), "
           + "FOREIGN KEY (HatedCreatureId) REFERENCES Creature(IdNumber)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Liked_Creatures ("
-          + "LikeeCreatureId char(10) NOT NULL, "
-          + "LikedCreatureId char(10) NOT NULL, "
+          + "LikeeCreatureId INT NOT NULL, "
+          + "LikedCreatureId INT NOT NULL, "
           + "FOREIGN KEY (LikeeCreatureId) REFERENCES Creature(IdNumber), "
           + "FOREIGN KEY (LikedCreatureId) REFERENCES Creature(IdNumber)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Areas_Willing_To_Go ("
-          + "CreatureId char(10),"
-          + "LocationId char(10), "
+          + "CreatureId INT,"
+          + "LocationId INT, "
           + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber), "
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
@@ -325,7 +325,7 @@ public class insertInfo {
 	public void generateLocation() {
 	  generate g = new generate(); 
 	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", IdNumber, Size, AreaType;
-
+	  System.out.println(insert);
     // Generate IdNumber, Size, AreaType
 	  IdNumber = g.randomIdNum();
 	  Size = g.randomSize(); 
