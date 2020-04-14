@@ -40,14 +40,6 @@ public class Runner {
     
     insertInfo insert = new insertInfo(m_dbConn);
     retrieveInformation getInfo = new retrieveInformation(m_dbConn);
-    /*
-    try {
-      m_dbConn.close();
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    */
     Gui gui = new Gui();
   }
   

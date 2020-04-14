@@ -2,6 +2,9 @@ package Gui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.swing.*;
 
 import database.retrieveInformation;
@@ -14,7 +17,7 @@ public class ItemsLayout extends JPanel{
   retrieveInformation ri = new retrieveInformation(retrieveInformation.getConncetion());
   int[] itemsList = new int[ri.getNumItems()];
   
-  public ItemsLayout() {
+  public ItemsLayout(){
     itemsList = ri.getAllItems();
     setLayout(new BorderLayout());
     setBackground(Color.GRAY);
@@ -38,11 +41,11 @@ public class ItemsLayout extends JPanel{
     return label;
   }
   
-  private JPanel buildItems(int rows) {
+  private JPanel buildItems(int rows){
     JPanel data = new JPanel();
     data.setLayout(new GridLayout(rows, 1));
     for(int i = 0; i < rows; i++) {
-      JLabel label = new JLabel(buildHtml());
+      JLabel label = new JLabel(buildHtml(itemsList[i]));
       label.setOpaque(true);
       label.setBackground(new Color(30, 30, 30));
       label.addMouseListener( new MouseAdapter() {
@@ -59,8 +62,21 @@ public class ItemsLayout extends JPanel{
     return data;
   }
 
-  private String buildHtml() {
-    return "<html><p style=\"color:white;\">Hi</p></html>";
+  private String buildHtml(int primaryKey){
+    String labelText = "";
+    ResultSet rs = null;
+    try {
+      rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ID = " + primaryKey);
+      rs.next();
+      labelText = "<html><p style = \"color:white;\">Id = " + rs.getInt("Id") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
+          "   LocationId = " + (rs.getInt("LocationId") == 0 ? "null" : "" + rs.getInt("LOCATIONID")) + /*"   CharacterName = " + rs.getString("cName") + */"</p></html>";
+      rs.close();
+    } catch(SQLException e){
+      e.printStackTrace();
+    }
+    
+    
+    return labelText;
   }
   
   private void removeSelectedBackground() {
