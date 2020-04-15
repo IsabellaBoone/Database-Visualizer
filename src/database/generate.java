@@ -28,7 +28,8 @@ public class generate {
           "Java", "Water", "Chicken", "Scheme", "Consumer", "Fish",
           "Toast", "Bird", "Riot", "Sunday"},
       
-      domains = {"OW", "WOW", "yeet", "poptart", "corsair", "amd"};
+      domains = {"OW", "WOW", "yeet", "poptart", "corsair", "amd"},
+      armorLoc = {"Head", "Chest", "Legs", "Feet"} ;
   String nums = "1234567890";
   /*
    * @param len how long the string will be
@@ -56,8 +57,7 @@ public class generate {
   }
 
   /**
-   * TODO not done
-   * @return a string of ints for id numbers
+   * @return a random int for id numbers
    */
   public int randomIdNum() {
     int id = (new Random()).nextInt();
@@ -66,6 +66,14 @@ public class generate {
     else
       return id;
     
+  }
+  
+  /**
+   * @return a string that is a random armor location
+   */
+  protected String randomArmorLoc() {
+    int loc = (int) (Math.floor(Math.random() * armorLoc.length));
+    return armorLoc[loc];
   }
 
   /**

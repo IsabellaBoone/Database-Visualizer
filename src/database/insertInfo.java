@@ -24,7 +24,7 @@ public class insertInfo {
    */
   String tableNames[] = { "Moderator", "Manager", "Commands",
       "Player", "Location", "Characters", "Item", "Weapon", 
-      "Abilities", "Creature", "Armor", "Container", "ContainerInventory",  
+      "Creature", "Abilities", "Armor", "Container", "ContainerInventory",  
       "Hated_Players", "Liked_Players", "Hated_Creatures",
       "Liked_Creatures", "Areas_Willing_To_Go"};
   
@@ -47,7 +47,7 @@ public class insertInfo {
       "CREATE TABLE IF NOT EXISTS Commands ("
           + "ManagerUsername varchar(20),"
           + "ModeratorUsername varchar(20),"
-          + "IdNumber INT NOT NULL," 
+          + "IdNumber INT UNSIGNED NOT NULL," 
           + "Effect varchar(20),"
           + "PRIMARY KEY (IdNumber), "
           + "FOREIGN KEY (ManagerUserName) REFERENCES Manager(Username),"
@@ -62,7 +62,7 @@ public class insertInfo {
           + ");", 
            
       "CREATE TABLE IF NOT EXISTS Location ("
-          + "IdNumber INT NOT NULL,"
+          + "IdNumber INT UNSIGNED NOT NULL,"
           + "Size INT UNSIGNED NOT NULL,"
           + "AreaType varChar(10) NOT NULL, "
           + "PRIMARY KEY(IdNumber)"
@@ -74,7 +74,7 @@ public class insertInfo {
           + "CurrentHP INT UNSIGNED NOT NULL,"
           + "Strength INT UNSIGNED NOT NULL,"
           + "Stamina INT UNSIGNED NOT NULL,"
-          + "LocationId INT NOT NULL,"
+          + "LocationId INT UNSIGNED NOT NULL,"
           + "pUserName varChar(20),"
           + "PRIMARY KEY (Name),"
           + "FOREIGN KEY (pUserName) REFERENCES Player(Username),"
@@ -85,7 +85,7 @@ public class insertInfo {
           + "Id INT NOT NULL, " 
           + "Weight INT UNSIGNED NOT NULL, "
           + "Volume INT UNSIGNED NOT NULL, "
-          + "LocationId INT,"
+          + "LocationId INT UNSIGNED,"
           + "cName varchar(20), "
           + "PRIMARY KEY(Id),"
           + "FOREIGN KEY(LocationId) REFERENCES Location(IdNumber),"
@@ -93,34 +93,32 @@ public class insertInfo {
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Weapon ("
-          + "IdNumber INT,"
+          + "IdNumber INT UNSIGNED NOT NULL,"
           + "PRIMARY KEY(IdNumber) );",
-           
-          
-      "CREATE TABLE IF NOT EXISTS Abilities ("
-          + "AbilityId INT, "
-          + "Type varchar(10) NOT NULL,"
-          + "EffectAmount INT UNSIGNED NOT NULL,"
-          + "WeaponId INT NOT NULL, "
-          + "CreatureID INT NOT NULL,"
-          + "PRIMARY KEY (AbilityId),"
-          + "FOREIGN KEY (WeaponId) REFERENCES Weapon(IdNumber),"
-          + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber)"
-          + "); ",
           
       "CREATE TABLE IF NOT EXISTS Creature ("
-          + "IdNumber INT NOT NULL,"
+          + "IdNumber INT UNSIGNED NOT NULL ,"
           + "CurrentHP INT UNSIGNED NOT NULL,"
           + "MaxHP INT UNSIGNED NOT NULL,"
           + "Stamina INT UNSIGNED NOT NULL, "
           + "Strength INT UNSIGNED NOT NULL, "
           + "Protection INT UNSIGNED NOT NULL, "
-          + "LocationId INT,"
+          + "LocationId INT UNSIGNED ,"
           + "PRIMARY KEY(IdNumber), "
           + "FOREIGN KEY(LocationId) REFERENCES Location(IdNumber)"
           + "); ",
-         
-           
+          
+      "CREATE TABLE IF NOT EXISTS Abilities ("
+          + "AbilityId INT UNSIGNED, "
+          + "Type varchar(10) NOT NULL,"
+          + "EffectAmount INT UNSIGNED,"
+          + "WeaponId INT UNSIGNED, "
+          + "CreatureID INT UNSIGNED,"
+          + "PRIMARY KEY (AbilityId),"
+          + "FOREIGN KEY (WeaponId) REFERENCES Weapon(IdNumber),"
+          + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber)"
+          + "); ",  
+          
       "CREATE TABLE IF NOT EXISTS Armor ("
           + "Id INT NOT NULL, "
           + "ArmorLocation char(10) NOT NULL," 
@@ -142,36 +140,36 @@ public class insertInfo {
           + ");",
            
       "CREATE TABLE IF NOT EXISTS Hated_Players ( "
-          + "CreatureIdHates INT NOT NULL, " 
+          + "CreatureIdHates INT UNSIGNED NOT NULL, " 
           + "PlayerHated varChar(20) NOT NULL, " 
           + "FOREIGN KEY (CreatureIdHates) REFERENCES Creature(IdNumber), " 
           + "FOREIGN KEY (PlayerHated) REFERENCES Player(Username) " 
           + ");", 
             
       "CREATE TABLE IF NOT EXISTS Liked_Players ( "
-          + "CreatureIdLikes INT NOT NULL, " 
+          + "CreatureIdLikes INT UNSIGNED NOT NULL, " 
           + "PlayerLiked varChar(20) NOT NULL, " 
           + "FOREIGN KEY (CreatureIdLikes) REFERENCES Creature(IdNumber), " 
           + "FOREIGN KEY (PlayerLiked) REFERENCES Player(Username) " 
           + ");",     
                  
       "CREATE TABLE IF NOT EXISTS Hated_Creatures ("
-          + "hateeCreatureId INT NOT NULL, "
-          + "HatedCreatureId INT NOT NULL, "
+          + "hateeCreatureId INT UNSIGNED NOT NULL, "
+          + "HatedCreatureId INT UNSIGNED NOT NULL, "
           + "FOREIGN KEY (hateeCreatureId) REFERENCES Creature(IdNumber), "
           + "FOREIGN KEY (HatedCreatureId) REFERENCES Creature(IdNumber)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Liked_Creatures ("
-          + "LikeeCreatureId INT NOT NULL, "
-          + "LikedCreatureId INT NOT NULL, "
+          + "LikeeCreatureId INT UNSIGNED NOT NULL, "
+          + "LikedCreatureId INT UNSIGNED NOT NULL, "
           + "FOREIGN KEY (LikeeCreatureId) REFERENCES Creature(IdNumber), "
           + "FOREIGN KEY (LikedCreatureId) REFERENCES Creature(IdNumber)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Areas_Willing_To_Go ("
-          + "CreatureId INT,"
-          + "LocationId INT, "
+          + "CreatureId INT UNSIGNED,"
+          + "LocationId INT UNSIGNED, "
           + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber), "
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
@@ -205,7 +203,7 @@ public class insertInfo {
           stmt.executeUpdate(statements[i]);
 //          System.out.println("Table '" + tableNames[i] + "' Created");
         } catch (SQLException e) {
-          System.out.println("Failed to create " + tableNames[i]);
+          System.out.println("Failed to create i: " + i + "" + tableNames[i] + " " + statements[i]);
           e.printStackTrace();
         }   
       }
@@ -338,27 +336,6 @@ public class insertInfo {
     }
 	}
   
-	
-	
-	
-	
-	
-	
-//	"CREATE TABLE IF NOT EXISTS Characters ("
-//  + "Name varchar(20) NOT NULL,"
-//  + "MaxHP INT UNSIGNED NOT NULL,"
-//  + "CurrentHP INT UNSIGNED NOT NULL,"
-//  + "Strength INT UNSIGNED NOT NULL,"
-//  + "Stamina INT UNSIGNED NOT NULL,"
-//  + "LocationId INT NOT NULL,"
-//  + "pUserName varChar(20),"
-//  + "PRIMARY KEY (Name),"
-//  + "FOREIGN KEY (pUserName) REFERENCES Player(Username),"
-//  + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber) "
-//  + ");",
-	
-	
-	
 	/**
    * Generate random characters for existing players
    * Side note -- location definitely does not work correctly. 
@@ -369,11 +346,11 @@ public class insertInfo {
     for(int i = 0; i < r.getNumPlayers(); i++) {
       // Generate a random number of characters for every player
       int randNumChars = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-      System.out.println("\n\n" + player[i] + " has " + randNumChars + " characters: "); 
+      System.out.print(player[i] + " has " + randNumChars + " characters: "); 
       for(int j = 0; j < randNumChars; j++) {
         generateCharacter(player[i]); 
-        
       }
+      System.out.println(); 
     }
   }
   
@@ -392,12 +369,13 @@ public class insertInfo {
         stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
 
     int[] loc = new retrieveInformation(m_dbConn).getAllLocationIds();
-    int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
+    int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
         
     try {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
-      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
-          str + " Strength, " + loc + " location" + " Player: " + player); 
+      System.out.print(name + ", ");
+//      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
+//          str + " Strength, " + loc + " location" + " Player: " + player); 
       
       statement.setString(1, name);
       statement.setInt(2, maxHP);
@@ -410,7 +388,7 @@ public class insertInfo {
       try {
         statement.execute(); 
       } catch(SQLException e) {
-        System.out.println(name + ": duplicate. trying again." );
+        System.out.print("-- duplicate. trying again." );
 //        e.printStackTrace();
         generateCharacter(player); 
       }
@@ -445,15 +423,58 @@ public class insertInfo {
     
   }
   
-  
+  /**
+   * Generate a bunch of items, which can be a weapon, 
+   * armor or container
+   */
   public void generateItems() {
-    int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-    System.out.println("Generating " + numItems + " items...");
+    // Generate all the items 
+    // numItems multiplied by 2 because we need more items
+    int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN)) * 2;
+    System.out.println("\nGenerating " + numItems + " items...");
     for(int i = 0; i < numItems; i++) {
       generateItem(); 
     }
     
+    // Makes every item generated a container, weapon or armor 
+    // we can't insert items into containers yet but like 
+    // i dont think we have to for the assignment so
+    for(int i = 0; i < numItems; i++) {
+      String insert = "INSERT INTO ";
+      String[] types = {"Weapon", "Container", "Armor"};
+      int[] listIds = (new retrieveInformation(m_dbConn)).getAllItems();
+      int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
+      
+
+      System.out.print(listIds[i] + " " + types[type]);
+      switch (type) {
+      case (0): // Weapon
+        insert += "Weapon VALUES (" + listIds[i] + "); ";
+        break;
+      case (1): // Container
+        // we will add to vol when we add items to it, which we currently
+        // cannot add any items to containers haha
+        int maxW = 80, vol = 0;
+        insert += "Container VALUES (" + listIds[i] + ", " + maxW + ", " + vol + ");";
+        break;
+      case (2):// Armor
+        String aLoc = (new generate().randomArmorLoc());
+        insert += "Armor VALUES (" + listIds[i] + ", '" + aLoc + "');";
+        break;
+      }
+
+      try {
+//        System.out.print(insert);
+        PreparedStatement stmt = m_dbConn.prepareStatement(insert);
+        stmt.execute();
+      } catch (SQLException e) {
+        System.out.print("Error with: " + insert);
+//        e.printStackTrace();
+      }
+    }
+
   }
+  
   /**
    * * Generate random item in world/on players
    * TODO: Allow characters to have items. (once characters is implemented)
@@ -483,8 +504,9 @@ public class insertInfo {
         statement.execute();
       } catch (SQLException e) {
         e.printStackTrace();
-        System.out.println("duplicate idnum: " + idNum + ". regenerating.");
-        generateItem();
+        System.out.print("This is kinda broken me tinks");
+//        System.out.println("duplicate idnum: " + idNum + ". regenerating.");
+//        generateItem();
       }
 
     } catch (SQLException e) {
