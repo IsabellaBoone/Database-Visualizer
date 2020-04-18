@@ -7,14 +7,15 @@ import java.sql.SQLException;
 
 import javax.swing.*;
 
-import database.retrieveInformation;
+import database.RetrieveManipulateInformation;
 
+// TODO: Add buttons for add item, edit item, and delete item.
 public class ItemsLayout extends JPanel{
   
 
   JScrollPane item = new JScrollPane();
   JLabel selected = null;
-  retrieveInformation ri = new retrieveInformation(retrieveInformation.getConncetion());
+  RetrieveManipulateInformation ri = new RetrieveManipulateInformation(RetrieveManipulateInformation.getConncetion());
   int[] itemsList = new int[ri.getNumItems()];
   
   public ItemsLayout(){
@@ -26,6 +27,13 @@ public class ItemsLayout extends JPanel{
     item.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     item.add(item.createVerticalScrollBar());
     add(item, BorderLayout.CENTER);
+    
+    JPanel subPanel = new JPanel(); 
+    JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
+    subPanel.add(add); 
+    subPanel.add(edit); 
+    subPanel.add(delete); 
+    add(subPanel, BorderLayout.SOUTH);
     
     item.setViewportView(buildItems(ri.getNumItems()));
     revalidate();
@@ -66,9 +74,9 @@ public class ItemsLayout extends JPanel{
     String labelText = "";
     ResultSet rs = null;
     try {
-      rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ID = " + primaryKey);
+      rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + primaryKey);
       rs.next();
-      labelText = "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:20px;\">Id = " + rs.getInt("Id") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
+      labelText = "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:20px;\">ItemId = " + rs.getInt("ItemId") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
           "   LocationId = " + (rs.getInt("LocationId") == 0 ? "null" : "" + rs.getInt("LOCATIONID")) + 
           "   CharacterName = " + (rs.getString("cName") == null ? "null" : rs.getString("cName")) + "</p><br style = \"font-size:2px;\"></html>";
       rs.close();

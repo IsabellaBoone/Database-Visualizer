@@ -9,7 +9,7 @@ import java.sql.*;
  *
  */
 
-public class insertInfo {
+public class GenerateInformation {
   
   // Global Variables 
   Connection m_dbConn = null;         // Connection to the database 
@@ -82,19 +82,20 @@ public class insertInfo {
           + ");",
            
       "CREATE TABLE IF NOT EXISTS Item ("
-          + "Id INT NOT NULL, " 
+          + "ItemId INT NOT NULL, " 
           + "Weight INT UNSIGNED NOT NULL, "
           + "Volume INT UNSIGNED NOT NULL, "
           + "LocationId INT UNSIGNED,"
           + "cName varchar(20), "
-          + "PRIMARY KEY(Id),"
+          + "PRIMARY KEY(ItemId),"
           + "FOREIGN KEY(LocationId) REFERENCES Location(IdNumber),"
           + "FOREIGN KEY(cName) REFERENCES Characters(Name)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Weapon ("
-          + "IdNumber INT UNSIGNED NOT NULL,"
-          + "PRIMARY KEY(IdNumber) );",
+          + "WepId INT NOT NULL,"
+          + "FOREIGN KEY(WepId) REFERENCES Item(ItemId) );",
+//          + "PRIMARY KEY(IdNumber) );",
           
       "CREATE TABLE IF NOT EXISTS Creature ("
           + "IdNumber INT UNSIGNED NOT NULL ,"
@@ -112,31 +113,31 @@ public class insertInfo {
           + "AbilityId INT UNSIGNED, "
           + "Type varchar(10) NOT NULL,"
           + "EffectAmount INT UNSIGNED,"
-          + "WeaponId INT UNSIGNED, "
+          + "WeaponId INT, "
           + "CreatureID INT UNSIGNED,"
           + "PRIMARY KEY (AbilityId),"
-          + "FOREIGN KEY (WeaponId) REFERENCES Weapon(IdNumber),"
+          + "FOREIGN KEY (WeaponId) REFERENCES Weapon(WepId),"
           + "FOREIGN KEY (CreatureId) REFERENCES Creature(IdNumber)"
           + "); ",  
           
       "CREATE TABLE IF NOT EXISTS Armor ("
-          + "Id INT NOT NULL, "
+          + "ArmorId INT NOT NULL, "
           + "ArmorLocation char(10) NOT NULL," 
-          + "FOREIGN KEY(Id) REFERENCES Item(Id)"
+          + "FOREIGN KEY(ArmorId) REFERENCES Item(ItemId)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS Container ("
-          + "Id INT NOT NULL,"
+          + "ContId INT NOT NULL,"
           + "MaxWeight INT UNSIGNED NOT NULL,"
           + "Volume INT UNSIGNED NOT NULL,"
-          + "PRIMARY KEY(Id)"
+          + "PRIMARY KEY(ContId)"
           + "); ",
            
       "CREATE TABLE IF NOT EXISTS ContainerInventory ("
           + "ContainerId INT NOT NULL,"
           + "ItemId INT NOT NULL,"
-          + "FOREIGN KEY(ContainerId) REFERENCES Container(Id),"
-          + "FOREIGN KEY(ItemId) REFERENCES Item(Id)"
+          + "FOREIGN KEY(ContainerId) REFERENCES Container(ContId),"
+          + "FOREIGN KEY(ItemId) REFERENCES Item(ItemId)"
           + ");",
            
       "CREATE TABLE IF NOT EXISTS Hated_Players ( "
@@ -174,7 +175,7 @@ public class insertInfo {
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
   
-  public insertInfo(Connection con) {
+  public GenerateInformation(Connection con) {
     this.m_dbConn = con; 
     
     dropAllTables();  // Drop tables before creating 
@@ -185,7 +186,7 @@ public class insertInfo {
   /**
    * Insert data into all tables.
    */
-  public void populateTables() {
+  private void populateTables() {
     generatePlayers(); 
     generateLocations();
     generateItems(); 
@@ -195,7 +196,7 @@ public class insertInfo {
   /**
    * Create all tables. 
    */
-  public void createTable() {
+  private void createTable() {
     try {
       Statement stmt = m_dbConn.createStatement();
       for(int i = 0; i < statements.length; i++) {
@@ -217,7 +218,7 @@ public class insertInfo {
 	/**
 	 * Drop all tables
 	 */
-	public void dropAllTables() {
+  private void dropAllTables() {
 	  String drop = "DROP TABLE ", syntax = ";";
 	  
 	  try {
@@ -244,7 +245,7 @@ public class insertInfo {
 	/**
 	 * Generate a random number of players
 	 */
-	public void generatePlayers() {
+  private void generatePlayers() {
 		int numPlayers = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
 		System.out.println("Generating " + numPlayers + " players...");
 		for(int i = 0; i < numPlayers; i++) {
@@ -252,11 +253,10 @@ public class insertInfo {
 		}
 	}
 	
-	
 	/**
 	 * Generate a single player
 	 */
-	public void generatePlayer() {
+  private void generatePlayer() {
 	  generate g = new generate();
 	  // Generate user, email, password
 	  String insert = "INSERT INTO Player (Username, Email, Password) VALUES (?,?,?);", user, email, pass;
@@ -287,11 +287,10 @@ public class insertInfo {
 	  }
   }
   
-	
 	/**
 	 * Generate a random number of locations. 
 	 */
-	public void generateLocations() {
+  private void generateLocations() {
 		int numLocations = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
 		System.out.println("Generating " + numLocations + " locations...");
 		for(int i = 0; i < numLocations; i++) {
@@ -302,7 +301,7 @@ public class insertInfo {
 	/**
 	 * Generate a single location. 
 	 */
-	public void generateLocation() {
+  private void generateLocation() {
 	  generate g = new generate(); 
 	  int IdNumber;
 	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", Size, AreaType;
@@ -340,8 +339,8 @@ public class insertInfo {
    * Generate random characters for existing players
    * Side note -- location definitely does not work correctly. 
    */
-  public void generateCharacters() {
-    retrieveInformation r = new retrieveInformation(m_dbConn);
+  private void generateCharacters() {
+    RetrieveManipulateInformation r = new RetrieveManipulateInformation(m_dbConn);
     String[] player = r.getAllPlayerUsernames(); 
     for(int i = 0; i < r.getNumPlayers(); i++) {
       // Generate a random number of characters for every player
@@ -358,7 +357,7 @@ public class insertInfo {
    * Generate a single character.
 	 * @param player 
    */
-  public void generateCharacter(String player) {
+  private void generateCharacter(String player) {
     generate g = new generate(); 
     // Our insert statements and data being generated. 
     String insert = "INSERT INTO Characters (Name, MaxHP, CurrentHP, Strength, Stamina, LocationID, pUserName) VALUES (?,?,?,?,?,?,?);", 
@@ -368,7 +367,7 @@ public class insertInfo {
         str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
         stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
 
-    int[] loc = new retrieveInformation(m_dbConn).getAllLocationIds();
+    int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
     int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
         
     try {
@@ -403,7 +402,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random moderators
    */
-  public void generateModerator() {
+  private void generateModerator() {
     
   }
   
@@ -411,7 +410,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random managers
    */
-  public void generateManager() {
+  private void generateManager() {
     
   }
   
@@ -419,7 +418,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random commands for existing manager/moderator
    */
-  public void generateCommands() {
+  private void generateCommands() {
     
   }
   
@@ -427,7 +426,7 @@ public class insertInfo {
    * Generate a bunch of items, which can be a weapon, 
    * armor or container
    */
-  public void generateItems() {
+  private void generateItems() {
     // Generate all the items 
     // numItems multiplied by 2 because we need more items
     int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN)) * 2;
@@ -442,7 +441,7 @@ public class insertInfo {
     for(int i = 0; i < numItems; i++) {
       String insert = "INSERT INTO ";
       String[] types = {"Weapon", "Container", "Armor"};
-      int[] listIds = (new retrieveInformation(m_dbConn)).getAllItems();
+      int[] listIds = (new RetrieveManipulateInformation(m_dbConn)).getAllItems();
       int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
       
 
@@ -476,22 +475,22 @@ public class insertInfo {
   }
   
   /**
-   * * Generate random item in world/on players
+   * Generate random item in world/on players
    * TODO: Allow characters to have items. (once characters is implemented)
    * Current goal: have a randomizer determine either how many characters/locations hold
    * items, or just do a random number check and take it from there. 
    */
-  public void generateItem() {
+  private void generateItem() {
     generate g = new generate(); 
-    String insert = "INSERT INTO Item (Id, Weight, Volume, LocationId, cName) VALUES (?,?,?,?,?);";
-    
+//    String insert = "INSERT INTO Item (Id, Weight, Volume, LocationId, cName) VALUES (?,?,?,?,?);";
+    String insert = "INSERT INTO Item VALUES (?,?,?,?,?);";
     try {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
       int idNum = g.randomIdNum(), volume = ((int) (Math.floor((Math.random()) * MAX_VOL))),
         weight = ((int) (Math.floor((Math.random()) * MAX_WEIGHT)));
       
       // Choose a random location
-      int[] loc = new retrieveInformation(m_dbConn).getAllLocationIds();
+      int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
       int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
 
       System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
@@ -518,15 +517,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random creatures in world
    */
-  public void generateCreature() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random weapons in world/on players
-   */
-  public void generateWeapon() {
+  private void generateCreature() {
     
   }
   
@@ -534,39 +525,16 @@ public class insertInfo {
    * TODO: Implement
    * Generate random abilities for creatures
    */
-  public void generateAbilities() {
+  private void generateAbilities() {
     
   }
   
-  /**
-   * TODO: Implement
-   * Generate random armor in world/on players
-   */
-  public void generateArmor() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random container
-   */
-  public void generateContainer() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random contents for a container
-   */
-  public void generateContainerInventory() {
-    
-  }
   
   /**
    * TODO: Implement
    * Generate random hated players for existing creature
    */
-  public void generateHatedPlayer() {
+  private void generateHatedPlayer() {
     
   }
   
@@ -574,7 +542,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random liked players for existing creatures
    */
-  public void generateLikedPlayer() {
+  private void generateLikedPlayer() {
     
   }
   
@@ -582,7 +550,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random hated creatures for existing creatures
    */
-  public void generateHatedCreature() {
+  private void generateHatedCreature() {
     
   }
   
@@ -590,7 +558,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random liked creatures for existing creatures
    */
-  public void generateLikedCreature() {
+  private void generateLikedCreature() {
     
   }
   
@@ -598,7 +566,7 @@ public class insertInfo {
    * TODO: Implement
    * Generate random areas willing to go for existing creatures
    */
-  public void generateAreasWillingToGo() {
+  private void generateAreasWillingToGo() {
     
   }
   

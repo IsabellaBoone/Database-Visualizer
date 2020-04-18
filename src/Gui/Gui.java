@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 import javax.swing.*;
 
-import database.retrieveInformation;
+import database.RetrieveManipulateInformation;
 
 public class Gui extends JFrame{
 
@@ -38,7 +38,7 @@ public class Gui extends JFrame{
       @Override
       public void windowClosing(WindowEvent arg0) {
         try {
-          retrieveInformation.getConncetion().close();
+          RetrieveManipulateInformation.getConncetion().close();
           System.out.println("Connection Closed");
         } catch (SQLException e) {
           

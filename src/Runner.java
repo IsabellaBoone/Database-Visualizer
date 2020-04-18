@@ -38,9 +38,11 @@ public class Runner {
       return;
     }
     
-    insertInfo insert = new insertInfo(m_dbConn);
-    retrieveInformation getInfo = new retrieveInformation(m_dbConn);
+    GenerateInformation insert = new GenerateInformation(m_dbConn);
+    RetrieveManipulateInformation getInfo = new RetrieveManipulateInformation(m_dbConn);
     Gui gui = new Gui();
+    
+    
   }
   
 

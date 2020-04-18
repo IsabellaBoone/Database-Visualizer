@@ -8,21 +8,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * TODO: Implement
- * 
+ * Retrieve and manipulate information that is currently in the database.
  * @author Isabella Boone, Chase Banyai, Joel Gingrich, Joshua Jackson
  *
  */
-public class retrieveInformation {
+public class RetrieveManipulateInformation {
   static Connection m_dbConn = null;
 
-  public retrieveInformation(Connection con) {
+  public RetrieveManipulateInformation(Connection con) {
     this.m_dbConn = con;
   }
   
   public static Connection getConncetion() {
     return m_dbConn;
   }
+  
   /**
    * Get the number of all items in database. 
    * @return int number of all items in DB. 
@@ -46,7 +46,7 @@ public class retrieveInformation {
    * database at the moment. 
    */
   public int[] getAllItems() {
-    String selectData = new String("SELECT Id FROM Item");
+    String selectData = new String("SELECT ItemId FROM Item");
     int[] ids = new int[getNumItems()];
     System.out.print(getNumItems() + " Items in database:\t");
 
@@ -64,8 +64,8 @@ public class retrieveInformation {
 //        System.out.println(rs.getInt("Id"));
 //        ids[i] = (Integer) rs.getObject("Id");
 //        ids[i] = rs.getInt("Id");
-        ids[i] = rs.getInt("id");
-        System.out.print(rs.getInt("id") + "\t");
+        ids[i] = rs.getInt("ItemId");
+        System.out.print(rs.getInt("ItemId") + "\t");
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -187,5 +187,59 @@ public class retrieveInformation {
       e.printStackTrace();
     }
     return ids;
+  }
+  
+  /**
+   * 
+   * @param ItemId item id that we want to update
+   * @param colUpdate table we're modifying, ex ArmorLocation
+   * @param updatedInfo new information to add
+   * @return\ whether or not update was successful.
+   */
+  public void updateItem(String itemId, String colUpdate, String updatedInfo) {
+    String update = "UPDATE ITEM SET " + colUpdate + " " + updatedInfo + " WHERE ITEMID = " + itemId + ";";   
+    System.out.println(update); 
+    
+  }
+  
+  /**
+   * 
+   * @param itemType can be 0, 1, 2 refering to "Weapon", "Container", "Armor"
+   * @param info to add, item = {idNum, weight, vol, location, cName} 
+   * @param itemTypeData item type specific information, ex ArmorLocation
+   */
+  public void addItem(int itemType, String[] item, String[] itemTypeData) {
+    String[] itemTypes = {"Weapon", "Container", "Armor"};
+    String insert = "INSERT INTO ITEM values (?,?,?,?,?)";
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(insert);
+      stmt.setInt(1, Integer.parseInt(item[0]));
+      stmt.setInt(2, Integer.parseInt(item[1]));
+      stmt.setInt(3, Integer.parseInt(item[2]));
+      
+      if(item[4] == null) {
+        stmt.setNull(4, java.sql.Types.INTEGER);
+      } else {
+        stmt.setInt(4, Integer.parseInt(item[3]));
+      }
+      if(item[5] == null) {
+        stmt.setNull(5, java.sql.Types.VARCHAR);
+      } else {
+        stmt.setInt(5, Integer.parseInt(item[4]));
+      }
+      
+      stmt.execute(); 
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+        
+        
+        
+    switch(itemType) {
+    case(0):
+      insert = "";
+    case(1):
+    case(2):
+    }
   }
 }
