@@ -12,13 +12,14 @@ import database.RetrieveManipulateInformation;
 // TODO: Add buttons for add item, edit item, and delete item.
 public class ItemsLayout extends JPanel{
   
-
+  RetrieveManipulateInformation rmi;
   JScrollPane item = new JScrollPane();
   JLabel selected = null;
   RetrieveManipulateInformation ri = new RetrieveManipulateInformation(RetrieveManipulateInformation.getConncetion());
   int[] itemsList = new int[ri.getNumItems()];
   
-  public ItemsLayout(){
+  public ItemsLayout(RetrieveManipulateInformation rmi){
+    this.rmi = rmi;
     itemsList = ri.getAllItems();
     setLayout(new BorderLayout());
     setBackground(Color.GRAY);
@@ -28,17 +29,29 @@ public class ItemsLayout extends JPanel{
     item.add(item.createVerticalScrollBar());
     add(item, BorderLayout.CENTER);
     
-    JPanel subPanel = new JPanel(); 
-    JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
-    subPanel.add(add); 
-    subPanel.add(edit); 
-    subPanel.add(delete); 
-    add(subPanel, BorderLayout.SOUTH);
+    add(buttons(), BorderLayout.SOUTH);
+    
     
     item.setViewportView(buildItems(ri.getNumItems()));
     revalidate();
     repaint();
     
+  }
+  
+  private JPanel buttons() {
+    JPanel subPanel = new JPanel(); 
+    JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
+    subPanel.add(add); 
+    subPanel.add(edit); 
+    subPanel.add(delete); 
+    add.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Add Item");
+        new AddItem(rmi); 
+      }
+    });
+    return subPanel; 
   }
   
   private JLabel Label(){

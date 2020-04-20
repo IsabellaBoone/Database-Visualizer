@@ -13,23 +13,23 @@ import javax.swing.*;
 import database.RetrieveManipulateInformation;
 
 public class Gui extends JFrame{
-
+  RetrieveManipulateInformation rmi;
   JPanel buttons;
-  JPanel view = new ItemsLayout();
+  JPanel view = new ItemsLayout(rmi);
   GridBagConstraints gbc = new GridBagConstraints(); 
   JButton itemLayout = new JButton("Items");
   JButton characterLayout = new JButton("Characters");
   JButton playerLayout = new JButton("Players");
   JButton locationLayout = new JButton("Locations");
   
-  public Gui(){
+  public Gui(RetrieveManipulateInformation getInfo) {
+    rmi = getInfo; 
     initJFrame();
     setButtons();
     setVisible(true);
   }
-  
+
   private void initJFrame() {
-    
     setLayout(new GridBagLayout());
     setBackground(Color.BLACK);
     setSize(1000, 750); 
@@ -47,6 +47,7 @@ public class Gui extends JFrame{
         System.exit(0);
       }
     });
+    setLocationRelativeTo(null);
   }
   
   //puts buttons on the screen at the top and puts actionlisteners on them.
@@ -106,7 +107,7 @@ public class Gui extends JFrame{
   //channges gui to items view
   public void setItemView() {
     remove(view);
-    view = new ItemsLayout();
+    view = new ItemsLayout(rmi);
     System.out.println("Item View");
     gbc.gridx = 0;
     gbc.gridy = 1;

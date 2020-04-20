@@ -10,7 +10,6 @@ import java.util.Random;
  *
  */
 public class generate {
-  // TODO IdNums
   
   // feel free to add to this :) 
   private String[] prefix = { "Rat", "Cat", "King", "Legend", "The",

@@ -18,7 +18,7 @@ public class GenerateInformation {
   private final int MAX_WEIGHT = 80;  // Max weight for items
   private final int MAX_VOL = 80;     // Max volume for items
   private final int MAX_STATS = 50; // Max value for stats
-  
+  private int DEBUG = 0; 
   /**
    * List of all table names.
    */
@@ -226,12 +226,14 @@ public class GenerateInformation {
 	    
 	    for(int i = tableNames.length - 1; i > 0; i--) {
 	    try {
-	      stmt.execute("SET FOREIGN_KEY_CHECKS = 0;"); // big brain chase, thanks
+	      stmt.execute("SET FOREIGN_KEY_CHECKS = 0;"); 
 //	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
 	      stmt.execute(drop + tableNames[i] + syntax);
 	    } catch (SQLException e) {
 //	      e.printStackTrace();
-//	      System.out.println(drop + "" + tableNames[i] + "" + syntax);
+	      if(DEBUG == 1) {
+	        System.out.println(drop + "" + tableNames[i] + "" + syntax);
+	      } 
 	      System.out.println("Failed to drop " + tableNames[i] + ", it doesn't seem to exist."); 
 	    }
 	  } 
@@ -247,7 +249,10 @@ public class GenerateInformation {
 	 */
   private void generatePlayers() {
 		int numPlayers = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-		System.out.println("Generating " + numPlayers + " players...");
+		if(DEBUG == 1) {
+		  System.out.println("Generating " + numPlayers + " players...");
+		}
+		
 		for(int i = 0; i < numPlayers; i++) {
 			generatePlayer(); 
 		}
@@ -266,8 +271,11 @@ public class GenerateInformation {
 	  
 	  try {
 		  PreparedStatement statement = m_dbConn.prepareStatement(insert);
-		// Print data and add it
-		  System.out.print(user + " | " + email + " | " + pass + "\t");
+		
+		  if(DEBUG == 1) {
+		    System.out.print(user + " | " + email + " | " + pass + "\t");
+		  }
+		  
 		  statement.setString(1, user);
 		  statement.setString(2, email);
 		  statement.setString(3, pass);
@@ -278,7 +286,10 @@ public class GenerateInformation {
          * add a primary key that already exists, so in that scenario, we just 
          * call this function again and hope it doesn't happen again =)
          */
-			  System.out.println("Duplicate entry. Calling generatePlayer() again. ");
+		    if(DEBUG == 1) {
+		      System.out.println("Duplicate entry. Calling generatePlayer() again. ");
+		    }
+			  
 			  generatePlayer(); 
 		  }
 	  } catch (SQLException e) {
@@ -292,7 +303,10 @@ public class GenerateInformation {
 	 */
   private void generateLocations() {
 		int numLocations = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-		System.out.println("Generating " + numLocations + " locations...");
+		if(DEBUG == 1) {
+		  System.out.println("Generating " + numLocations + " locations...");
+		}
+		
 		for(int i = 0; i < numLocations; i++) {
 		  generateLocation(); 
 		}
@@ -315,7 +329,10 @@ public class GenerateInformation {
     try {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
       // Print data and add it to statement
-      System.out.print(IdNumber + " | " + Size + " | " + AreaType + "\t");
+      if(DEBUG == 1) {
+        System.out.print(IdNumber + " | " + Size + " | " + AreaType + "\t");
+      }
+      
       statement.setInt(1, IdNumber);
       statement.setString(2, Size);
       statement.setString(3, AreaType);
@@ -326,7 +343,10 @@ public class GenerateInformation {
          * add a primary key that already exists, so in that scenario, we just 
          * call this function again and hope it doesn't happen again =)
          */
-        System.out.println("Duplicate entry. Calling generateLocation() again. ");
+        if(DEBUG == 1) {
+          System.out.println("Duplicate entry. Calling generateLocation() again. ");
+        }
+        
         generateLocation(); 
       }
     } catch (SQLException e) {
@@ -345,7 +365,10 @@ public class GenerateInformation {
     for(int i = 0; i < r.getNumPlayers(); i++) {
       // Generate a random number of characters for every player
       int randNumChars = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
-      System.out.print(player[i] + " has " + randNumChars + " characters: "); 
+      if(DEBUG == 1 ) {
+        System.out.print(player[i] + " has " + randNumChars + " characters: "); 
+      }
+      
       for(int j = 0; j < randNumChars; j++) {
         generateCharacter(player[i]); 
       }
@@ -372,7 +395,10 @@ public class GenerateInformation {
         
     try {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
-      System.out.print(name + ", ");
+      if(DEBUG == 1) {
+        System.out.print(name + ", ");
+      }
+      
 //      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
 //          str + " Strength, " + loc + " location" + " Player: " + player); 
       
@@ -387,7 +413,10 @@ public class GenerateInformation {
       try {
         statement.execute(); 
       } catch(SQLException e) {
-        System.out.print("-- duplicate. trying again." );
+        if(DEBUG == 1) {
+          System.out.print("-- duplicate. trying again." );   
+        }
+       
 //        e.printStackTrace();
         generateCharacter(player); 
       }
@@ -430,7 +459,10 @@ public class GenerateInformation {
     // Generate all the items 
     // numItems multiplied by 2 because we need more items
     int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN)) * 2;
-    System.out.println("\nGenerating " + numItems + " items...");
+    if(DEBUG == 1) {
+      System.out.println("\nGenerating " + numItems + " items...");
+    }
+    
     for(int i = 0; i < numItems; i++) {
       generateItem(); 
     }
@@ -445,7 +477,10 @@ public class GenerateInformation {
       int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
       
 
-      System.out.print(listIds[i] + " " + types[type]);
+      if(DEBUG == 1) {
+        System.out.print(listIds[i] + " " + types[type]);
+      }
+      
       switch (type) {
       case (0): // Weapon
         insert += "Weapon VALUES (" + listIds[i] + "); ";
@@ -493,7 +528,10 @@ public class GenerateInformation {
       int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
       int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
 
-      System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
+      if(DEBUG == 1) {
+        System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
+      }
+      
       statement.setInt(1, idNum);
       statement.setInt(2, weight);
       statement.setInt(3, volume);
@@ -503,9 +541,12 @@ public class GenerateInformation {
         statement.execute();
       } catch (SQLException e) {
         e.printStackTrace();
-        System.out.print("This is kinda broken me tinks");
-//        System.out.println("duplicate idnum: " + idNum + ". regenerating.");
-//        generateItem();
+//        System.out.print("This is kinda broken me tinks");
+        if(DEBUG == 1) {
+          System.out.println("duplicate idnum: " + idNum + ". regenerating.");
+        }
+        
+        generateItem();
       }
 
     } catch (SQLException e) {

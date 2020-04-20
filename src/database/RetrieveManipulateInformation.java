@@ -190,56 +190,51 @@ public class RetrieveManipulateInformation {
   }
   
   /**
-   * 
-   * @param ItemId item id that we want to update
-   * @param colUpdate table we're modifying, ex ArmorLocation
-   * @param updatedInfo new information to add
-   * @return\ whether or not update was successful.
+   * This function is BROKEN 
+   * @param id
+   * @return true if it exists, false if it does not exist
    */
-  public void updateItem(String itemId, String colUpdate, String updatedInfo) {
-    String update = "UPDATE ITEM SET " + colUpdate + " " + updatedInfo + " WHERE ITEMID = " + itemId + ";";   
-    System.out.println(update); 
+  public boolean itemIdExists(String id) {
+    String select = "SELECT COUNT(*) FROM ITEM WHERE ID = " + id + ";"; 
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      ResultSet rs = stmt.executeQuery(select); 
+      
+      System.out.println(rs.getInt("Count"));
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } 
+    
+    
+    
+    return false; 
+  }
+  
+  
+  /**
+   * Update an item
+   * @param itemId
+   */
+  public void updateItem(String itemId) {
     
   }
   
   /**
-   * 
-   * @param itemType can be 0, 1, 2 refering to "Weapon", "Container", "Armor"
-   * @param info to add, item = {idNum, weight, vol, location, cName} 
-   * @param itemTypeData item type specific information, ex ArmorLocation
+   * Create a weapon in the database. 
+   * @param id ItemId for weapon
    */
-  public void addItem(int itemType, String[] item, String[] itemTypeData) {
-    String[] itemTypes = {"Weapon", "Container", "Armor"};
-    String insert = "INSERT INTO ITEM values (?,?,?,?,?)";
+  public void createWeapon(String id) {
+    String statement = "INSERT INTO Weapon VALUES (" + id + ");";
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(insert);
-      stmt.setInt(1, Integer.parseInt(item[0]));
-      stmt.setInt(2, Integer.parseInt(item[1]));
-      stmt.setInt(3, Integer.parseInt(item[2]));
-      
-      if(item[4] == null) {
-        stmt.setNull(4, java.sql.Types.INTEGER);
-      } else {
-        stmt.setInt(4, Integer.parseInt(item[3]));
-      }
-      if(item[5] == null) {
-        stmt.setNull(5, java.sql.Types.VARCHAR);
-      } else {
-        stmt.setInt(5, Integer.parseInt(item[4]));
-      }
-      
-      stmt.execute(); 
+      PreparedStatement stmt = m_dbConn.prepareStatement(statement);
+      stmt.execute();
+      System.out.println("Created weapon with id of '" + id + "'"); 
     } catch (SQLException e) {
       e.printStackTrace();
-    }
-        
-        
-        
-    switch(itemType) {
-    case(0):
-      insert = "";
-    case(1):
-    case(2):
-    }
+      System.out.println("Duplicate pk (probably)."); 
+    } 
+    
+    
   }
 }

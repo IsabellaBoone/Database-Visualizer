@@ -40,7 +40,7 @@ public class Runner {
     
     GenerateInformation insert = new GenerateInformation(m_dbConn);
     RetrieveManipulateInformation getInfo = new RetrieveManipulateInformation(m_dbConn);
-    Gui gui = new Gui();
+    Gui gui = new Gui(getInfo);
     
     
   }
