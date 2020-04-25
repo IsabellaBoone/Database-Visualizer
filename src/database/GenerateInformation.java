@@ -372,7 +372,6 @@ public class GenerateInformation {
       for(int j = 0; j < randNumChars; j++) {
         generateCharacter(player[i]); 
       }
-      System.out.println(); 
     }
   }
   

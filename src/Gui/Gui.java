@@ -120,7 +120,7 @@ public class Gui extends JFrame{
   //changes gui to characters view
   public void setCharacterView() {
     remove(view);
-    view = new CharactersLayout();
+    view = new CharactersLayout(rmi);
     System.out.println("Character View");
     gbc.gridx = 0;
     gbc.gridy = 1;

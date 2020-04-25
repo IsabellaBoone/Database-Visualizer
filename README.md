@@ -10,5 +10,7 @@ TO-DO: generateModerator(), generateManage(), generateCommands(), generateCreatu
 - Implement a user interface to display data
 - Implement buttons to change data in the database.  
 
-TODO: 
- Add buttons to items, add, update and delete functionality, Panel 2, 3, & 4
+-- Panel 1: purify user input, prettify input panels, delete & modify
+-- Panel 2: Fix wonky shit with updating panels, add stats panel, add buttons. 
+-- Panel 3: Everything
+-- Panel 4: Everything

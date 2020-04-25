@@ -78,25 +78,47 @@ public class RetrieveManipulateInformation {
    * @param username of the desired player
    * @return String array of the information, [0] = Username, [1] = Email, [2] = Password
    */
-  public String[] getPlayer(String username) {
-    String[] player = new String[3]; 
-    String selectData = new String("SELECT * FROM Player WHERE Player.Username = '" + username + "';"); 
+/*  public String[] getCharStats(String username) {
+//    String[] player = new String[3]; 
+//    String selectData = new String("SELECT * FROM Player WHERE Player.Username = '" + username + "';"); 
+//    try {
+//      PreparedStatement stmt = m_dbConn.prepareStatement(selectData);
+//      ResultSet rs = stmt.executeQuery(selectData);
+//      
+//      while (rs.next()) {
+//        for (int i = 1; i <= 3; i++) {
+//          player[i - 1] = rs.getString(i) + "";
+//        }
+//      }
+//      
+//    } catch (SQLException e) {
+//      e.printStackTrace();
+//    }
+//    return player;
+//   }*/
+
+  /**
+   * 
+   */
+  public String[] getAllCharsFromUser(String user) {
+    String[] chars = new String[getNumChars(user)];
+    String select = new String("SELECT * FROM Characters WHERE pUserName = '" + user + "';");
+    
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(selectData);
-      ResultSet rs = stmt.executeQuery(selectData);
+      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      ResultSet rs = stmt.executeQuery(select); 
       
-      while (rs.next()) {
-        for (int i = 1; i <= 3; i++) {
-          player[i - 1] = rs.getString(i) + "";
-        }
+      int i = 0;
+      while(rs.next()) {
+        chars[i] = rs.getString("Name");
+        i++; 
       }
-      
-    } catch (SQLException e) {
+    } catch(SQLException e) {
       e.printStackTrace();
     }
-    return player;
+    return chars;
+    
   }
-
   /**
    * Get the number of all existing players currently in the DB. 
    * @return number of players in DB. 
@@ -136,7 +158,6 @@ public class RetrieveManipulateInformation {
 //        System.out.print(rs.getString("Username") + "\t");
         usernames[i] = rs.getString("Username");
       }
-      System.out.println();
       
     } catch (SQLException e) {
       e.printStackTrace();
@@ -144,6 +165,7 @@ public class RetrieveManipulateInformation {
     return usernames; 
   }
 
+  
   /**
    * Get the number of locations currently in the DB. 
    * @return number of locations in DB
@@ -182,7 +204,6 @@ public class RetrieveManipulateInformation {
 //        System.out.print(rs.getInt("IdNumber") + "\t");
         ids[i] = rs.getInt("IdNumber");
       }
-      System.out.println(); 
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -237,4 +258,83 @@ public class RetrieveManipulateInformation {
     
     
   }
+
+  public int getNumCharacters() {
+    try {
+      Statement stmt = m_dbConn.createStatement();
+      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Characters");
+      r.next();
+      return r.getInt("count(*)");
+    } catch (SQLException e) {
+      e.printStackTrace();
+      System.out.println("made an oopsie");
+      return -1;
+    }
+
+  }
+  
+
+  public int getNumChars(String user) {
+    try {
+      Statement stmt = m_dbConn.createStatement();
+      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Characters WHERE pUserName = '" + user + "';");
+      r.next();
+      return r.getInt("count(*)");
+    } catch (SQLException e) {
+      e.printStackTrace();
+      System.out.println("made an oopsie");
+      return -1;
+    }
+
+  }
+
+  // TODO; might not b necessary? idk
+  public String[] getAllCharacters() {
+    String selectData = new String("SELECT Name FROM Characters");
+    String[] charNames = new String[getNumCharacters()];
+    System.out.println(getNumPlayers() + " Players in database: ");
+
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(selectData);
+      ResultSet rs = stmt.executeQuery(selectData);
+
+      // Each fetch for every player
+      for (int i = 0; i < getNumCharacters(); i++) {
+        if (!(rs.next())) {
+          break;
+        }
+        System.out.print(rs.getString("Name") + "\t");
+        charNames[i] = rs.getString("Name");
+      }
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return charNames; 
+  }
+  
+  public String[] getPlayersCharacters(String user) {
+    String selectData = new String("SELECT Name FROM Characters WHERE pUserName = '" + user + "';");
+    String[] charNames = new String[getNumCharacters()];
+    System.out.println(getNumPlayers() + " Players in database: ");
+
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(selectData);
+      ResultSet rs = stmt.executeQuery(selectData);
+
+      // Each fetch for every player
+      for (int i = 0; i < getNumCharacters(); i++) {
+        if (!(rs.next())) {
+          break;
+        }
+        System.out.print(rs.getString("Name") + "\t");
+        charNames[i] = rs.getString("Name");
+      }
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return charNames; 
+  }
+
 }
