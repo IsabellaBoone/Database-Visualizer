@@ -41,7 +41,6 @@ public class AddItem {
   private void initializeP1() {
     JFrame frame1 = new JFrame("Add Item");
     frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame1.setSize(800,250);
     frame1.setLocationRelativeTo(null);
     frame1.setLayout(new GridBagLayout());
     
@@ -133,7 +132,7 @@ public class AddItem {
     });
     
     frame1.add(nextPanel);
-    
+    frame1.pack();
     frame1.setVisible(true); 
     
   }

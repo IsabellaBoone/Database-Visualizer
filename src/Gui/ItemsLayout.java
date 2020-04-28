@@ -60,6 +60,14 @@ public class ItemsLayout extends JPanel{
         deleteItem();
       }
     });
+    edit.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        editItem();
+      }
+      
+    });
     return subPanel; 
   }
   
@@ -127,6 +135,10 @@ public class ItemsLayout extends JPanel{
       }
       item.setViewportView(buildItems(ri.getNumItems()));
     }
+  }
+  
+  private void editItem() {
+    new EditItem();
   }
   
 }
