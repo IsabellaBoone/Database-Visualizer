@@ -17,21 +17,29 @@ import java.sql.Statement;
 public class RetrieveManipulateInformation {
   static Connection m_dbConn = null;
   String[] procedures = {
-      "CREATE PROCEDURE get_all_player_usernames AS "
-        + " SELECT Username FROM Player; ",
+      "Delimiter //"
+      + "CREATE PROCEDURE get_all_player_usernames AS "
+        + " SELECT Username FROM Player; end//"
+        + "Delimiter ; ",
         
-      "CREATE PROCEDURE get_all_items() "
-        + "BEGIN SELECT ItemId from Item; ",
+      "Delimiter //"
+      + "CREATE PROCEDURE get_all_items() "
+        + "BEGIN SELECT ItemId from Item; end//"
+        + "Delimiter ; ",
           
-      "CREATE PROCEDURE get_character_names(IN n varchar(20))"
-        + " BEGIN SELECT Name FROM Characters; ",
+      "Delimiter //"
+      + "CREATE PROCEDURE get_character_names(IN n varchar(20))"
+        + " BEGIN SELECT Name FROM Characters; end//"
+        + "Delimiter ; ",
           
-      "CREATE PROCEDURE get_all_location_idNumbers() "
-        + " BEGIN SELECT IdNumber from Location; "
+      "Delimiter //"
+      + "CREATE PROCEDURE get_all_location_idNumbers() "
+        + " BEGIN SELECT IdNumber from Location; end// "
+        + "Delimiter // "
           
   }, procedureNames = { 
       "get_all_player_usernames", "get_all_items", 
-      "get_character_names", "get_all_location_idNumbers()"
+      "get_character_names", "get_all_location_idNumbers"
   };
   
   public RetrieveManipulateInformation(Connection con) {
@@ -159,12 +167,14 @@ public class RetrieveManipulateInformation {
     int[] itemIds = new int[getNumItems()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
-      stmt.execute();
-      
+      boolean x = stmt.execute();
+      System.out.println(x);
       ResultSet rs = stmt.getResultSet(); 
       
       int i = 0;
+      rs.next();
       while(rs.next()) {
+        
         itemIds[i] = rs.getInt("ItemId");
         i++; 
       }
