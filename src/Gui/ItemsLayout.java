@@ -138,7 +138,15 @@ public class ItemsLayout extends JPanel{
   }
   
   private void editItem() {
-    new EditItem();
+    ResultSet rs = null;
+    try {
+      rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + selectedId);
+      rs.next();
+    } catch(SQLException e) {
+      e.printStackTrace();
+    }
+    
+    new EditItem(rs);
   }
   
 }
