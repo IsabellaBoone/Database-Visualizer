@@ -40,5 +40,17 @@ public class LocationLayout extends JPanel {
     c.gridy = 0;
     c.weightx = 0.33;
     c.weighty = 0.95;
+    add(buildLocationPanel(),c);
+  }
+  
+  private JPanel buildLocationPanel() {
+    JPanel panel = new JPanel();
+    panel.setBackground(new Color(132, 132, 132));
+    panel.setLayout(new GridBagLayout());
+    
+    locationNames = rmi.getAllAreaTypes();
+    locationNames.toString();
+    return panel;
+    
   }
 }

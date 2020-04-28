@@ -16,8 +16,10 @@ import java.sql.Statement;
  */
 public class RetrieveManipulateInformation {
   static Connection m_dbConn = null;
+  final int playerUsernames = 0, allItems = 1, charNames = 2, 
+            locIdNums = 3, locAreaTypes = 4;
   String[] procedures = {
-      "CREATE PROCEDURE get_all_player_usernames "
+      "CREATE PROCEDURE get_all_player_usernames()"
         + " SELECT Username FROM Player;",
 
       "CREATE PROCEDURE get_all_items() "
@@ -28,10 +30,14 @@ public class RetrieveManipulateInformation {
           
       "CREATE PROCEDURE get_all_location_idNumbers() "
         + "SELECT IdNumber from Location;",
+        
+      "CREATE PROCEDURE get_all_location_AreaTypes() "
+        + "SELECT AreaType from Location;"
           
   }, procedureNames = { 
       "get_all_player_usernames", "get_all_items", 
-      "get_character_names", "get_all_location_idNumbers"
+      "get_character_names", "get_all_location_idNumbers", 
+      "get_all_location_AreaTypes,"
   };
   
   public RetrieveManipulateInformation(Connection con) {
@@ -147,6 +153,35 @@ public class RetrieveManipulateInformation {
     
     return locationIds; 
   }
+  
+  /**
+   * Retrieve all location AreaTypes, utilizing stored procedure
+   * @return String array of all location AreaTypes
+   */
+  public String[] getAllAreaTypes() {
+    String call = "CALL " + procedureNames[locAreaTypes] + "();";
+    String[] types = new String[getNumLocations()]; 
+    try {
+      CallableStatement stmt = m_dbConn.prepareCall(call);
+      stmt.execute();
+      
+      ResultSet rs = stmt.getResultSet(); 
+      
+      int i = 0;
+      while(rs.next()) {
+        types[i] = rs.getString("AreaTypes");
+        i++; 
+      }
+      
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+      System.out.println("Syntax error (probably, dunno)");
+    }
+    
+    return types; 
+  }
+  
+  
   
   
   // Item Manipulation Methods

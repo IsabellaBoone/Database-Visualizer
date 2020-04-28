@@ -39,6 +39,7 @@ public class Gui extends JFrame{
       public void windowClosing(WindowEvent arg0) {
         try {
           RetrieveManipulateInformation.getConncetion().close();
+          rmi.dropProcedures();
           System.out.println("Connection Closed");
         } catch (SQLException e) {
           
