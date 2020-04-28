@@ -37,7 +37,7 @@ public class RetrieveManipulateInformation {
   }, procedureNames = { 
       "get_all_player_usernames", "get_all_items", 
       "get_character_names", "get_all_location_idNumbers", 
-      "get_all_location_AreaTypes,"
+      "get_all_location_AreaTypes"
   };
   
   public RetrieveManipulateInformation(Connection con) {
@@ -169,7 +169,7 @@ public class RetrieveManipulateInformation {
       
       int i = 0;
       while(rs.next()) {
-        types[i] = rs.getString("AreaTypes");
+        types[i] = rs.getString("AreaType");
         i++; 
       }
       
