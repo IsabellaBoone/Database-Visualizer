@@ -1,9 +1,44 @@
 package Gui;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import database.RetrieveManipulateInformation;
 import javax.swing.JPanel;
 
-public class LocationLayout extends JPanel{
-  public LocationLayout() {
-    
+//Joel Gingrich
+public class LocationLayout extends JPanel {
+
+  private RetrieveManipulateInformation rmi;
+
+  private JLabel selectedLocationJLabel;
+  private JPanel curLocationPanel = null, curStatsPanel = null;
+  private GridBagConstraints locPanel, statPanel;
+  private String[] locationNames;
+
+  public LocationLayout(RetrieveManipulateInformation rmi) {
+    this.rmi = rmi;
+
+    initializeJPanel();
+  }
+
+  private void initializeJPanel() {
+    setBackground(Color.DARK_GRAY);
+    setLayout(new GridBagLayout());
+
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.weightx = 0.33;
+    c.weighty = 0.95;
   }
 }
