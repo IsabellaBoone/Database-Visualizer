@@ -17,25 +17,17 @@ import java.sql.Statement;
 public class RetrieveManipulateInformation {
   static Connection m_dbConn = null;
   String[] procedures = {
-      "Delimiter //"
-      + "CREATE PROCEDURE get_all_player_usernames AS "
-        + " SELECT Username FROM Player; end//"
-        + "Delimiter ; ",
-        
-      "Delimiter //"
-      + "CREATE PROCEDURE get_all_items() "
-        + "BEGIN SELECT ItemId from Item; end//"
-        + "Delimiter ; ",
+      "CREATE PROCEDURE get_all_player_usernames "
+        + " SELECT Username FROM Player;",
+
+      "CREATE PROCEDURE get_all_items() "
+        + "SELECT ItemId from Item;",
+
+      "CREATE PROCEDURE get_character_names(IN n varchar(20))"
+        + "SELECT Name FROM Characters;",
           
-      "Delimiter //"
-      + "CREATE PROCEDURE get_character_names(IN n varchar(20))"
-        + " BEGIN SELECT Name FROM Characters; end//"
-        + "Delimiter ; ",
-          
-      "Delimiter //"
-      + "CREATE PROCEDURE get_all_location_idNumbers() "
-        + " BEGIN SELECT IdNumber from Location; end// "
-        + "Delimiter // "
+      "CREATE PROCEDURE get_all_location_idNumbers() "
+        + "SELECT IdNumber from Location;",
           
   }, procedureNames = { 
       "get_all_player_usernames", "get_all_items", 
@@ -75,7 +67,7 @@ public class RetrieveManipulateInformation {
           stmt = m_dbConn.prepareStatement(procedures[i]);
           stmt.execute();
         } catch (SQLException e) {
-//          e.printStackTrace();
+          e.printStackTrace();
           System.out.println("Invalid SQL Statement -- " + procedures[i]);
         }
       }
