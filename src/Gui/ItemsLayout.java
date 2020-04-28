@@ -15,6 +15,7 @@ public class ItemsLayout extends JPanel{
   RetrieveManipulateInformation rmi;
   JScrollPane item = new JScrollPane();
   JLabel selected = null;
+  int selectedId;
   RetrieveManipulateInformation ri = new RetrieveManipulateInformation(RetrieveManipulateInformation.getConncetion());
   int[] itemsList = new int[ri.getNumItems()];
   
@@ -51,6 +52,12 @@ public class ItemsLayout extends JPanel{
         new AddItem(rmi); 
       }
     });
+    delete.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        
+      }
+    });
     return subPanel; 
   }
   
@@ -75,9 +82,9 @@ public class ItemsLayout extends JPanel{
               removeSelectedBackground();
               label.setBackground(new Color(234, 201, 55));
               selected = label;
+//              selectedId = 0;
           }
       });
-      label.setPreferredSize(new Dimension(20,50));
       data.add(label);
     }
     return data;
@@ -104,6 +111,10 @@ public class ItemsLayout extends JPanel{
   private void removeSelectedBackground() {
     if(selected != null)
       selected.setBackground(new Color(30, 30, 30));
+  }
+  
+  private void deleteItem() {
+    
   }
   
 }
