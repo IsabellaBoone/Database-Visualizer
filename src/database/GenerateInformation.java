@@ -12,6 +12,7 @@ import java.sql.*;
 public class GenerateInformation {
   
   // Global Variables 
+  
   Connection m_dbConn = null;         // Connection to the database 
   private final int GEN_MIN = 5;      // Min num of entries for each table
   private final int GEN_MAX = 10;     // Max num of entries for each table
@@ -19,6 +20,7 @@ public class GenerateInformation {
   private final int MAX_VOL = 80;     // Max volume for items
   private final int MAX_STATS = 50; // Max value for stats
   private int DEBUG = 0; 
+  RetrieveManipulateInformation r;
   /**
    * List of all table names.
    */
@@ -177,7 +179,7 @@ public class GenerateInformation {
   
   public GenerateInformation(Connection con) {
     this.m_dbConn = con; 
-    
+    r = RetrieveManipulateInformation.createRetrieveManipulateInformation(m_dbConn);
     dropAllTables();  // Drop tables before creating 
     createTable();    // Create tables 
     populateTables(); // Populate the tables
@@ -360,7 +362,7 @@ public class GenerateInformation {
    * Side note -- location definitely does not work correctly. 
    */
   private void generateCharacters() {
-    RetrieveManipulateInformation r = new RetrieveManipulateInformation(m_dbConn);
+    
     String[] player = r.getAllPlayerUsernames(); 
     for(int i = 0; i < r.getNumPlayers(); i++) {
       // Generate a random number of characters for every player
@@ -389,7 +391,7 @@ public class GenerateInformation {
         str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
         stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
 
-    int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
+    int[] loc = r.getAllLocationIds();
     int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
         
     try {
@@ -472,7 +474,7 @@ public class GenerateInformation {
     for(int i = 0; i < numItems; i++) {
       String insert = "INSERT INTO ";
       String[] types = {"Weapon", "Container", "Armor"};
-      int[] listIds = (new RetrieveManipulateInformation(m_dbConn)).getAllItems();
+      int[] listIds = r.getAllItems();
       int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
       
 
@@ -524,7 +526,7 @@ public class GenerateInformation {
         weight = ((int) (Math.floor((Math.random()) * MAX_WEIGHT)));
       
       // Choose a random location
-      int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
+      int[] loc = r.getAllLocationIds();
       int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
 
       if(DEBUG == 1) {

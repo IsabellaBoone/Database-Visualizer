@@ -16,6 +16,9 @@ import java.sql.Statement;
  */
 public class RetrieveManipulateInformation {
   static Connection m_dbConn = null;
+  
+  static RetrieveManipulateInformation rmi;
+  
   final int playerUsernames = 0, allItems = 1, charNames = 2, 
             locIdNums = 3, locAreaTypes = 4;
   String[] procedures = {
@@ -40,9 +43,20 @@ public class RetrieveManipulateInformation {
       "get_all_location_AreaTypes"
   };
   
-  public RetrieveManipulateInformation(Connection con) {
+  private RetrieveManipulateInformation(Connection con) {
     this.m_dbConn = con;
     createProcedures(); 
+  }
+  
+  public static RetrieveManipulateInformation createRetrieveManipulateInformation(Connection conn) {
+    if(rmi != null) {
+      return rmi;
+    }
+    return new RetrieveManipulateInformation(conn);
+  }
+  
+  public void setConncetion(Connection con) {
+    m_dbConn = con;
   }
   
   public static Connection getConncetion() {
@@ -171,8 +185,8 @@ public class RetrieveManipulateInformation {
     int[] itemIds = new int[getNumItems()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
-      boolean x = stmt.execute();
-      System.out.println(x);
+      stmt.execute();
+  
       ResultSet rs = stmt.getResultSet(); 
       
       int i = 0;

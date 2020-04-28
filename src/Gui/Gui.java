@@ -15,7 +15,7 @@ import database.RetrieveManipulateInformation;
 public class Gui extends JFrame{
   RetrieveManipulateInformation rmi;
   JPanel buttons;
-  JPanel view = new ItemsLayout(rmi);
+  JPanel view = null;
   GridBagConstraints gbc = new GridBagConstraints(); 
   JButton itemLayout = new JButton("Items");
   JButton characterLayout = new JButton("Characters");
@@ -106,7 +106,9 @@ public class Gui extends JFrame{
   }
   //channges gui to items view
   public void setItemView() {
-    remove(view);
+    if(view != null)
+      remove(view);
+    
     view = new ItemsLayout(rmi);
     System.out.println("Item View");
     gbc.gridx = 0;
@@ -119,7 +121,9 @@ public class Gui extends JFrame{
   }
   //changes gui to characters view
   public void setCharacterView() {
-    remove(view);
+    if(view != null)
+      remove(view);
+    
     view = new CharactersLayout(rmi);
     System.out.println("Character View");
     gbc.gridx = 0;
@@ -132,8 +136,10 @@ public class Gui extends JFrame{
   }
   //changes gui to players view
   public void setPlayerView() {
-    remove(view);
-    view = new PlayersLayout();
+    if(view != null)
+      remove(view);
+    
+    view = new PlayersLayout(rmi);
     System.out.println("Player View");
     gbc.gridx = 0;
     gbc.gridy = 1;
@@ -145,7 +151,9 @@ public class Gui extends JFrame{
   }
   //changes the gui to location view
   public void setLocationView() {
-    remove(view);
+    if(view != null)
+      remove(view);
+    
     view = new LocationLayout(rmi);
     System.out.println("Location View");
     gbc.gridx = 0;
