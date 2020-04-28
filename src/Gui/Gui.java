@@ -146,7 +146,7 @@ public class Gui extends JFrame{
   //changes the gui to location view
   public void setLocationView() {
     remove(view);
-    view = new LocationLayout();
+    view = new LocationLayout(rmi);
     System.out.println("Location View");
     gbc.gridx = 0;
     gbc.gridy = 1;
