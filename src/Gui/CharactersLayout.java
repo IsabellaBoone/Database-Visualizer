@@ -15,18 +15,17 @@ import javax.swing.SwingConstants;
 import database.RetrieveManipulateInformation;
 
 public class CharactersLayout extends JPanel {
-  private RetrieveManipulateInformation rmi;
-  private JLabel playersJLabel[], charactersJLabel[],
+  private RetrieveManipulateInformation rmi;// used for replacing manipulating information ya know
+  private JLabel playerJLabel[], charactersJLabel[], // hold every single label in characters n players
   
-  playerSelected, // Needed for highlighting selected player
-  characterSelected; // Needed for highlighting selected character
+  selectedPlayerJLabel, // Needed for highlighting selected player
+  selectedCharacterJLabel; // Needed for highlighting selected character
   
-  private JPanel curCharactersPanel, curStatsPanel; 
-  private GridBagConstraints charPanel, statPanel; 
-  private String selectedPlayer = null, selectedCharacter = null; // maybe not needed
+  private JPanel curCharactersPanel = null, curStatsPanel = null; // used for replacing panels, kinda lowkey important 
+  private GridBagConstraints charPanel, statPanel; // used for replacing panels, kinda lowkey important 
+  private String selectedPlayerUsername = null, selectedCharacterName = null; // maybe not needed
   
   private String[] playerUsernames, charNames;
-//  private int playerSelcted, charSelected; 
   
   public CharactersLayout(RetrieveManipulateInformation rmi) {
     this.rmi = rmi;
@@ -47,13 +46,13 @@ public class CharactersLayout extends JPanel {
     add(genUsernamePanel(), c);
     c.gridx++;
     
-    curCharactersPanel = genCharacterPanel(); 
-    add(curCharactersPanel, c);
+//    curCharactersPanel = genCharacterPanel(); 
+//    add(curCharactersPanel, c);
     charPanel = c; 
     c.gridx++;
     
-    curStatsPanel = genCharStatsPanel(); 
-    add(curStatsPanel, c);
+//    curStatsPanel = genCharStatsPanel(); 
+//    add(curStatsPanel, c);
     statPanel = c; 
     c.gridx++;
     
@@ -65,14 +64,14 @@ public class CharactersLayout extends JPanel {
     panel.setBackground(Color.DARK_GRAY);
     panel.setLayout(new GridBagLayout()); 
     
-    playersJLabel = new JLabel[rmi.getNumPlayers()];
+    playerJLabel = new JLabel[rmi.getNumPlayers()];
     playerUsernames = rmi.getAllPlayerUsernames();
     
     GridBagConstraints c = new GridBagConstraints(); 
     c.gridx = 0;
     c.gridy = 0; 
     c.weightx = 0.95;
-    
+    c.ipady = 20; 
     panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + "Players:" + "</H1></html>"));
     
     c.gridy++; 
@@ -81,16 +80,20 @@ public class CharactersLayout extends JPanel {
     for(int i = 0; i < playerUsernames.length; i++) {
       // HTML Formatting for JLabel, then add mouse listener.
       String format = "<html><body style = \"color:white; font-size: 22px\">" + playerUsernames[i] + "</body></html>"; // text with html formatting
-      playersJLabel[i] = new JLabel(format, SwingConstants.CENTER);
-      playersJLabel[i].addMouseListener(new MouseAdapter() {
+      playerJLabel[i] = new JLabel(format, SwingConstants.CENTER);
+      playerJLabel[i].addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
           // Remove background from selected player
-          removeSelectedBackgroundPlayer(); 
+          if(selectedPlayerJLabel == null) {
+            // tee hee ya know
+          } else {
+            removeSelectedBackgroundPlayer(); 
+          }
           
           // Find what label the user selected
-          for(int j = 0; j < playersJLabel.length; j++) {
-            if(e.getSource() == playersJLabel[j]) {
+          for(int j = 0; j < playerJLabel.length; j++) {
+            if(e.getSource() == playerJLabel[j]) {
               /*
                * When we find what player was selected, 
                * change playerSelected variable to keep 
@@ -100,18 +103,26 @@ public class CharactersLayout extends JPanel {
                * Then, break out because there is no point to
                * the loop anymore. 
                */
-              playerSelected = playersJLabel[j]; 
-              selectedPlayer = playerUsernames[j]; // Store the string for later
-              playersJLabel[j].setOpaque(true);
-              playersJLabel[j].setBackground(new Color(234, 201, 55));
+              selectedPlayerJLabel = playerJLabel[j]; 
+              selectedPlayerUsername = playerUsernames[j]; // Store the string for later
+              playerJLabel[j].setOpaque(true);
+              playerJLabel[j].setBackground(new Color(234, 201, 55));
               break;
             }
           }
-          refreshCharacterPanel(); 
+          if(curCharactersPanel == null) {
+            JPanel pp = genCharacterPanel(); 
+            curCharactersPanel = pp; 
+            add(pp, charPanel);
+            pp.validate();
+            pp.repaint();
+          } else {
+            refreshCharacterPanel(); 
+          }
         }
       });
     
-      panel.add(playersJLabel[i], c);
+      panel.add(playerJLabel[i], c);
       c.gridy++; 
     }
     
@@ -128,27 +139,28 @@ public class CharactersLayout extends JPanel {
     panel.setBackground(Color.DARK_GRAY);
     setLayout(new GridBagLayout());
     
-    if(selectedPlayer == null) {
-      charNames = rmi.getAllCharsFromUser(playerUsernames[0]);
+    if(selectedPlayerUsername == null) {
+      charNames = rmi.getAllCharacterNamesFromUser(playerUsernames[0]);
       charactersJLabel = new JLabel[rmi.getNumChars(playerUsernames[0])];
     } else {
-      charNames = rmi.getAllCharsFromUser(selectedPlayer);
-      charactersJLabel = new JLabel[rmi.getNumChars(selectedPlayer)];
+      charNames = rmi.getAllCharacterNamesFromUser(selectedPlayerUsername);
+      charactersJLabel = new JLabel[rmi.getNumChars(selectedPlayerUsername)];
     }
     
     GridBagConstraints c = new GridBagConstraints(); 
-    c.gridx = 1;
+    c.fill = GridBagConstraints.RELATIVE;
+    c.gridx = 0;
     c.gridy = 0; 
     c.weightx = 0.95;
     
     c.gridy++; 
     
-    if(selectedPlayer == null) {
+    if(selectedPlayerUsername == null) {
       panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + playerUsernames[0] + "'s Characters:" + "</H1></html>"));
       System.out.print(playerUsernames[0] + ": ");
     } else {
-      panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + selectedPlayer + "'s Characters:" + "</H1></html>"));
-      System.out.print(selectedPlayer + ": ");
+      panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + selectedPlayerUsername + "'s Characters:" + "</H1></html>"));
+      System.out.print(selectedPlayerUsername + ": ");
     }
     
     for(int i = 0; i < charNames.length; i++) {
@@ -165,10 +177,8 @@ public class CharactersLayout extends JPanel {
           // Find what label the user selected
           for(int j = 0; j < charactersJLabel.length; j++) {
             if(e.getSource() == charactersJLabel[j]) {
-              /*
-               */
-              characterSelected = charactersJLabel[j]; 
-              selectedCharacter = charNames[j]; // Store the string for later
+              selectedCharacterJLabel = charactersJLabel[j]; 
+              selectedCharacterName = charNames[j]; // Store the string for later
               charactersJLabel[j].setOpaque(true);
               charactersJLabel[j].setBackground(new Color(234, 201, 55));
               break;
@@ -187,7 +197,13 @@ public class CharactersLayout extends JPanel {
   
   private JPanel genCharStatsPanel() {
     JPanel panel = new JPanel(); 
-    panel.add(new JLabel("Character Stats Placeholder")); 
+    String[][] charStats = rmi.getCharacterStats(selectedCharacterName);
+    
+    
+    
+    
+    
+//    panel.add(new JLabel("Character Stats Placeholder")); 
     return panel; 
   }
   
@@ -211,11 +227,11 @@ public class CharactersLayout extends JPanel {
   }
   
   private void removeSelectedBackgroundPlayer() {
-    if(playerSelected != null)
-      playerSelected.setBackground(Color.DARK_GRAY);
+    if(selectedPlayerJLabel != null)
+      selectedPlayerJLabel.setBackground(Color.DARK_GRAY);
   }
   private void removeSelectedBackgroundChars() {
-    if(characterSelected != null)
-      characterSelected.setBackground(Color.DARK_GRAY);
+    if(selectedCharacterJLabel != null)
+      selectedCharacterJLabel.setBackground(Color.DARK_GRAY);
   }
 }

@@ -176,7 +176,7 @@ public class AddItem {
     frame.add(b);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
-    rmi.createWeapon(id); 
+//    rmi.createWeapon(id); 
     
   }
   

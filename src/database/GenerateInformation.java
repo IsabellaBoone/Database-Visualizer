@@ -95,7 +95,7 @@ public class GenerateInformation {
       "CREATE TABLE IF NOT EXISTS Weapon ("
           + "WepId INT NOT NULL,"
           + "FOREIGN KEY(WepId) REFERENCES Item(ItemId) );",
-//          + "PRIMARY KEY(IdNumber) );",
+//          + "PRIMARY KEY(WepId) );",
           
       "CREATE TABLE IF NOT EXISTS Creature ("
           + "IdNumber INT UNSIGNED NOT NULL ,"
@@ -396,10 +396,10 @@ public class GenerateInformation {
       PreparedStatement statement = m_dbConn.prepareStatement(insert);
       if(DEBUG == 1) {
         System.out.print(name + ", ");
-      }
-      
+        
 //      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
-//          str + " Strength, " + loc + " location" + " Player: " + player); 
+//      str + " Strength, " + loc + " location" + " Player: " + player); 
+      }
       
       statement.setString(1, name);
       statement.setInt(2, maxHP);

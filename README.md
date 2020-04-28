@@ -11,6 +11,6 @@ TO-DO: generateModerator(), generateManage(), generateCommands(), generateCreatu
 - Implement buttons to change data in the database.  
 
 -- Panel 1: purify user input, prettify input panels, delete & modify
--- Panel 2: Fix wonky shit with updating panels, add stats panel, add buttons. 
+-- Panel 2: implement procedure, fix wonky shit with updating panels, add stats panel, add buttons. 
 -- Panel 3: Everything
 -- Panel 4: Everything
