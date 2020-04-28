@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.*;
 
 import database.RetrieveManipulateInformation;
@@ -17,15 +19,15 @@ public class ItemsLayout extends JPanel{
   JLabel selected = null;
   int selectedId;
   RetrieveManipulateInformation ri = new RetrieveManipulateInformation(RetrieveManipulateInformation.getConncetion());
-  int[] itemsList = new int[ri.getNumItems()];
+  int[] itemsList;
   
   public ItemsLayout(RetrieveManipulateInformation rmi){
     this.rmi = rmi;
-    itemsList = ri.getAllItems();
+    
     setLayout(new BorderLayout());
     setBackground(Color.GRAY);
     add(Label(),BorderLayout.NORTH);
-    //item.add(buildItems(10));
+
     item.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     item.add(item.createVerticalScrollBar());
     add(item, BorderLayout.CENTER);
@@ -55,7 +57,7 @@ public class ItemsLayout extends JPanel{
     delete.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        
+        deleteItem();
       }
     });
     return subPanel; 
@@ -70,9 +72,11 @@ public class ItemsLayout extends JPanel{
   }
   
   private JPanel buildItems(int rows){
+    itemsList = ri.getAllItems();
     JPanel data = new JPanel();
     data.setLayout(new GridLayout(rows, 1));
     for(int i = 0; i < rows; i++) {
+      final int x = i;
       JLabel label = new JLabel(buildHtml(itemsList[i]));
       label.setOpaque(true);
       label.setBackground(new Color(30, 30, 30));
@@ -82,7 +86,7 @@ public class ItemsLayout extends JPanel{
               removeSelectedBackground();
               label.setBackground(new Color(234, 201, 55));
               selected = label;
-//              selectedId = 0;
+              selectedId = itemsList[x];
           }
       });
       data.add(label);
@@ -114,7 +118,15 @@ public class ItemsLayout extends JPanel{
   }
   
   private void deleteItem() {
-    
+    if(selected != null) {
+      try {
+        ri.getConncetion().createStatement().execute("DELETE FROM ITEM WHERE ItemId = " + selectedId);
+        selected = null;
+      }catch(SQLException e) {
+        e.printStackTrace();
+      }
+      item.setViewportView(buildItems(ri.getNumItems()));
+    }
   }
   
 }
