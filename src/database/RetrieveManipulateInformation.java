@@ -26,7 +26,7 @@ public class RetrieveManipulateInformation {
         + "SELECT ItemId from Item;",
 
       "CREATE PROCEDURE get_character_names(IN n varchar(20))"
-        + "SELECT Name FROM Characters;",
+        + "SELECT Name FROM Characters WHERE pUserName = n;",
           
       "CREATE PROCEDURE get_all_location_idNumbers() "
         + "SELECT IdNumber from Location;",
@@ -52,40 +52,19 @@ public class RetrieveManipulateInformation {
   /**
    * Create all procedures
    */
-  public void createProcedures() {
-    // Create Procedure
-    String delimSlash = "DELIMITER //", delimSemi = "DELIMITER ;";
-    
-//    try {
-      // Set delimiter for create procedures 
-//      PreparedStatement stmt = m_dbConn.prepareStatement(delimSlash);
-//      try {
-//        stmt.execute(); // Execute statement 
-//      } catch(SQLException e) {
-//        e.printStackTrace();
-//        System.out.println(delimSlash);
-//      }
-      
+  private void createProcedures() {
       PreparedStatement stmt;
       // Call statement to create procedures
       for(int i = 0; i < procedures.length; i++) {
         try {
           stmt = m_dbConn.prepareStatement(procedures[i]);
           stmt.execute();
+          System.out.println("SQL Statement CREATED-- " + procedures[i]); 
         } catch (SQLException e) {
-          e.printStackTrace();
+//          e.printStackTrace();
           System.out.println("Invalid SQL Statement -- " + procedures[i]);
         }
       }
-      
-      // Fix delimiter back to normal
-//      stmt = m_dbConn.prepareStatement(delimSemi);
-//      stmt.execute();
-      
-//    } catch (SQLException e) {
-//      e.printStackTrace();
-//      System.out.println("fucc");
-//    }
   }
 
   /**
@@ -94,14 +73,14 @@ public class RetrieveManipulateInformation {
    */
   public void dropProcedures() {
     for(int i = 0; i < procedures.length; i++) {
-      String drop = "DROP PROCEDURE IF EXISTS" + procedures[i] + ";";
+      String drop = "DROP PROCEDURE IF EXISTS " + procedures[i] + "();";
       try {
         PreparedStatement stmt = m_dbConn.prepareStatement(drop);
         stmt.execute(); 
         
       } catch (SQLException e) {
-        e.printStackTrace();
-        
+//        e.printStackTrace();
+        System.out.println("Failed to drop " + procedures[i]);
       }
     }
   }
@@ -132,7 +111,7 @@ public class RetrieveManipulateInformation {
    * @return int[] of all Location IdNumbers 
    */
   public int[] getAllLocationIds() {
-    String call = "CALL " + procedureNames[2] + "();";
+    String call = "CALL " + procedureNames[locIdNums] + "();";
     int[] locationIds = new int[getNumLocations()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
@@ -147,8 +126,8 @@ public class RetrieveManipulateInformation {
       }
       
     } catch (SQLException e1) {
-      e1.printStackTrace();
-      System.out.println("Syntax error, maybe");
+//      e1.printStackTrace();
+      System.out.println("getAllLocationIds failed");
     }
     
     return locationIds; 
@@ -180,8 +159,6 @@ public class RetrieveManipulateInformation {
     
     return types; 
   }
-  
-  
   
   
   // Item Manipulation Methods
@@ -356,7 +333,7 @@ public class RetrieveManipulateInformation {
    * @return String array of all player usernames
    */
   public String[] getAllPlayerUsernames() {
-    String call = "CALL " + procedureNames[0] + "();";
+    String call = "CALL " + procedureNames[playerUsernames] + "();";
     String[] usernames = new String[getNumPlayers()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
