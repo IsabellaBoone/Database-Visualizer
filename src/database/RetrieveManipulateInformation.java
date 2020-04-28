@@ -172,9 +172,7 @@ public class RetrieveManipulateInformation {
       ResultSet rs = stmt.getResultSet(); 
       
       int i = 0;
-      rs.next();
-      while(rs.next()) {
-        
+      while(rs.next()) {  
         itemIds[i] = rs.getInt("ItemId");
         i++; 
       }
