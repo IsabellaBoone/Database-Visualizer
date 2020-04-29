@@ -50,7 +50,12 @@ public class ItemsLayout extends JPanel{
       @Override
       public void actionPerformed(ActionEvent ae) {
         System.out.println("Add Item");
-        new AddItem(rmi);
+        new AddItem(rmi).addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent arg0) {
+            item.setViewportView(buildItems(rmi.getNumItems()));
+          }
+        });
       }
     });
     delete.addActionListener(new ActionListener() {

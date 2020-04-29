@@ -25,7 +25,7 @@ import database.RetrieveManipulateInformation;
  * @author Isabella
  *
  */
-public class AddItem {
+public class AddItem extends JFrame{
   RetrieveManipulateInformation rmi;
   int itemType = -1; 
   int id; 
@@ -45,10 +45,10 @@ public class AddItem {
    * TODO: gridbaglayout, button functionality
    */
   private void initializeP1() {
-    JFrame frame1 = new JFrame("Add Item");
-    frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame1.setLocationRelativeTo(null);
-    frame1.setLayout(new GridBagLayout());
+    
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setLocationRelativeTo(null);
+    setLayout(new GridBagLayout());
     
     JLabel enterItemId = new JLabel ("Enter Item ID: ");
     JTextField itemId = new JTextField("Press enter to submit"); 
@@ -93,20 +93,20 @@ public class AddItem {
     JLabel cNameLabel = new JLabel("Item belongs to: ");
     JTextField cNameTxt = new JTextField("(Optional)");
     
-    frame1.add(enterItemId);
-    frame1.add(itemId);
-    frame1.add(enterType); 
-    frame1.add(wepRb);
-    frame1.add(armRb);
-    frame1.add(contRb); 
-    frame1.add(wLabel); 
-    frame1.add(wTxt); 
-    frame1.add(vLabel); 
-    frame1.add(vTxt);
-    frame1.add(locLabel);
-    frame1.add(locTxt);
-    frame1.add(cNameLabel); 
-    frame1.add(cNameTxt); 
+    add(enterItemId);
+    add(itemId);
+    add(enterType); 
+    add(wepRb);
+    add(armRb);
+    add(contRb); 
+    add(wLabel); 
+    add(wTxt); 
+    add(vLabel); 
+    add(vTxt);
+    add(locLabel);
+    add(locTxt);
+    add(cNameLabel); 
+    add(cNameTxt); 
     
     JButton nextPanel = new JButton("Next"); 
     nextPanel.addActionListener(new ActionListener() { 
@@ -140,22 +140,32 @@ public class AddItem {
             
             break;
           case (1):
+            try{
+              location = "" + Integer.parseInt(location); 
+            }catch(NumberFormatException nfe){
+              location = "null";
+            } 
             initArmFrame();
-            
+            addNewItem();
             break;
           case (2):
+            try{
+              location = "" + Integer.parseInt(location); 
+            }catch(NumberFormatException nfe){
+              location = "null";
+            } 
             initContFrame();
-            
+            addNewItem();
             break;
           }
-          frame1.dispose();
+          
         }
       }
     });
     
-    frame1.add(nextPanel);
-    frame1.pack();
-    frame1.setVisible(true); 
+    add(nextPanel);
+    pack();
+    setVisible(true); 
     
   }
   
