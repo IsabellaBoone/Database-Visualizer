@@ -61,7 +61,7 @@ public class LocationLayout extends JPanel {
     JPanel panel = new JPanel();
     panel.setBackground(new Color(132, 132, 132));
     panel.setLayout(new BorderLayout());
-    Dimension d = new Dimension(300, 600);
+    Dimension d = new Dimension(350, 600);
     panel.setMinimumSize(d);
     panel.setPreferredSize(d);
     panel.setMaximumSize(d);
@@ -88,11 +88,11 @@ public class LocationLayout extends JPanel {
         BorderLayout.NORTH);
 
     for (int i = 0; i < locationAreaTypes.length; i++) {
-      String areaType = "<html><body style = \"color:white; font-size: 22px\">" + locationAreaTypes[i]
-          + "</body></html>";
+      String areaType = "<html><body style = \"color:white; font-size: 22px\">" + locationAreaTypes[i] + ": "
+          + locationIDs[i] + "</body></html>";
       locationLabels[i] = new JLabel(areaType, SwingConstants.CENTER);
 
-      d = new Dimension(200, 30);
+      d = new Dimension(325, 30);
       locationLabels[i].setMinimumSize(d);
       locationLabels[i].setPreferredSize(d);
       locationLabels[i].setMaximumSize(d);
@@ -130,7 +130,7 @@ public class LocationLayout extends JPanel {
 
   private JPanel buildObjListPanel() {
     JPanel panel = new JPanel();
-    Dimension d = new Dimension(400, 300);
+    Dimension d = new Dimension(400, 400);
     panel.setLayout(new BorderLayout());
     panel.setBackground(new Color(132, 132, 132));
     panel.setMinimumSize(d);
@@ -222,12 +222,12 @@ public class LocationLayout extends JPanel {
       }
 
       // creatures
-      rs = RetrieveManipulateInformation.getConncetion().createStatement()
-          .executeQuery("SELECT IdNumber FROM Creature WHERE Creature.LocationId = " + locationIDs[selectedLocationIndex]);
+      rs = RetrieveManipulateInformation.getConncetion().createStatement().executeQuery(
+          "SELECT IdNumber FROM Creature WHERE Creature.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
             "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:15px;\">Creature Id = "
-                + rs.getInt("CreatureId") + "</p><br style = \"font-size:2px;\"></html>");
+                + rs.getInt("IdNumber") + "</p><br style = \"font-size:2px;\"></html>");
 
         item.setMinimumSize(d);
         item.setPreferredSize(d);
@@ -236,8 +236,8 @@ public class LocationLayout extends JPanel {
       }
 
       // character
-      rs = RetrieveManipulateInformation.getConncetion().createStatement()
-          .executeQuery("SELECT Name FROM Characters WHERE Characters.LocationId = " + locationIDs[selectedLocationIndex]);
+      rs = RetrieveManipulateInformation.getConncetion().createStatement().executeQuery(
+          "SELECT Name FROM Characters WHERE Characters.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
             "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:15px;\">Character Name = "

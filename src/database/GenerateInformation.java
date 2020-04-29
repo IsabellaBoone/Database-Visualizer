@@ -193,6 +193,7 @@ public class GenerateInformation {
     generateLocations();
     generateItems(); 
     generateCharacters(); 
+    generateCreatures();
   }
   
   /**
@@ -527,7 +528,7 @@ public class GenerateInformation {
       
       // Choose a random location
       int[] loc = r.getAllLocationIds();
-      int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
+      int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
 
       if(DEBUG == 1) {
         System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
@@ -556,11 +557,71 @@ public class GenerateInformation {
   }
   
   /**
-   * TODO: Implement
+   * TODO implement ability generation
    * Generate random creatures in world
    */
+  private void generateCreatures() {
+    // Generate all the items 
+    // numItems multiplied by 2 because we need more items
+    int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN)) * 2;
+    if(DEBUG == 1) {
+      System.out.println("\nGenerating " + numItems + " items...");
+    }
+    for(int i = 0; i < numItems; i++) {
+      generateCreature(); 
+    }
+  }
+  /**
+   * 
+   * Generate single creature
+   */
   private void generateCreature() {
-    
+    generate g = new generate(); 
+    //  String insert = "INSERT INTO Item (Id, curHP, MaxHP, Stamina, Strength, Protection, LocationId) VALUES (?,?,?,?,?);";
+    String insert = "INSERT INTO Creature VALUES (?,?,?,?,?,?,?);";
+    int idNum = g.randomIdNum(),
+        maxHP = MAX_STATS, 
+        curHP = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
+        str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
+        stam  = ((int) (Math.floor((Math.random()) * MAX_STATS))),
+        prot = stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
+
+    int[] loc = r.getAllLocationIds();
+    int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
+        
+    try {
+      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      if(DEBUG == 1) {
+        System.out.print(idNum + ", ");
+        
+//      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
+//      str + " Strength, " + loc + " location" + " Player: " + player); 
+      }
+      
+      statement.setInt(1, idNum);
+      statement.setInt(2, maxHP);
+      statement.setInt(3, curHP);
+      statement.setInt(4, str);
+      statement.setInt(5, stam);
+      statement.setInt(6, prot);
+      statement.setInt(7, location);
+      
+      
+      try {
+        statement.execute(); 
+      } catch(SQLException e) {
+        if(DEBUG == 1) {
+          System.out.print("-- duplicate. trying again." );   
+        }
+        generateCreature();
+//        e.printStackTrace();
+         
+      }
+      
+    } catch(SQLException e) {
+      e.printStackTrace();
+      System.out.print("connection closed prob idk" );
+    }
   }
   
   /**
