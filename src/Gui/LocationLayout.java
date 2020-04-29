@@ -49,9 +49,9 @@ public class LocationLayout extends JPanel {
     panel.setLayout(new GridBagLayout());
     
     locationNames = rmi.getAllAreaTypes();
-    for(int i = 0; i < locationNames.length; i++) {
-      System.out.println(locationNames[i]);
-    }
+//    for(int i = 0; i < locationNames.length; i++) {
+//      System.out.println(locationNames[i]);
+//    }
     return panel;
     
   }

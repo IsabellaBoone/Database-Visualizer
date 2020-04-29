@@ -10,7 +10,7 @@ public class Runner {
   // These credentials are to log into a locally hosted mysql server
   public static final String DB_LOCATION = "jdbc:mysql://localhost:3306/csc371";
   public static final String LOGIN_NAME = "root";
-  public static final String PASSWORD = "Password02";
+  public static final String PASSWORD = "password";
 
   /* sorry i had to move this in here it do be kinda ugly
    * public static final String DB_LOCATION =
@@ -33,7 +33,6 @@ public class Runner {
 
   public static void main(String[] args) {
     
-    
     if (!(establishConnection())) {
       return;
     }
@@ -42,8 +41,6 @@ public class Runner {
     RetrieveManipulateInformation getInfo = RetrieveManipulateInformation.createRetrieveManipulateInformation(m_dbConn);
     Gui gui = new Gui(getInfo);
     
-    
   }
   
-
 }

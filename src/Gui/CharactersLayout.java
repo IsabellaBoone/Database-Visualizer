@@ -184,7 +184,16 @@ public class CharactersLayout extends JPanel {
               break;
             }
           }
-//          refreshStatPanel(); 
+          
+          if(curStatsPanel == null) {
+            JPanel pp = genStatsPanel(); 
+            curStatsPanel = pp; 
+            add(pp, statPanel);
+            pp.validate();
+            pp.repaint();
+          } else {
+            refreshCharacterPanel(); 
+          }
         }
       });
     
@@ -195,16 +204,33 @@ public class CharactersLayout extends JPanel {
     return panel;
   }
   
-  private JPanel genCharStatsPanel() {
+  private JPanel genStatsPanel() {
     JPanel panel = new JPanel(); 
-    String[][] charStats = rmi.getCharacterStats(selectedCharacterName);
+    panel.setLayout(new GridBagLayout());
+    String[] charStats = rmi.getCharacterStats(selectedCharacterName);
     
+    String hp = charStats[0] + "/" + charStats[1] + "HP";
+    String loc = rmi.getLocType(charStats[4]); 
+    String str = charStats[3] + " Strength"; 
+    String stam = charStats[2] + " Stamina"; 
     
+    JLabel hpJLabel = new JLabel(hp); 
+    JLabel locJLabel = new JLabel(loc); 
+    JLabel strJLabel = new JLabel(str); 
+    JLabel stamJLabel = new JLabel(stam); 
     
+    GridBagConstraints c = new GridBagConstraints(); 
+    c.gridx = 0;
+    c.gridy = 0;
+    panel.add(hpJLabel, c);
+    c.gridy++; 
+    panel.add(locJLabel, c);
+    c.gridy++; 
+    panel.add(strJLabel, c);
+    c.gridy++; 
+    panel.add(stamJLabel, c);
     
-    
-//    panel.add(new JLabel("Character Stats Placeholder")); 
-    return panel; 
+    return panel;
   }
   
   private void refreshCharacterPanel() { 
