@@ -26,7 +26,11 @@ import database.RetrieveManipulateInformation;
 public class AddItem {
   RetrieveManipulateInformation rmi;
   int itemType = -1; 
-  String id = null; 
+  int id; 
+  int volume;
+  int weight;
+  String character = null;
+  int location;
   // prompt for item type & item number
   // prompt for specifics of item type
   
@@ -48,7 +52,7 @@ public class AddItem {
     JTextField itemId = new JTextField("Press enter to submit"); 
     itemId.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        id = (itemId.getText()); 
+        id = Integer.parseInt((itemId.getText())); 
       }
     });
     
@@ -107,26 +111,36 @@ public class AddItem {
       public void actionPerformed(ActionEvent e) {
 //        System.out.println("itemType: " + itemType + " id: " + id + " itemIdExists: " + rmi.itemIdExists(id));
         // this if statement does not check to see if the id is already in the db, need to do that and fix itemIdExists(); 
-        id = itemId.getText(); 
+        id = Integer.parseInt(itemId.getText());
+
+        volume = Integer.parseInt(vTxt.getText());
+
+        weight = Integer.parseInt(wTxt.getText());
+        
+        character = cNameTxt.getText();
+        
+        location = Integer.parseInt(locTxt.getText());
+        
 //        rmi.itemIdExists(id);
-        if((itemType == -1) || (id == null)) {
+        if((itemType == -1) || (id < 1) || volume < 1 || weight < 1) {
           failedToSelect(); 
         } else {
 //          rmi.createItem();
           switch (itemType) {
           case (0):
             initWepFrame();
-            frame1.dispose();
+            
             break;
           case (1):
             initArmFrame();
-            frame1.dispose();
+            
             break;
           case (2):
             initContFrame();
-            frame1.dispose();
+            
             break;
           }
+          frame1.dispose();
         }
       }
     });
