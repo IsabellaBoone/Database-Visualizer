@@ -6,12 +6,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -61,7 +66,7 @@ public class LocationLayout extends JPanel {
     JPanel panel = new JPanel();
     panel.setBackground(new Color(132, 132, 132));
     panel.setLayout(new BorderLayout());
-    Dimension d = new Dimension(350, 600);
+    Dimension d = new Dimension(375, 600);
     panel.setMinimumSize(d);
     panel.setPreferredSize(d);
     panel.setMaximumSize(d);
@@ -92,7 +97,7 @@ public class LocationLayout extends JPanel {
           + locationIDs[i] + "</body></html>";
       locationLabels[i] = new JLabel(areaType, SwingConstants.CENTER);
 
-      d = new Dimension(325, 30);
+      d = new Dimension(350, 30);
       locationLabels[i].setMinimumSize(d);
       locationLabels[i].setPreferredSize(d);
       locationLabels[i].setMaximumSize(d);
@@ -130,7 +135,7 @@ public class LocationLayout extends JPanel {
 
   private JPanel buildObjListPanel() {
     JPanel panel = new JPanel();
-    Dimension d = new Dimension(400, 400);
+    Dimension d = new Dimension(415, 435);
     panel.setLayout(new BorderLayout());
     panel.setBackground(new Color(132, 132, 132));
     panel.setMinimumSize(d);
@@ -140,6 +145,7 @@ public class LocationLayout extends JPanel {
     JScrollPane items = new JScrollPane();
     items.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     items.add(items.createVerticalScrollBar());
+    d = new Dimension(415, 400);
     items.setMinimumSize(d);
     items.setPreferredSize(d);
     items.setMaximumSize(d);
@@ -182,9 +188,47 @@ public class LocationLayout extends JPanel {
     }
 
     items.setViewportView(contents);
-
     panel.add(items, BorderLayout.NORTH);
+
+    JPanel b = buttons();
+    panel.add(b, BorderLayout.CENTER);
     return panel;
+  }
+
+  private JPanel buttons() {
+    JPanel subPanel = new JPanel();
+    JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
+    subPanel.add(add);
+    subPanel.add(edit);
+    subPanel.add(delete);
+    add.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Add Item");
+        new AddItem(rmi, locationIDs[selectedLocationIndex]).addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent arg0) {
+            refreshContentPanel();
+          }
+        });
+      }
+    });
+    delete.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        // deleteItem();
+        refreshContentPanel();
+      }
+    });
+    edit.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        // editItem();
+      }
+
+    });
+    return subPanel;
   }
 
   private void refreshContentPanel() {

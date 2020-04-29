@@ -33,11 +33,19 @@ public class AddItem extends JFrame{
   int weight;
   String character = null;
   String location = null;
+  boolean locationGiven = false;
   // prompt for item type & item number
   // prompt for specifics of item type
   
   public AddItem(RetrieveManipulateInformation rmi) {
     this.rmi = rmi;
+    initializeP1();
+  }
+  
+  public AddItem(RetrieveManipulateInformation rmi, int location) {
+    this.rmi = rmi;
+    this.location = Integer.toString(location);
+    locationGiven = true;
     initializeP1();
   }
   
@@ -86,9 +94,18 @@ public class AddItem extends JFrame{
     
     JLabel vLabel = new JLabel("Item volume: ");
     JTextField vTxt = new JTextField("000");
+    JLabel locLabel;
+    JTextField locTxt;
     
-    JLabel locLabel = new JLabel("Item location: ");
-    JTextField locTxt = new JTextField("(Optional)");
+    if(!locationGiven) {
+      locLabel = new JLabel("Item location: ");
+       locTxt = new JTextField("(Optional)");
+    } else {
+      locLabel = new JLabel("Item location: ");
+      locTxt = new JTextField(location);
+    }
+    
+    
     
     JLabel cNameLabel = new JLabel("Item belongs to: ");
     JTextField cNameTxt = new JTextField("(Optional)");
