@@ -22,7 +22,7 @@ import database.RetrieveManipulateInformation;
 import javax.swing.JPanel;
 
 //AUTHOR Joel Gingrich
-//TODO add edit and add options.
+//TODO add edit and add options
 public class LocationLayout extends JPanel {
 
   private RetrieveManipulateInformation rmi;
@@ -114,7 +114,7 @@ public class LocationLayout extends JPanel {
               break;
             }
           }
-          
+
           refreshContentPanel();
         }
       });
@@ -153,15 +153,14 @@ public class LocationLayout extends JPanel {
     c.gridy = 0;
     c.weightx = 0.95;
     c.ipady = 20;
-    
-    
+
     for (int i = 0; i < locationContents.size(); i++) {
 
       // locationLabels[i].setMinimumSize(new Dimension(400,100));
 
       locationContents.get(i).addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
-          
+
           if (selectedContent != null) {
             removeSelectedBackgroundContent();
           }
@@ -175,19 +174,19 @@ public class LocationLayout extends JPanel {
               break;
             }
           }
-          
+
         }
       });
       contents.add(locationContents.get(i), c);
       c.gridy++;
     }
-    
 
     items.setViewportView(contents);
-    
+
     panel.add(items, BorderLayout.NORTH);
     return panel;
   }
+
   private void refreshContentPanel() {
     updateContents();
     GridBagConstraints c = new GridBagConstraints();
@@ -198,21 +197,52 @@ public class LocationLayout extends JPanel {
     remove(contentPanel);
     JPanel temp = buildObjListPanel();
     contentPanel = temp;
-    add(contentPanel,c);
+    add(contentPanel, c);
     revalidate();
     repaint();
   }
+
   private void updateContents() {
     locationContents.clear();
+    Dimension d = new Dimension(350, 30);
     ResultSet rs = null;
     try {
+      // items
       rs = RetrieveManipulateInformation.getConncetion().createStatement()
           .executeQuery("SELECT ItemId FROM ITEM WHERE ITEM.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
             "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:15px;\">ItemId = "
                 + rs.getInt("ItemId") + "</p><br style = \"font-size:2px;\"></html>");
-        Dimension d = new Dimension(200, 30);
+
+        item.setMinimumSize(d);
+        item.setPreferredSize(d);
+        item.setMaximumSize(d);
+        locationContents.add(item);
+      }
+
+      // creatures
+      rs = RetrieveManipulateInformation.getConncetion().createStatement()
+          .executeQuery("SELECT IdNumber FROM Creature WHERE Creature.LocationId = " + locationIDs[selectedLocationIndex]);
+      while (rs.next()) {
+        JLabel item = new JLabel(
+            "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:15px;\">Creature Id = "
+                + rs.getInt("CreatureId") + "</p><br style = \"font-size:2px;\"></html>");
+
+        item.setMinimumSize(d);
+        item.setPreferredSize(d);
+        item.setMaximumSize(d);
+        locationContents.add(item);
+      }
+
+      // character
+      rs = RetrieveManipulateInformation.getConncetion().createStatement()
+          .executeQuery("SELECT Name FROM Characters WHERE Characters.LocationId = " + locationIDs[selectedLocationIndex]);
+      while (rs.next()) {
+        JLabel item = new JLabel(
+            "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:15px;\">Character Name = "
+                + rs.getString("Name") + "</p><br style = \"font-size:2px;\"></html>");
+
         item.setMinimumSize(d);
         item.setPreferredSize(d);
         item.setMaximumSize(d);
@@ -228,6 +258,7 @@ public class LocationLayout extends JPanel {
     if (selectedLocation != null)
       selectedLocation.setBackground(new Color(132, 132, 132));
   }
+
   private void removeSelectedBackgroundContent() {
     if (selectedContent != null)
       selectedContent.setBackground(new Color(132, 132, 132));
