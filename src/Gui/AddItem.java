@@ -8,7 +8,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.Window.*; 
 import java.awt.Frame.*;
 
@@ -30,7 +32,7 @@ public class AddItem {
   int volume;
   int weight;
   String character = null;
-  int location;
+  String location = null;
   // prompt for item type & item number
   // prompt for specifics of item type
   
@@ -119,7 +121,7 @@ public class AddItem {
         
         character = cNameTxt.getText();
         
-        location = Integer.parseInt(locTxt.getText());
+        location = locTxt.getText();
         
 //        rmi.itemIdExists(id);
         if((itemType == -1) || (id < 1) || volume < 1 || weight < 1) {
@@ -128,7 +130,13 @@ public class AddItem {
 //          rmi.createItem();
           switch (itemType) {
           case (0):
+            try{
+              location = "" + Integer.parseInt(location); 
+            }catch(NumberFormatException nfe){
+              location = "null";
+            } 
             initWepFrame();
+            addNewItem();
             
             break;
           case (1):
@@ -205,6 +213,17 @@ public class AddItem {
    */
   private void initContFrame() {
 
+  }
+  
+  private void addNewItem() {
+    try {
+      Statement stmt = RetrieveManipulateInformation.getConncetion().createStatement();
+      stmt.execute("INSERT INTO ITEM VALUES (" + id + ", " + weight + ", " + volume + ", " + location + ", "
+          + (character.equals("(Optional)") ? "null" : character)  + ");");
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
 }

@@ -50,7 +50,7 @@ public class ItemsLayout extends JPanel{
       @Override
       public void actionPerformed(ActionEvent ae) {
         System.out.println("Add Item");
-        new AddItem(rmi); 
+        new AddItem(rmi);
       }
     });
     delete.addActionListener(new ActionListener() {
