@@ -9,9 +9,12 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -60,7 +63,7 @@ public class CharactersLayout extends JPanel {
     panel.setLayout(new BorderLayout());
     
     // Size for each panel
-    Dimension d = new Dimension(450, 700);
+    Dimension d = new Dimension(450, 650);
     panel.setMinimumSize(d);
     panel.setPreferredSize(d);
     panel.setMaximumSize(d);
@@ -78,9 +81,11 @@ public class CharactersLayout extends JPanel {
     // Initialize character names
     characterNames = rmi.getAllCharacterNames();
 
+    // Add header
     panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Characters:" + "</H1></html>"),
         BorderLayout.NORTH);
 
+    // Add all labels of character names
     for (int i = 0; i < characterNames.length; i++) {
       final int x = i;
       String format = "<html><body style = \"color:black; font-size: 20px\">" + characterNames[i] + "</body></html>";
@@ -101,9 +106,83 @@ public class CharactersLayout extends JPanel {
     
     names.setViewportView(characters);
     panel.add(names, BorderLayout.CENTER);
+    panel.add(addCharacterButtons(), BorderLayout.SOUTH);
     return panel;
   }
 
+  /**
+   * Add character, remove character, modify character
+   * @return
+   */
+  private JPanel addCharacterButtons() {
+    JPanel panel = new JPanel(); 
+    panel.setLayout(new GridLayout(2, 3));
+    
+    Dimension d = new Dimension(450, 75);
+    panel.setMinimumSize(d);
+    panel.setPreferredSize(d);
+    panel.setMaximumSize(d);
+    
+    // Buttons
+    JButton addChar = new JButton("Add Character"), 
+        editChar = new JButton("Edit Character"),
+        deleteChar = new JButton("Delete Character"),
+        addUser = new JButton("Add User"),
+        editUser = new JButton("Edit User"),
+        deleteUser = new JButton("Delete User"); 
+    
+    panel.add(addChar);
+    panel.add(editChar);
+    panel.add(deleteChar);
+    panel.add(addUser);
+    panel.add(editUser); 
+    panel.add(deleteUser);
+    
+    addChar.addActionListener(new ActionListener() {
+      @Override 
+      public void actionPerformed(ActionEvent ae) {
+        addChar(); 
+        System.out.println("Add Character");
+      }
+    });
+    
+    editChar.addActionListener(new ActionListener() {
+      @Override 
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Edit Character");
+      }
+    });
+    
+    deleteChar.addActionListener(new ActionListener() {
+      @Override 
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Delete Character");
+      }
+    });
+    
+    addUser.addActionListener(new ActionListener() {
+      @Override 
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Add User");
+      }
+    });
+    
+    editUser.addActionListener(new ActionListener() {
+      @Override 
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Edit User");
+      }
+    });
+    
+    deleteUser.addActionListener(new ActionListener() {
+      @Override 
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Delete User");
+      }
+    });
+    
+    return panel;
+  }
   private JPanel genStatsPanel() {
     // Entire panel, that will have header and panel of names
     JPanel panel = new JPanel();
@@ -160,4 +239,12 @@ public class CharactersLayout extends JPanel {
     if (selectedNameJLabel != null)
       selectedNameJLabel.setBackground(Color.LIGHT_GRAY);
   } 
+  
+  // Buttons
+  
+  private void addChar() {
+    if(selectedName != null) {
+      
+    }
+  }
 }
