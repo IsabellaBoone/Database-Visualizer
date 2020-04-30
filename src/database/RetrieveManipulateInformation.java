@@ -429,7 +429,7 @@ public class RetrieveManipulateInformation {
    */
   public String[] getCharacterStats(String characterName) {
 	String call = "SELECT * FROM Characters WHERE Name = '" + characterName + "';";
-	String[] stats = new String[5]; 
+	String[] stats = new String[6]; 
 	try {
 		PreparedStatement stmt = m_dbConn.prepareStatement(call);
 		stmt.execute();
@@ -443,7 +443,8 @@ public class RetrieveManipulateInformation {
 		stats[2] = String.valueOf(rs.getInt("Strength"));
 		stats[3] = String.valueOf(rs.getInt("Stamina"));
 		stats[4] = String.valueOf(rs.getInt("LocationId"));
-//		stats[5] = rs.getString("pUserName"); 
+		stats[5] = rs.getString("pUserName"); 
+		
 	} catch(SQLException e) {
 		e.printStackTrace();
 	}
