@@ -14,6 +14,8 @@ import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
 
+import database.RetrieveManipulateInformation;
+
 public class PlayersLayout extends JPanel{
 	 private RetrieveManipulateInformation rmi;// used for replacing manipulating information ya know
 	  private JLabel playerJLabel[], charactersJLabel[], // hold every single label in characters n players
@@ -197,7 +199,7 @@ public class PlayersLayout extends JPanel{
 	  
 	  private JPanel genCharStatsPanel() {
 	    JPanel panel = new JPanel(); 
-	    String[][] charStats = rmi.getCharacterStats(selectedCharacterName);
+	    String[] charStats = rmi.getCharacterStats(selectedCharacterName);
 	    
 	    
 	    
@@ -234,4 +236,10 @@ public class PlayersLayout extends JPanel{
 	    if(selectedCharacterJLabel != null)
 	      selectedCharacterJLabel.setBackground(Color.DARK_GRAY);
 	  }
-	}
+
+
+  public PlayersLayout(RetrieveManipulateInformation r) {
+    rmi = r;
+  }
+}
+

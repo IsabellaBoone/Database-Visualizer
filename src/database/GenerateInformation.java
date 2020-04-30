@@ -12,6 +12,7 @@ import java.sql.*;
 public class GenerateInformation {
   
   // Global Variables 
+  
   Connection m_dbConn = null;         // Connection to the database 
   private final int GEN_MIN = 5;      // Min num of entries for each table
   private final int GEN_MAX = 10;     // Max num of entries for each table
@@ -19,6 +20,7 @@ public class GenerateInformation {
   private final int MAX_VOL = 80;     // Max volume for items
   private final int MAX_STATS = 50; // Max value for stats
   private int DEBUG = 0; 
+  RetrieveManipulateInformation r;
   /**
    * List of all table names.
    */
@@ -177,7 +179,7 @@ public class GenerateInformation {
   
   public GenerateInformation(Connection con) {
     this.m_dbConn = con; 
-    
+    r = RetrieveManipulateInformation.createRetrieveManipulateInformation(m_dbConn);
     dropAllTables();  // Drop tables before creating 
     createTable();    // Create tables 
     populateTables(); // Populate the tables
@@ -191,6 +193,7 @@ public class GenerateInformation {
     generateLocations();
     generateItems(); 
     generateCharacters(); 
+    generateCreatures();
   }
   
   /**
@@ -360,7 +363,7 @@ public class GenerateInformation {
    * Side note -- location definitely does not work correctly. 
    */
   private void generateCharacters() {
-    RetrieveManipulateInformation r = new RetrieveManipulateInformation(m_dbConn);
+    
     String[] player = r.getAllPlayerUsernames(); 
     for(int i = 0; i < r.getNumPlayers(); i++) {
       // Generate a random number of characters for every player
@@ -389,7 +392,7 @@ public class GenerateInformation {
         str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
         stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
 
-    int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
+    int[] loc = r.getAllLocationIds();
     int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
         
     try {
@@ -472,7 +475,7 @@ public class GenerateInformation {
     for(int i = 0; i < numItems; i++) {
       String insert = "INSERT INTO ";
       String[] types = {"Weapon", "Container", "Armor"};
-      int[] listIds = (new RetrieveManipulateInformation(m_dbConn)).getAllItems();
+      int[] listIds = r.getAllItems();
       int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
       
 
@@ -524,8 +527,8 @@ public class GenerateInformation {
         weight = ((int) (Math.floor((Math.random()) * MAX_WEIGHT)));
       
       // Choose a random location
-      int[] loc = new RetrieveManipulateInformation(m_dbConn).getAllLocationIds();
-      int location = loc[(int) (Math.floor(Math.random() * (loc.length - 1)))];
+      int[] loc = r.getAllLocationIds();
+      int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
 
       if(DEBUG == 1) {
         System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
@@ -554,11 +557,71 @@ public class GenerateInformation {
   }
   
   /**
-   * TODO: Implement
+   * TODO implement ability generation
    * Generate random creatures in world
    */
+  private void generateCreatures() {
+    // Generate all the items 
+    // numItems multiplied by 2 because we need more items
+    int numItems = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN)) * 2;
+    if(DEBUG == 1) {
+      System.out.println("\nGenerating " + numItems + " items...");
+    }
+    for(int i = 0; i < numItems; i++) {
+      generateCreature(); 
+    }
+  }
+  /**
+   * 
+   * Generate single creature
+   */
   private void generateCreature() {
-    
+    generate g = new generate(); 
+    //  String insert = "INSERT INTO Item (Id, curHP, MaxHP, Stamina, Strength, Protection, LocationId) VALUES (?,?,?,?,?);";
+    String insert = "INSERT INTO Creature VALUES (?,?,?,?,?,?,?);";
+    int idNum = g.randomIdNum(),
+        maxHP = MAX_STATS, 
+        curHP = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
+        str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
+        stam  = ((int) (Math.floor((Math.random()) * MAX_STATS))),
+        prot = stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
+
+    int[] loc = r.getAllLocationIds();
+    int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
+        
+    try {
+      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      if(DEBUG == 1) {
+        System.out.print(idNum + ", ");
+        
+//      System.out.print(name + " " + curHP + "/" + maxHP + "HP, " + stam + " Stamina, " +
+//      str + " Strength, " + loc + " location" + " Player: " + player); 
+      }
+      
+      statement.setInt(1, idNum);
+      statement.setInt(2, maxHP);
+      statement.setInt(3, curHP);
+      statement.setInt(4, str);
+      statement.setInt(5, stam);
+      statement.setInt(6, prot);
+      statement.setInt(7, location);
+      
+      
+      try {
+        statement.execute(); 
+      } catch(SQLException e) {
+        if(DEBUG == 1) {
+          System.out.print("-- duplicate. trying again." );   
+        }
+        generateCreature();
+//        e.printStackTrace();
+         
+      }
+      
+    } catch(SQLException e) {
+      e.printStackTrace();
+      System.out.print("connection closed prob idk" );
+    }
   }
   
   /**

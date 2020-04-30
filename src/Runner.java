@@ -12,6 +12,7 @@ public class Runner {
   public static final String LOGIN_NAME = "jj7253";
   public static final String PASSWORD = "password";
 
+
   /* sorry i had to move this in here it do be kinda ugly
    * public static final String DB_LOCATION =
    * "jdbc:mysql://db.cs.ship.edu:3306/csc371_##"; public static final String
@@ -33,17 +34,14 @@ public class Runner {
 
   public static void main(String[] args) {
     
-    
     if (!(establishConnection())) {
       return;
     }
     
     GenerateInformation insert = new GenerateInformation(m_dbConn);
-    RetrieveManipulateInformation getInfo = new RetrieveManipulateInformation(m_dbConn);
+    RetrieveManipulateInformation getInfo = RetrieveManipulateInformation.createRetrieveManipulateInformation(m_dbConn);
     Gui gui = new Gui(getInfo);
-    
     
   }
   
-
 }

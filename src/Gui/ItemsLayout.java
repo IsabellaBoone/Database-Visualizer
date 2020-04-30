@@ -18,7 +18,6 @@ public class ItemsLayout extends JPanel{
   JScrollPane item = new JScrollPane();
   JLabel selected = null;
   int selectedId;
-  RetrieveManipulateInformation ri = new RetrieveManipulateInformation(RetrieveManipulateInformation.getConncetion());
   int[] itemsList;
   
   public ItemsLayout(RetrieveManipulateInformation rmi){
@@ -35,7 +34,7 @@ public class ItemsLayout extends JPanel{
     add(buttons(), BorderLayout.SOUTH);
     
     
-    item.setViewportView(buildItems(ri.getNumItems()));
+    item.setViewportView(buildItems(this.rmi.getNumItems()));
     revalidate();
     repaint();
     
@@ -51,7 +50,12 @@ public class ItemsLayout extends JPanel{
       @Override
       public void actionPerformed(ActionEvent ae) {
         System.out.println("Add Item");
-        new AddItem(rmi); 
+        new AddItem(rmi).addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosed(WindowEvent arg0) {
+            item.setViewportView(buildItems(rmi.getNumItems()));
+          }
+        });
       }
     });
     delete.addActionListener(new ActionListener() {
@@ -80,7 +84,7 @@ public class ItemsLayout extends JPanel{
   }
   
   private JPanel buildItems(int rows){
-    itemsList = ri.getAllItems();
+    itemsList = rmi.getAllItems();
     JPanel data = new JPanel();
     data.setLayout(new GridLayout(rows, 1));
     for(int i = 0; i < rows; i++) {
@@ -106,7 +110,7 @@ public class ItemsLayout extends JPanel{
     String labelText = "";
     ResultSet rs = null;
     try {
-      rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + primaryKey);
+      rs = rmi.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + primaryKey);
       rs.next();
       labelText = "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:20px;\">ItemId = " + rs.getInt("ItemId") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
           "   LocationId = " + (rs.getInt("LocationId") == 0 ? "null" : "" + rs.getInt("LOCATIONID")) + 
@@ -128,25 +132,29 @@ public class ItemsLayout extends JPanel{
   private void deleteItem() {
     if(selected != null) {
       try {
-        ri.getConncetion().createStatement().execute("DELETE FROM ITEM WHERE ItemId = " + selectedId);
+        rmi.getConncetion().createStatement().execute("DELETE FROM ITEM WHERE ItemId = " + selectedId);
         selected = null;
       }catch(SQLException e) {
         e.printStackTrace();
       }
-      item.setViewportView(buildItems(ri.getNumItems()));
+      item.setViewportView(buildItems(rmi.getNumItems()));
     }
   }
   
   private void editItem() {
     ResultSet rs = null;
     try {
-      rs = ri.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + selectedId);
+      rs = rmi.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + selectedId);
       rs.next();
     } catch(SQLException e) {
       e.printStackTrace();
     }
     
-    new EditItem(rs);
+    new EditItem(rs, rmi).addWindowListener(new WindowAdapter(){
+      public void windowClosed(WindowEvent arg0) {
+        item.setViewportView(buildItems(rmi.getNumItems()));
+      }
+    });
   }
   
 }

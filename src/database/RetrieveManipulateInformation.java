@@ -16,8 +16,11 @@ import java.sql.Statement;
  */
 public class RetrieveManipulateInformation {
   static Connection m_dbConn = null;
+  
+  static RetrieveManipulateInformation rmi;
+  
   final int playerUsernames = 0, allItems = 1, charNames = 2, 
-            locIdNums = 3, locAreaTypes = 4;
+            locIdNums = 3, locAreaTypes = 4, charStats = 5;
   String[] procedures = {
       "CREATE PROCEDURE get_all_player_usernames()"
         + " SELECT Username FROM Player;",
@@ -26,23 +29,38 @@ public class RetrieveManipulateInformation {
         + "SELECT ItemId from Item;",
 
       "CREATE PROCEDURE get_character_names(IN n varchar(20))"
-        + "SELECT Name FROM Characters;",
+        + "SELECT Name FROM Characters WHERE pUserName = n;",
           
       "CREATE PROCEDURE get_all_location_idNumbers() "
         + "SELECT IdNumber from Location;",
         
       "CREATE PROCEDURE get_all_location_AreaTypes() "
-        + "SELECT AreaType from Location;"
+        + "SELECT AreaType from Location;",
+        
+      "CREATE PROCEDURE get_character_stats(IN n varchar(20))"
+        + " SELECT * From Characters WHERE Name = n;"
           
   }, procedureNames = { 
       "get_all_player_usernames", "get_all_items", 
       "get_character_names", "get_all_location_idNumbers", 
-      "get_all_location_AreaTypes,"
+      "get_all_location_AreaTypes", "get_character_stats"
   };
   
-  public RetrieveManipulateInformation(Connection con) {
+  private RetrieveManipulateInformation(Connection con) {
     this.m_dbConn = con;
     createProcedures(); 
+  }
+  
+  public static RetrieveManipulateInformation createRetrieveManipulateInformation(Connection conn) {
+    if(rmi != null) {
+      return rmi;
+    }
+    
+    return new RetrieveManipulateInformation(conn);
+  }
+  
+  public void setConncetion(Connection con) {
+    m_dbConn = con;
   }
   
   public static Connection getConncetion() {
@@ -52,40 +70,24 @@ public class RetrieveManipulateInformation {
   /**
    * Create all procedures
    */
-  public void createProcedures() {
-    // Create Procedure
-    String delimSlash = "DELIMITER //", delimSemi = "DELIMITER ;";
-    
-//    try {
-      // Set delimiter for create procedures 
-//      PreparedStatement stmt = m_dbConn.prepareStatement(delimSlash);
-//      try {
-//        stmt.execute(); // Execute statement 
-//      } catch(SQLException e) {
+  private void createProcedures() {
+    /* If we do not drop the procedures before we create them, we get a bunch of
+     * errors from trying to create procedures that already exist.  
+     */
+    dropProcedures();
+
+    PreparedStatement stmt;
+    // Call statement to create procedures
+    for (int i = 0; i < procedures.length; i++) {
+      try {
+        stmt = m_dbConn.prepareStatement(procedures[i]); 
+        stmt.execute();
+//        System.out.println("SQL Statement CREATED -- " + procedures[i]);
+      } catch (SQLException e) {
 //        e.printStackTrace();
-//        System.out.println(delimSlash);
-//      }
-      
-      PreparedStatement stmt;
-      // Call statement to create procedures
-      for(int i = 0; i < procedures.length; i++) {
-        try {
-          stmt = m_dbConn.prepareStatement(procedures[i]);
-          stmt.execute();
-        } catch (SQLException e) {
-          e.printStackTrace();
-          System.out.println("Invalid SQL Statement -- " + procedures[i]);
-        }
+        System.out.println("Stored procedure already exists -- " + procedures[i]);
       }
-      
-      // Fix delimiter back to normal
-//      stmt = m_dbConn.prepareStatement(delimSemi);
-//      stmt.execute();
-      
-//    } catch (SQLException e) {
-//      e.printStackTrace();
-//      System.out.println("fucc");
-//    }
+    }
   }
 
   /**
@@ -93,15 +95,15 @@ public class RetrieveManipulateInformation {
    * maybe
    */
   public void dropProcedures() {
-    for(int i = 0; i < procedures.length; i++) {
-      String drop = "DROP PROCEDURE IF EXISTS" + procedures[i] + ";";
+    for(int i = 0; i < procedureNames.length; i++) {
+      String drop = "DROP PROCEDURE IF EXISTS " + procedureNames[i] + ";";
       try {
         PreparedStatement stmt = m_dbConn.prepareStatement(drop);
         stmt.execute(); 
-        
+//        System.out.println("Table dropped -- " + procedureNames[i]);
       } catch (SQLException e) {
-        e.printStackTrace();
-        
+//        e.printStackTrace();
+        System.out.println("Failed to drop " + procedures[i]);
       }
     }
   }
@@ -132,7 +134,7 @@ public class RetrieveManipulateInformation {
    * @return int[] of all Location IdNumbers 
    */
   public int[] getAllLocationIds() {
-    String call = "CALL " + procedureNames[2] + "();";
+    String call = "CALL " + procedureNames[locIdNums] + "();";
     int[] locationIds = new int[getNumLocations()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
@@ -147,8 +149,8 @@ public class RetrieveManipulateInformation {
       }
       
     } catch (SQLException e1) {
-      e1.printStackTrace();
-      System.out.println("Syntax error, maybe");
+//      e1.printStackTrace();
+      System.out.println("getAllLocationIds failed");
     }
     
     return locationIds; 
@@ -169,7 +171,7 @@ public class RetrieveManipulateInformation {
       
       int i = 0;
       while(rs.next()) {
-        types[i] = rs.getString("AreaTypes");
+        types[i] = rs.getString("AreaType");
         i++; 
       }
       
@@ -182,8 +184,6 @@ public class RetrieveManipulateInformation {
   }
   
   
-  
-  
   // Item Manipulation Methods
   /**
    * Get the ItemId of every item in the database , utilizing stored procedure
@@ -194,8 +194,8 @@ public class RetrieveManipulateInformation {
     int[] itemIds = new int[getNumItems()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
-      boolean x = stmt.execute();
-      System.out.println(x);
+      stmt.execute();
+  
       ResultSet rs = stmt.getResultSet(); 
       
       int i = 0;
@@ -338,7 +338,7 @@ public class RetrieveManipulateInformation {
       ResultSet rs = stmt.getResultSet(); 
       
       int i = 0;
-      while(rs.next()) {
+      while((rs.next()) && (i < names.length)) {
         names[i] = rs.getString("Name");
         i++; 
       }
@@ -356,7 +356,7 @@ public class RetrieveManipulateInformation {
    * @return String array of all player usernames
    */
   public String[] getAllPlayerUsernames() {
-    String call = "CALL " + procedureNames[0] + "();";
+    String call = "CALL " + procedureNames[playerUsernames] + "();";
     String[] usernames = new String[getNumPlayers()]; 
     try {
       CallableStatement stmt = m_dbConn.prepareCall(call);
@@ -378,8 +378,59 @@ public class RetrieveManipulateInformation {
     return usernames; 
   }
 
-  public String[][] getCharacterStats(String characterName) {
+  /**
+   * im gonna use a stored procedure because this function will prob be called a lot
+   * so hopefully using a stored procedure is faster than just select statements and
+   * maybe thats the point of a store procedure. dunno.
+   * 
+   * @param characterName
+   * @return
+   */
+  public String[] getCharacterStats(String characterName) {
+    String call = "CALL " + procedureNames[playerUsernames] + "();";
+    String[] stats = new String[5];
+    try {
+      CallableStatement stmt = m_dbConn.prepareCall(call);
+      stmt.execute();
+      
+      ResultSet rs = stmt.getResultSet(); 
+      
+      rs.next();
+      
+      System.out.println(rs.getInt("MaxHP"));
+      stats[0] = "" + rs.getInt("MaxHP");      
+      stats[1] = "" + rs.getInt("CurrentHP");   
+      stats[2] = "" + rs.getInt("Strength");    
+      stats[3] = "" + rs.getInt("Stamina"); 
+      stats[4] = "" + rs.getInt("LocationId");
+      
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
     
-    return null;
+    return stats; 
+  }
+  
+  /**
+   * 
+   * @param string
+   * @return
+   */
+  public String getLocType(String idNumber) {
+    String select = "SELECT AreaType FROM Location WHERE IdNumber = '" + idNumber + "';";
+    String areatype = null; 
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      stmt.execute(); 
+      
+      ResultSet rs = stmt.getResultSet(); 
+      
+      rs.next(); 
+      areatype = rs.getString("AreaType");
+      
+    } catch(SQLException e) {
+      
+    }
+    return areatype;
   }
 }
