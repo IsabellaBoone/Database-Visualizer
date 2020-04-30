@@ -599,8 +599,8 @@ public class GenerateInformation {
       }
       
       statement.setInt(1, idNum);
-      statement.setInt(2, maxHP);
-      statement.setInt(3, curHP);
+      statement.setInt(2, curHP);
+      statement.setInt(3, maxHP);
       statement.setInt(4, str);
       statement.setInt(5, stam);
       statement.setInt(6, prot);
