@@ -175,7 +175,7 @@ public class AddItem extends JFrame{
             addNewItem();
             break;
           }
-          
+          dispose();
         }
       }
     });
@@ -232,14 +232,40 @@ public class AddItem extends JFrame{
    * Initialize add armor frame
    */
   private void initArmFrame() {
-
+    JFrame frame = new JFrame(); 
+    frame.setSize(200,100);
+    frame.setLayout(new FlowLayout());
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+    frame.add(new JLabel("Armor Created."));
+    JButton b = new JButton("Ok");
+    b.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        frame.dispose();
+      }
+    });
+    frame.add(b);
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
   }
   
   /**
    * Initialize add container frame
    */
   private void initContFrame() {
-
+    JFrame frame = new JFrame(); 
+    frame.setSize(200,100);
+    frame.setLayout(new FlowLayout());
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+    frame.add(new JLabel("Container created."));
+    JButton b = new JButton("Ok");
+    b.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        frame.dispose();
+      }
+    });
+    frame.add(b);
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
   }
   
   private void addNewItem() {
