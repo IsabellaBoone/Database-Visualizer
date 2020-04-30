@@ -223,8 +223,8 @@ public class LocationLayout extends JPanel {
     delete.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        // deleteItem();
-        refreshContentPanel();
+        deleteItem();
+        
       }
     });
     edit.addActionListener(new ActionListener() {
@@ -251,8 +251,8 @@ public class LocationLayout extends JPanel {
     deleteC.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        // deleteItem();
-        refreshContentPanel();
+        deleteItem();
+
       }
     });
     editC.addActionListener(new ActionListener() {
@@ -346,10 +346,43 @@ public class LocationLayout extends JPanel {
       selectedContent.setBackground(new Color(132, 132, 132));
   }
 
+  private void deleteItem() {
+    String content = selectedContent.getText();
+    if (content != null) {
+      if (content.contains("Item")) {
+        content = content.substring(86);
+        content = content.substring(0, content.indexOf("<"));
+        int id = Integer.parseInt(content);
+
+        try {
+          RetrieveManipulateInformation.getConncetion().createStatement()
+              .execute("DELETE FROM ITEM WHERE ItemId = " + id);
+          selectedContent = null;
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
+        refreshContentPanel();
+      } else if (content.contains("Creature")) {
+        content = content.substring(91);
+        content = content.substring(0, content.indexOf("<"));
+        int id = Integer.parseInt(content);
+
+        try {
+          RetrieveManipulateInformation.getConncetion().createStatement()
+              .execute("DELETE FROM Creature WHERE IdNumber = " + id);
+          selectedContent = null;
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
+        refreshContentPanel();
+      }
+    }
+  }
+
   private void edit() {
     ResultSet rs = null;
     String content = selectedContent.getText();
-    //if item
+    // if item
     if (content.contains("Item")) {
       content = content.substring(86);
       content = content.substring(0, content.indexOf("<"));
@@ -368,9 +401,8 @@ public class LocationLayout extends JPanel {
           refreshContentPanel();
         }
       });
-    }
-    else if(content.contains("Creature")) {
-      
+    } else if (content.contains("Creature")) {
+
       content = content.substring(91);
       content = content.substring(0, content.indexOf("<"));
       int id = Integer.parseInt(content);
