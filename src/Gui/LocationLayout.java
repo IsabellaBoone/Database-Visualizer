@@ -135,7 +135,7 @@ public class LocationLayout extends JPanel {
 
   private JPanel buildObjListPanel() {
     JPanel panel = new JPanel();
-    Dimension d = new Dimension(415, 435);
+    Dimension d = new Dimension(415, 480);
     panel.setLayout(new BorderLayout());
     panel.setBackground(new Color(132, 132, 132));
     panel.setMinimumSize(d);
@@ -196,11 +196,19 @@ public class LocationLayout extends JPanel {
   }
 
   private JPanel buttons() {
-    JPanel subPanel = new JPanel();
+    JPanel subPanel = new JPanel(),
+        subSubPanel = new JPanel(),
+        panel = new JPanel(new BorderLayout());
     JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
+    JButton addC = new JButton("Add Creature"), editC = new JButton("Edit Creature"), deleteC = new JButton("Delete Creature");
+
     subPanel.add(add);
     subPanel.add(edit);
     subPanel.add(delete);
+    
+    subSubPanel.add(addC);
+    subSubPanel.add(editC);
+    subSubPanel.add(deleteC);
     add.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
@@ -228,7 +236,38 @@ public class LocationLayout extends JPanel {
       }
 
     });
-    return subPanel;
+    
+    addC.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent ae) {
+        System.out.println("Add Item");
+        new AddCreature(rmi, locationIDs[selectedLocationIndex]).addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosed(WindowEvent arg0) {
+            refreshContentPanel();
+          }
+        });
+      }
+    });
+    deleteC.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        // deleteItem();
+        refreshContentPanel();
+      }
+    });
+    editC.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        // editItem();
+      }
+
+    });
+    panel.add(subPanel, BorderLayout.NORTH);
+    panel.add(subSubPanel, BorderLayout.CENTER);
+    
+    return panel;
   }
 
   private void refreshContentPanel() {
