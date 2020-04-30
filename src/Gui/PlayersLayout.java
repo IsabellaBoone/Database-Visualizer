@@ -29,7 +29,7 @@ public class PlayersLayout extends JPanel{
 	  
 	  private String[] playerUsernames, charNames;
 	  
-	  public void CharactersLayout(RetrieveManipulateInformation rmi) {
+	  public PlayersLayout(RetrieveManipulateInformation rmi) {
 	    this.rmi = rmi;
 	    
 	    initializeJPanel(); 
@@ -57,7 +57,7 @@ public class PlayersLayout extends JPanel{
 //	    add(curStatsPanel, c);
 	    statPanel = c; 
 	    c.gridx++;
-	    
+	    setVisible(true);
 	  }
 	  
 	  private JPanel genUsernamePanel() {
@@ -236,10 +236,5 @@ public class PlayersLayout extends JPanel{
 	    if(selectedCharacterJLabel != null)
 	      selectedCharacterJLabel.setBackground(Color.DARK_GRAY);
 	  }
-
-
-  public PlayersLayout(RetrieveManipulateInformation r) {
-    rmi = r;
-  }
 }
 
