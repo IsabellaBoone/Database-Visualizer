@@ -97,7 +97,6 @@ public class GenerateInformation {
       "CREATE TABLE IF NOT EXISTS Weapon ("
           + "WepId INT NOT NULL,"
           + "FOREIGN KEY(WepId) REFERENCES Item(ItemId) );",
-//          + "PRIMARY KEY(WepId) );",
           
       "CREATE TABLE IF NOT EXISTS Creature ("
           + "IdNumber INT UNSIGNED NOT NULL ,"

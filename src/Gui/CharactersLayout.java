@@ -3,8 +3,10 @@ package Gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -20,11 +22,9 @@ public class CharactersLayout extends JPanel {
   
   selectedPlayerJLabel, // Needed for highlighting selected player
   selectedCharacterJLabel; // Needed for highlighting selected character
-  
-  private JPanel curCharactersPanel = null, curStatsPanel = null; // used for replacing panels, kinda lowkey important 
-  private GridBagConstraints charPanel, statPanel; // used for replacing panels, kinda lowkey important 
   private String selectedPlayerUsername = null, selectedCharacterName = null; // maybe not needed
   
+  private JPanel userPanel, charPanel, statPanel; 
   private String[] playerUsernames, charNames;
   
   public CharactersLayout(RetrieveManipulateInformation rmi) {
@@ -32,77 +32,72 @@ public class CharactersLayout extends JPanel {
     
     initializeJPanel(); 
   }
-
+  
   private void initializeJPanel() {
+	playerUsernames = rmi.getAllPlayerUsernames();
+	  
     setBackground(Color.DARK_GRAY );
-    setLayout(new GridBagLayout());
+    setLayout(new GridLayout(3, 1));
     
-    GridBagConstraints c = new GridBagConstraints(); 
-    c.gridx = 0; 
-    c.gridy = 0;
-    c.weightx = 0.33;
-    c.weighty = 0.95; 
+    userPanel = genUsernamePanel(); 
+    add(userPanel); 
+
+    charPanel = genCharacterPanel(); 
+    add(charPanel);
     
-    add(genUsernamePanel(), c);
-    c.gridx++;
+    statPanel = genStatsPanel(); 
+    add(statPanel);
     
-//    curCharactersPanel = genCharacterPanel(); 
-//    add(curCharactersPanel, c);
-    charPanel = c; 
-    c.gridx++;
-    
-//    curStatsPanel = genCharStatsPanel(); 
-//    add(curStatsPanel, c);
-    statPanel = c; 
-    c.gridx++;
-    
+  }
+  
+  private void refreshJPanel() {
+	  remove(userPanel);
+	  remove(charPanel); 
+	  remove(statPanel); 
+	  
+	  userPanel = genUsernamePanel(); 
+	  add(userPanel);
+	  
+	  charPanel = genCharacterPanel(); 
+	  add(charPanel); 
+	  
+	  statPanel = genStatsPanel(); 
+	  add(statPanel); 
   }
   
   private JPanel genUsernamePanel() {
     JPanel panel = new JPanel(); 
-    
     panel.setBackground(Color.DARK_GRAY);
     panel.setLayout(new GridBagLayout()); 
+    Dimension d = new Dimension(375, 600);
+    panel.setMinimumSize(d);
+    panel.setPreferredSize(d);
+    panel.setMaximumSize(d);
     
     playerJLabel = new JLabel[rmi.getNumPlayers()];
-    playerUsernames = rmi.getAllPlayerUsernames();
     
     GridBagConstraints c = new GridBagConstraints(); 
     c.gridx = 0;
     c.gridy = 0; 
     c.weightx = 0.95;
     c.ipady = 20; 
-    panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + "Players:" + "</H1></html>"));
+    panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 25px\">" + "Players:" + "</H1></html>"));
     
     c.gridy++; 
     
     // Add all usernames
     for(int i = 0; i < playerUsernames.length; i++) {
       // HTML Formatting for JLabel, then add mouse listener.
-      String format = "<html><body style = \"color:white; font-size: 22px\">" + playerUsernames[i] + "</body></html>"; // text with html formatting
+      String format = "<html><body style = \"color:white; font-size: 20px\">" + playerUsernames[i] + "</body></html>"; // text with html formatting
       playerJLabel[i] = new JLabel(format, SwingConstants.CENTER);
       playerJLabel[i].addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          // Remove background from selected player
-          if(selectedPlayerJLabel == null) {
-            // tee hee ya know
-          } else {
-            removeSelectedBackgroundPlayer(); 
-          }
+        	if(selectedPlayerJLabel != null)
+        		removeSelectedBackgroundPlayer(); 
           
-          // Find what label the user selected
           for(int j = 0; j < playerJLabel.length; j++) {
             if(e.getSource() == playerJLabel[j]) {
-              /*
-               * When we find what player was selected, 
-               * change playerSelected variable to keep 
-               * track for future references, and change
-               * the background color to yellow.
-               * 
-               * Then, break out because there is no point to
-               * the loop anymore. 
-               */
               selectedPlayerJLabel = playerJLabel[j]; 
               selectedPlayerUsername = playerUsernames[j]; // Store the string for later
               playerJLabel[j].setOpaque(true);
@@ -110,20 +105,19 @@ public class CharactersLayout extends JPanel {
               break;
             }
           }
-          if(curCharactersPanel == null) {
-            JPanel pp = genCharacterPanel(); 
-            curCharactersPanel = pp; 
-            add(pp, charPanel);
-            pp.validate();
-            pp.repaint();
-          } else {
-            refreshCharacterPanel(); 
-          }
+
+          refreshCharacterPanel(); 
         }
       });
-    
       panel.add(playerJLabel[i], c);
       c.gridy++; 
+    }
+    
+    if(selectedPlayerJLabel == null) {
+    	selectedPlayerJLabel = playerJLabel[0]; 
+    	selectedPlayerUsername = playerUsernames[0]; // Store the string for later
+        playerJLabel[0].setOpaque(true);
+        playerJLabel[0].setBackground(new Color(234, 201, 55));
     }
     
     return panel; 
@@ -138,6 +132,11 @@ public class CharactersLayout extends JPanel {
     
     panel.setBackground(Color.DARK_GRAY);
     setLayout(new GridBagLayout());
+    
+    Dimension d = new Dimension(375, 600);
+    panel.setMinimumSize(d);
+    panel.setPreferredSize(d);
+    panel.setMaximumSize(d);
     
     if(selectedPlayerUsername == null) {
       charNames = rmi.getAllCharacterNamesFromUser(playerUsernames[0]);
@@ -156,17 +155,17 @@ public class CharactersLayout extends JPanel {
     c.gridy++; 
     
     if(selectedPlayerUsername == null) {
-      panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + playerUsernames[0] + "'s Characters:" + "</H1></html>"));
+      panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 25px\">" + playerUsernames[0] + "'s Characters:" + "</H1></html>"));
       System.out.print(playerUsernames[0] + ": ");
     } else {
-      panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 30px\">" + selectedPlayerUsername + "'s Characters:" + "</H1></html>"));
+      panel.add(new JLabel("<html><H1 Style = \"color:#808080; font-size: 25px\">" + selectedPlayerUsername + "'s Characters:" + "</H1></html>"));
       System.out.print(selectedPlayerUsername + ": ");
     }
     
     for(int i = 0; i < charNames.length; i++) {
    // HTML Formatting for JLabel, then add mouse listener.
       System.out.print(charNames[i] + "\t");
-      String format = "<html><body style = \"color:white; font-size: 22px\">" + charNames[i] + "</body></html>"; // text with html formatting
+      String format = "<html><body style = \"color:white; font-size: 20px\">" + charNames[i] + "</body></html>"; // text with html formatting
       charactersJLabel[i] = new JLabel(format, SwingConstants.CENTER);
       charactersJLabel[i].addMouseListener(new MouseAdapter() {
         @Override
@@ -184,19 +183,17 @@ public class CharactersLayout extends JPanel {
               break;
             }
           }
-          
-          if(curStatsPanel == null) {
-            JPanel pp = genStatsPanel(); 
-            curStatsPanel = pp; 
-            add(pp, statPanel);
-            pp.validate();
-            pp.repaint();
-          } else {
-            refreshCharacterPanel(); 
-          }
+          refreshJPanel(); 
         }
       });
     
+      if(selectedCharacterJLabel == null) {
+    	  selectedCharacterJLabel = charactersJLabel[0]; 
+          selectedCharacterName = charNames[0]; // Store the string for later
+          charactersJLabel[0].setOpaque(true);
+          charactersJLabel[0].setBackground(new Color(234, 201, 55));
+      }
+      
       panel.add(charactersJLabel[i], c);
       c.gridy++; 
     }
@@ -206,8 +203,18 @@ public class CharactersLayout extends JPanel {
   
   private JPanel genStatsPanel() {
     JPanel panel = new JPanel(); 
+    Dimension d = new Dimension(375, 600);
+    panel.setMinimumSize(d);
+    panel.setPreferredSize(d);
+    panel.setMaximumSize(d);
     panel.setLayout(new GridBagLayout());
-    String[] charStats = rmi.getCharacterStats(selectedCharacterName);
+    
+    String[] charStats;
+    if(selectedCharacterName == null) {
+    	charStats = rmi.getCharacterStats(charNames[0]);
+    } else {
+    	charStats = rmi.getCharacterStats(selectedCharacterName);
+    }
     
     String hp = charStats[0] + "/" + charStats[1] + "HP";
     String loc = rmi.getLocType(charStats[4]); 
@@ -234,20 +241,19 @@ public class CharactersLayout extends JPanel {
   }
   
   private void refreshCharacterPanel() { 
-    // delete curCharPanel, add new genCharPanel()
-    remove(curCharactersPanel);
-    JPanel p = genCharacterPanel();
-    curCharactersPanel = p;
-    add(p, charPanel);
+    remove(charPanel);
+    charPanel = genCharacterPanel();
+    add(charPanel);
+    
     validate(); 
     repaint();
   }
   
   private void refreshStatPanel() {
-    remove(curStatsPanel);
-    JPanel p = genCharacterPanel();
-    curStatsPanel = p;
-    add(p, statPanel);
+    remove(statPanel);
+    statPanel = genCharacterPanel();
+    add(statPanel);
+    
     validate();
     repaint();
   }

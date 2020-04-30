@@ -20,7 +20,7 @@ public class RetrieveManipulateInformation {
   static RetrieveManipulateInformation rmi;
   
   final int playerUsernames = 0, allItems = 1, charNames = 2, 
-            locIdNums = 3, locAreaTypes = 4, charStats = 5;
+            locIdNums = 3, locAreaTypes = 4, charStats = 5, characterNames = 6;
   String[] procedures = {
       "CREATE PROCEDURE get_all_player_usernames()"
         + " SELECT Username FROM Player;",
@@ -37,13 +37,17 @@ public class RetrieveManipulateInformation {
       "CREATE PROCEDURE get_all_location_AreaTypes() "
         + "SELECT AreaType from Location;",
         
-      "CREATE PROCEDURE get_character_stats(IN n varchar(20))"
-        + " SELECT * From Characters WHERE Name = n;"
+      "CREATE PROCEDURE get_character_stats(IN n varchar(20)) "
+        + "SELECT * From Characters WHERE Name = n;",
+    		  
+      "CREATE PROCEDURE get_all_character_names() "
+        + "SELECT Name FROM Characters;"
           
   }, procedureNames = { 
       "get_all_player_usernames", "get_all_items", 
       "get_character_names", "get_all_location_idNumbers", 
-      "get_all_location_AreaTypes", "get_character_stats"
+      "get_all_location_AreaTypes", "get_character_stats",
+      "get_all_character_names"
   };
   
   private RetrieveManipulateInformation(Connection con) {
@@ -351,6 +355,43 @@ public class RetrieveManipulateInformation {
     return names; 
   }
 
+  public String[] getAllCharacterNames() {
+	  String call = "CALL " + procedureNames[characterNames] + "();";
+	    String[] names = new String[getNumCharacters()]; 
+	    try {
+	      CallableStatement stmt = m_dbConn.prepareCall(call);
+	      stmt.execute();
+	      
+	      ResultSet rs = stmt.getResultSet(); 
+	      
+	      int i = 0;
+	      while(rs.next()) {
+	    	  names[i] = rs.getString("Name");
+	        i++; 
+	      }
+	      
+	    } catch (SQLException e1) {
+	      e1.printStackTrace();
+	    }
+	    
+	    return names; 
+  }
+  
+  public int getNumCharacters() {
+	  try {
+	      Statement stmt = m_dbConn.createStatement();
+	      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Characters");
+	      // Count how many players we have
+	      
+	      r.next();
+	      return r.getInt("count(*)"); 
+	      
+	    } catch (SQLException e) {
+	      e.printStackTrace();
+	      return -1; // If this number is actually accidentally used, it will throw an error. 
+	    }
+  }
+  
   /**
    * Retrieve all player usernames, utilizing stored procedure
    * @return String array of all player usernames
@@ -387,27 +428,25 @@ public class RetrieveManipulateInformation {
    * @return
    */
   public String[] getCharacterStats(String characterName) {
-    String call = "CALL " + procedureNames[playerUsernames] + "();";
-    String[] stats = new String[5];
-    try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
-      stmt.execute();
-      
-      ResultSet rs = stmt.getResultSet(); 
-      
-      rs.next();
-      
-      System.out.println(rs.getInt("MaxHP"));
-      stats[0] = "" + rs.getInt("MaxHP");      
-      stats[1] = "" + rs.getInt("CurrentHP");   
-      stats[2] = "" + rs.getInt("Strength");    
-      stats[3] = "" + rs.getInt("Stamina"); 
-      stats[4] = "" + rs.getInt("LocationId");
-      
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-    }
-    
+	String call = "SELECT * FROM Characters WHERE Name = '" + characterName + "';";
+	String[] stats = new String[5]; 
+	try {
+		PreparedStatement stmt = m_dbConn.prepareStatement(call);
+		stmt.execute();
+		
+		ResultSet rs = stmt.getResultSet(); 
+		
+		rs.next(); 
+		
+		stats[0] = String.valueOf(rs.getInt("MaxHP"));
+		stats[1] = String.valueOf(rs.getInt("CurrentHP"));
+		stats[2] = String.valueOf(rs.getInt("Strength"));
+		stats[3] = String.valueOf(rs.getInt("Stamina"));
+		stats[4] = String.valueOf(rs.getInt("LocationId"));
+//		stats[5] = rs.getString("pUserName"); 
+	} catch(SQLException e) {
+		e.printStackTrace();
+	}
     return stats; 
   }
   
