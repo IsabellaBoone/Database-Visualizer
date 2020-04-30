@@ -12,6 +12,7 @@ public class Runner {
   public static final String LOGIN_NAME = "root";
   public static final String PASSWORD = "Password02";
 
+
   /* sorry i had to move this in here it do be kinda ugly
    * public static final String DB_LOCATION =
    * "jdbc:mysql://db.cs.ship.edu:3306/csc371_##"; public static final String
