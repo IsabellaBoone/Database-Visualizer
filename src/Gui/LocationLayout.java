@@ -196,16 +196,15 @@ public class LocationLayout extends JPanel {
   }
 
   private JPanel buttons() {
-    JPanel subPanel = new JPanel(),
-        subSubPanel = new JPanel(),
-        panel = new JPanel(new BorderLayout());
+    JPanel subPanel = new JPanel(), subSubPanel = new JPanel(), panel = new JPanel(new BorderLayout());
     JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
-    JButton addC = new JButton("Add Creature"), editC = new JButton("Edit Creature"), deleteC = new JButton("Delete Creature");
+    JButton addC = new JButton("Add Creature"), editC = new JButton("Edit Creature"),
+        deleteC = new JButton("Delete Creature");
 
     subPanel.add(add);
     subPanel.add(edit);
     subPanel.add(delete);
-    
+
     subSubPanel.add(addC);
     subSubPanel.add(editC);
     subSubPanel.add(deleteC);
@@ -232,11 +231,11 @@ public class LocationLayout extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        // editItem();
+        edit();
       }
 
     });
-    
+
     addC.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
@@ -260,13 +259,13 @@ public class LocationLayout extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        // editItem();
+        edit();
       }
 
     });
     panel.add(subPanel, BorderLayout.NORTH);
     panel.add(subSubPanel, BorderLayout.CENTER);
-    
+
     return panel;
   }
 
@@ -345,5 +344,51 @@ public class LocationLayout extends JPanel {
   private void removeSelectedBackgroundContent() {
     if (selectedContent != null)
       selectedContent.setBackground(new Color(132, 132, 132));
+  }
+
+  private void edit() {
+    ResultSet rs = null;
+    String content = selectedContent.getText();
+    //if item
+    if (content.contains("Item")) {
+      content = content.substring(86);
+      content = content.substring(0, content.indexOf("<"));
+      int id = Integer.parseInt(content);
+
+      try {
+        rs = RetrieveManipulateInformation.getConncetion().createStatement()
+            .executeQuery("SELECT * FROM Item WHERE Item.ItemId = " + id);
+        rs.next();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+      new EditItem(rs, rmi).addWindowListener(new WindowAdapter() {
+        public void windowClosed(WindowEvent arg0) {
+          refreshContentPanel();
+        }
+      });
+    }
+    else if(content.contains("Creature")) {
+      
+      content = content.substring(91);
+      content = content.substring(0, content.indexOf("<"));
+      int id = Integer.parseInt(content);
+
+      try {
+        rs = RetrieveManipulateInformation.getConncetion().createStatement()
+            .executeQuery("SELECT * FROM Creature WHERE Creature.IdNumber = " + id);
+        rs.next();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+      new EditCreature(rs, rmi).addWindowListener(new WindowAdapter() {
+        public void windowClosed(WindowEvent arg0) {
+          refreshContentPanel();
+        }
+      });
+    }
+
   }
 }
