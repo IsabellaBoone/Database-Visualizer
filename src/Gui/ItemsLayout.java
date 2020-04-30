@@ -52,7 +52,7 @@ public class ItemsLayout extends JPanel{
         System.out.println("Add Item");
         new AddItem(rmi).addWindowListener(new WindowAdapter() {
           @Override
-          public void windowClosing(WindowEvent arg0) {
+          public void windowClosed(WindowEvent arg0) {
             item.setViewportView(buildItems(rmi.getNumItems()));
           }
         });
@@ -150,7 +150,11 @@ public class ItemsLayout extends JPanel{
       e.printStackTrace();
     }
     
-    new EditItem(rs);
+    new EditItem(rs, rmi).addWindowListener(new WindowAdapter(){
+      public void windowClosed(WindowEvent arg0) {
+        item.setViewportView(buildItems(rmi.getNumItems()));
+      }
+    });
   }
   
 }
