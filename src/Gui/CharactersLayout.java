@@ -244,7 +244,7 @@ public class CharactersLayout extends JPanel {
   
   private void addChar() {
     if(selectedName != null) {
-      
+      new AddCharacter(rmi); 
     }
   }
 }

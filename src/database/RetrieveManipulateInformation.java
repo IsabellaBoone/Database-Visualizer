@@ -473,4 +473,72 @@ public class RetrieveManipulateInformation {
     }
     return areatype;
   }
+  
+  /**
+   * 
+   * @param name
+   * @return
+   */
+  public boolean userNameExists(String name) {
+    String select = "SELECT Count(*) from Characters WHERE Name = '" + name + "';";
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      stmt.execute(); 
+      
+      ResultSet rs = stmt.getResultSet(); 
+      
+      rs.next(); 
+      
+      if(rs.getInt(1) > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch(SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
+  
+  public boolean locationExists(String loc) {
+    String select = "SELECT Count(*) from Location WHERE IdNumber = '" + loc + "';";
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      stmt.execute(); 
+      
+      ResultSet rs = stmt.getResultSet(); 
+      
+      rs.next(); 
+      
+      if(rs.getInt(1) > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch(SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
+  
+  public boolean playerExists(String loc) {
+    String select = "SELECT Count(*) from Player WHERE Username = '" + loc + "';";
+    try {
+      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      stmt.execute(); 
+      
+      ResultSet rs = stmt.getResultSet(); 
+      
+      rs.next(); 
+      
+      if(rs.getInt(1) > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch(SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
 }
