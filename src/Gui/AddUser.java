@@ -79,7 +79,7 @@ public class AddUser extends JFrame {
     try {
       String insert = "INSERT INTO Player (Username, Email, Password) "
           + "VALUES ('" + username + "', '" + email + "', '" + password + "');";
-      java.sql.Statement stmt = rmi.getConncetion().createStatement(); 
+      java.sql.Statement stmt = rmi.getConnection().createStatement(); 
       stmt.execute(insert);
     } catch(SQLException e) {
       e.printStackTrace();

@@ -49,7 +49,7 @@ public class DeleteCharacter extends JPanel{
   private void delete() {
     try {
       String statement = "DELETE FROM Characters WHERE Name = \'" + name + "\';";
-      rmi.getConncetion().prepareStatement(statement).execute(statement);
+      rmi.getConnection().prepareStatement(statement).execute(statement);
     } catch (SQLException e) {
       e.printStackTrace();
     }

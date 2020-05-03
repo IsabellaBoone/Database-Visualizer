@@ -134,8 +134,7 @@ public class CharactersLayout extends JPanel {
       public void actionPerformed(ActionEvent e) {
         System.out.println("Add character"); 
         new AddCharacter(rmi); 
-        refreshCharacterPanel();
-        refreshStatsPanel(); 
+        refresh();
       }
     });
     
@@ -146,8 +145,7 @@ public class CharactersLayout extends JPanel {
           failureToSelect(); 
         } else {
           new EditCharacter(rmi, selectedName); 
-          refreshCharacterPanel();
-          refreshStatsPanel(); 
+          refresh();
         }
       }
     });
@@ -159,7 +157,7 @@ public class CharactersLayout extends JPanel {
           failureToSelect(); 
         } else {
           new DeleteCharacter(rmi, selectedName); 
-          refreshCharacterPanel(); 
+          refresh(); 
         }
       }
     });
@@ -167,8 +165,7 @@ public class CharactersLayout extends JPanel {
     addUser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         new AddUser(rmi); 
-        refreshCharacterPanel();
-        refreshStatsPanel(); 
+        refresh();
       }
     });
     
@@ -232,15 +229,21 @@ public class CharactersLayout extends JPanel {
     return panel;
   }
   
-  private void refreshCharacterPanel() {
+  
+  private void refresh() {
     remove(characterPanel);
     characterPanel = genCharacterPanel(); 
     SwingUtilities.updateComponentTreeUI(characterPanel);
     add(characterPanel, BorderLayout.WEST);
+    
+    remove(statsPanel);
+    statsPanel = genStatsPanel();
+    add(statsPanel, BorderLayout.EAST);
+    SwingUtilities.updateComponentTreeUI(statsPanel);
+
     validate();
     repaint();
   }
-  
   private void refreshStatsPanel() {
     remove(statsPanel);
     statsPanel = genStatsPanel();
@@ -250,7 +253,7 @@ public class CharactersLayout extends JPanel {
     validate();
     repaint();
   }
-
+  
   private void removeSelectedBackgroundChars() {
     if (selectedNameJLabel != null)
       selectedNameJLabel.setBackground(Color.LIGHT_GRAY);

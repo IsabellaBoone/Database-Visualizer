@@ -20,41 +20,22 @@ import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
 
-public class EditCharacter extends JFrame {
-  RetrieveManipulateInformation rmi = null;
-  
-  /*
-   * To edit a character, we need to first fetch the character information. 
-   * Then, we can pull up a panel that shows the characters current information
-   * and also allow them to modify it. 
-   */
-  
-  String name, user, 
-    newName, newUser;
-  
-  int maxHP, curHP, str, stam, loc,
-    newMax, newCur, newStr, newStam, newLoc;
-  
+public class EditCharacter extends Panels {
+  String[] oldInfo = new String[7], 
+      newInfo = new String[7]; 
   
   public EditCharacter(RetrieveManipulateInformation rmi, String name) {
-    this.rmi = rmi; 
-    this.name = name; 
+    setRMI(rmi); 
     
-    fetchInfo();
+    String select = "SELECT * FROM Characters WHERE Name = '" + name + "';",
+          toGet[] = {"Name", "MaxHP", "CurrentHP", "Strength", 
+              "Stamina", "LocationId", "pUserName"};
+          
+    oldInfo = fetchInfo(select, toGet);
     editCharacterPrompt(); 
   }
 
   private void editCharacterPrompt() {
-    setLayout(new GridLayout(0, 2)); 
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setLocationRelativeTo(null); 
-    Dimension d = new Dimension(500, 200);
-    setMinimumSize(d);
-    setPreferredSize(d);
-    setMaximumSize(d);
-    
-    // Add buttons/prompts.  
-    
     JLabel[] prompt = {
         new JLabel("Enter Character Name:", SwingConstants.CENTER),
         new JLabel("Enter MaxHP: ", SwingConstants.CENTER),
@@ -66,13 +47,13 @@ public class EditCharacter extends JFrame {
     };
     
     JTextField[] txt = {
-        new JTextField(name),
-        new JTextField(maxHP + ""),
-        new JTextField(curHP + ""),
-        new JTextField(str + ""),
-        new JTextField(stam + ""),
-        new JTextField(loc + ""),
-        new JTextField(user)
+        new JTextField(oldInfo[0]),
+        new JTextField(oldInfo[1] + ""),
+        new JTextField(oldInfo[2] + ""),
+        new JTextField(oldInfo[3] + ""),
+        new JTextField(oldInfo[4] + ""),
+        new JTextField(oldInfo[5] + ""),
+        new JTextField(oldInfo[6])
     };
     
     for(int i = 0; i < prompt.length; i++) {
@@ -92,171 +73,66 @@ public class EditCharacter extends JFrame {
   private void addListeners(JTextField[] txt, JButton b) {
     b.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        newName = txt[0].getText();
-        newMax = Integer.parseInt(txt[1].getText());
-        newCur = Integer.parseInt(txt[2].getText());
-        newStr = Integer.parseInt(txt[3].getText());
-        newStam = Integer.parseInt(txt[4].getText());
-        newLoc = Integer.parseInt(txt[5].getText());
-        newUser = txt[6].getText();
-        
+        for (int i = 0; i < newInfo.length; i++) {
+          newInfo[i] = txt[i].getText();
+        }
+
         // check make sure each number is valid
-        if(newMax < 0) {
+        if (Integer.parseInt(newInfo[1]) < 0) {
           fail("Max HP value invalid");
           return;
-        } else if (newCur < 0) {
+        } else if (Integer.parseInt(newInfo[2]) < 0) {
           fail("Current HP value invalid");
           return;
-        } else if (newStr < 0) {
-          fail("Strength value invalid"); 
+        } else if (Integer.parseInt(newInfo[3]) < 0) {
+          fail("Strength value invalid");
           return;
-        } else if(newStam < 0) {
+        } else if (Integer.parseInt(newInfo[4]) < 0) {
           fail("Stamina value invalid");
           return;
+        } else if(Integer.parseInt(newInfo[1]) < Integer.parseInt(newInfo[2])) {
+          fail("Current HP cannot be larger than Max HP.");
+          return;
         }
-        
-        if(!(rmi.playerExists(newUser))) {
-          fail("Username does not exist. Create user before linking characters to that username.  ");
-        } else if(!(rmi.locationExists(String.valueOf(loc)))) {
-          // check if the location exists
+
+        // Check to make sure player exists
+        if (!(rmi.playerExists(newInfo[6]))) {
+          fail("Username does not exist.  "
+              + "Create a new player with that username before "
+              + "linking characters to the username.");
+          return;
+        } else if (!(rmi.locationExists(newInfo[5]))) {
           fail("Location does not exist");
           return;
-        } else if(!(rmi.playerExists(user))) {
-          // check if the user exists
-          fail("Username does not exist");
+        } else if (!(oldInfo[0].contentEquals(newInfo[0])) && (rmi.characterExists(newInfo[0]))) {
+          fail("Name does not exist");
           return;
         } else {
           // Finally, we've check all our failure conditions
           // and can properly add what the user inputs
-          editCharacter(); 
-          dispose(); 
-          characterEditedSuccessfully(); 
+          editCharacter();
+          dispose();
+          success("Character " + oldInfo[0] + " was successfully edited.");
         }
-      }
-    });
-    
-    
-    
-    // These action listeners just print whenever you
-    // press enter on a text field
-    
-    // name
-    txt[0].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[0].getText());
-      }
-    });
-    
-    // max hp
-    txt[1].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[1].getText());
-      }
-    });
-    
-    // current hp
-    txt[2].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[2].getText());
-      }
-    });
-    
-    // strength
-    txt[3].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[3].getText());
-      }
-    });
-    
-    // stamina
-    txt[4].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[4].getText());
-      }
-    });
-    
-    // location
-    txt[5].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[5].getText());
-      }
-    });
-    
-    // username
-    txt[6].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[6].getText());
       }
     });
   }
   
   private void editCharacter() {
     try {
-      Statement stmt = rmi.getConncetion().createStatement();
-      String statement = "UPDATE Characters SET Name = \'" + newName + "\'" +
-                          ", MaxHP = " + newMax + 
-                          ", CurrentHP = " + newCur + 
-                          ", Strength = " + newStr + 
-                          ", Stamina = " + newStam + 
-                          ", LocationId = " + newLoc + 
-                          ", pUserName = \'" + newUser + "\'" +
-                          " WHERE Name = \'" + name + "\';";
+      Statement stmt = rmi.getConnection().createStatement();
+      String statement = "UPDATE Characters SET Name = \'" + newInfo[0] + "\'" +
+                          ", MaxHP = " + newInfo[1] + 
+                          ", CurrentHP = " + newInfo[2] + 
+                          ", Strength = " + newInfo[3] + 
+                          ", Stamina = " + newInfo[4] + 
+                          ", LocationId = " + newInfo[5] + 
+                          ", pUserName = \'" + newInfo[6] + "\'" +
+                          " WHERE Name = \'" + oldInfo[0] + "\';";
       stmt.execute(statement); 
       
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-  }
-
-  private void fetchInfo() {
-    try {
-      String insert = "SELECT * FROM Characters WHERE Name = '" + name + "';";
-      PreparedStatement stmt = rmi.getConncetion().prepareStatement(insert);
-      stmt.execute();
-      ResultSet rs = stmt.getResultSet(); 
-      
-      rs.next(); 
-      
-      user = rs.getString("pUserName"); 
-      maxHP = rs.getInt("MaxHP"); 
-      curHP = rs.getInt("CurrentHP"); 
-      str = rs.getInt("Strength"); 
-      stam = rs.getInt("Stamina"); 
-      loc = rs.getInt("LocationId");
-    } catch(SQLException e) { 
-      fail("Fetch failed"); 
-    }
-  }
-  private void characterEditedSuccessfully() {
-    JFrame frame = new JFrame("Success");
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel("Information successfully updated.");
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-  }
-  private void fail(String reason) {
-    JFrame frame = new JFrame("Error");
-    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel("Edit failed - " + reason);
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-    
   }
 }

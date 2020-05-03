@@ -110,7 +110,7 @@ public class ItemsLayout extends JPanel{
     String labelText = "";
     ResultSet rs = null;
     try {
-      rs = rmi.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + primaryKey);
+      rs = rmi.getConnection().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + primaryKey);
       rs.next();
       labelText = "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:20px;\">ItemId = " + rs.getInt("ItemId") + "   Weight = " + rs.getInt("Weight") + "   Volume = " + rs.getInt("Volume") +
           "   LocationId = " + (rs.getInt("LocationId") == 0 ? "null" : "" + rs.getInt("LOCATIONID")) + 
@@ -132,7 +132,7 @@ public class ItemsLayout extends JPanel{
   private void deleteItem() {
     if(selected != null) {
       try {
-        rmi.getConncetion().createStatement().execute("DELETE FROM ITEM WHERE ItemId = " + selectedId);
+        rmi.getConnection().createStatement().execute("DELETE FROM ITEM WHERE ItemId = " + selectedId);
         selected = null;
       }catch(SQLException e) {
         e.printStackTrace();
@@ -144,7 +144,7 @@ public class ItemsLayout extends JPanel{
   private void editItem() {
     ResultSet rs = null;
     try {
-      rs = rmi.getConncetion().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + selectedId);
+      rs = rmi.getConnection().createStatement().executeQuery("SELECT * FROM ITEM WHERE ITEM.ITEMID = " + selectedId);
       rs.next();
     } catch(SQLException e) {
       e.printStackTrace();

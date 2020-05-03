@@ -18,20 +18,11 @@ import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
 
-public class AddCharacter extends JFrame{
-  RetrieveManipulateInformation rmi = null;
+public class AddCharacter extends Panels {
   String name, user;
   int maxHP, curHP, str, stam, loc;
   public AddCharacter(RetrieveManipulateInformation rmi) {
-    this.rmi = rmi; 
-    // JFrame settings
-    setLayout(new GridLayout(0, 2)); 
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setLocationRelativeTo(null); 
-    Dimension d = new Dimension(500, 200);
-    setMinimumSize(d);
-    setPreferredSize(d);
-    setMaximumSize(d);
+    setRMI(rmi); 
     
     // Add Labels & Buttons
     JLabel[] prompt = {
@@ -112,62 +103,8 @@ public class AddCharacter extends JFrame{
           // and can properly add what the user inputs
           addCharacter(); 
           dispose(); 
-          characterAddedSuccessfully(); 
+          success("Succesfully added " + user + "'s character " + name);
         }
-      }
-    });
-    
-    
-    
-    // These action listeners just print whenever you
-    // press enter on a text field
-    
-    // name
-    txt[0].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[0].getText());
-      }
-    });
-    
-    // max hp
-    txt[1].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[1].getText());
-      }
-    });
-    
-    // current hp
-    txt[2].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[2].getText());
-      }
-    });
-    
-    // strength
-    txt[3].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[3].getText());
-      }
-    });
-    
-    // stamina
-    txt[4].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[4].getText());
-      }
-    });
-    
-    // location
-    txt[5].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[5].getText());
-      }
-    });
-    
-    // username
-    txt[6].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(txt[6].getText());
       }
     });
   }
@@ -178,43 +115,11 @@ public class AddCharacter extends JFrame{
           + "Strength, Stamina, LocationId, pUserName) VALUES ('" + name + "', " +
         maxHP + ", " + curHP + ", " + str + ", " + stam + ", " + loc 
         + ", '" + user + "');";
-        java.sql.Statement stmt = rmi.getConncetion().createStatement(); 
+        java.sql.Statement stmt = rmi.getConnection().createStatement(); 
         stmt.execute(insert);
     } catch(SQLException e) {
       e.printStackTrace();
     }
   }
   
-  private void fail(String reason) {
-    JFrame frame = new JFrame("Error");
-    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel("Add failed - " + reason);
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-    
-  }
-  
-  private void characterAddedSuccessfully() {
-    JFrame frame = new JFrame("Success");
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel(user + "'s character '" + name + "' was added successfully!");
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-  }
 }

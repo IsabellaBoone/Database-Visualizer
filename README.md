@@ -11,6 +11,6 @@ TO-DO: generateModerator(), generateManage(), generateCommands(), generateCreatu
 - Implement buttons to change data in the database.  
 
 -- Panel 1: 
--- Panel 2: Fix refreshing, finish stats buttons.  
+-- Panel 2: Refactor code cuz its bad
 -- Panel 3: 
 -- Panel 4: 

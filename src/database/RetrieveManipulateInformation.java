@@ -55,7 +55,7 @@ public class RetrieveManipulateInformation {
     m_dbConn = con;
   }
 
-  public static Connection getConncetion() {
+  public static Connection getConnection() {
     return m_dbConn;
   }
 
