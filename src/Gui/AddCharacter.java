@@ -1,8 +1,10 @@
 package Gui;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.Statement;
@@ -12,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
 
@@ -22,19 +25,23 @@ public class AddCharacter extends JFrame{
   public AddCharacter(RetrieveManipulateInformation rmi) {
     this.rmi = rmi; 
     // JFrame settings
-    setLayout(new GridBagLayout());
+    setLayout(new GridLayout(0, 2)); 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null); 
+    Dimension d = new Dimension(850, 200);
+    setMinimumSize(d);
+    setPreferredSize(d);
+    setMaximumSize(d);
     
     // Add Labels & Buttons
     JLabel[] prompt = {
-        new JLabel("Enter Character Name:"),
-        new JLabel("Enter MaxHP: "),
-        new JLabel("Enter current HP: "),
-        new JLabel("Enter strength: "),
-        new JLabel("Enter stamina: "),
-        new JLabel("Enter location: "),
-        new JLabel("Enter username: ")
+        new JLabel("Enter Character Name:", SwingConstants.CENTER),
+        new JLabel("Enter MaxHP: ", SwingConstants.CENTER),
+        new JLabel("Enter current HP: ", SwingConstants.CENTER),
+        new JLabel("Enter strength: ", SwingConstants.CENTER),
+        new JLabel("Enter stamina: ", SwingConstants.CENTER),
+        new JLabel("Enter location: ", SwingConstants.CENTER),
+        new JLabel("Enter username: ", SwingConstants.CENTER)
     };
     
     JTextField[] txt = {
@@ -47,23 +54,13 @@ public class AddCharacter extends JFrame{
         new JTextField("Username")
     };
     
-    
-    GridBagConstraints c = new GridBagConstraints(); 
-    c.gridx = 0;
-    c.gridy = 0;
-    c.weightx = 0.35;
-    c.weighty = 0.10; 
-    
     for(int i = 0; i < prompt.length; i++) {
       add(prompt[i]);
-      c.gridx = 1;
       add(txt[i]);
-      c.gridy++; 
-      c.gridx = 0; 
     }
     
     JButton cont = new JButton("Continue");
-    add(cont, c); 
+    add(cont); 
     
     addButtons(txt, cont);
     

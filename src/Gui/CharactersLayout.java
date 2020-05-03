@@ -167,6 +167,8 @@ public class CharactersLayout extends JPanel {
       }
     });
 
+    
+    
     panel.add(addChar);
     panel.add(editChar);
     panel.add(deleteChar);

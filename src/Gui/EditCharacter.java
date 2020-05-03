@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
 
@@ -49,7 +50,7 @@ public class EditCharacter extends JFrame {
   }
 
   private void editCharacterPrompt() {
-    setLayout(new GridLayout(2, 0)); 
+    setLayout(new GridLayout(0, 2)); 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null); 
     Dimension d = new Dimension(850, 200);
@@ -60,13 +61,13 @@ public class EditCharacter extends JFrame {
     // Add buttons/prompts.  
     
     JLabel[] prompt = {
-        new JLabel("Enter Character Name:"),
-        new JLabel("Enter MaxHP: "),
-        new JLabel("Enter current HP: "),
-        new JLabel("Enter strength: "),
-        new JLabel("Enter stamina: "),
-        new JLabel("Enter location: "),
-        new JLabel("Enter username: ")
+        new JLabel("Enter Character Name:", SwingConstants.CENTER),
+        new JLabel("Enter MaxHP: ", SwingConstants.CENTER),
+        new JLabel("Enter current HP: ", SwingConstants.CENTER),
+        new JLabel("Enter strength: ", SwingConstants.CENTER),
+        new JLabel("Enter stamina: ", SwingConstants.CENTER),
+        new JLabel("Enter location: ", SwingConstants.CENTER),
+        new JLabel("Enter username: ", SwingConstants.CENTER)
     };
     
     JTextField[] txt = {
@@ -79,19 +80,9 @@ public class EditCharacter extends JFrame {
         new JTextField(user)
     };
     
-    
-//    GridBagConstraints c = new GridBagConstraints(); 
-//    c.gridx = 0;
-//    c.gridy = 0;
-//    c.weightx = 0.35;
-//    c.weighty = 0.10; 
-    
     for(int i = 0; i < prompt.length; i++) {
       add(prompt[i]);
-//      c.gridx = 1;
       add(txt[i]);
-//      c.gridy++; 
-//      c.gridx = 0; 
     }
     JButton cont = new JButton("Continue");
     add(cont); 
