@@ -36,7 +36,6 @@ public class CharactersLayout extends JPanel {
   private RetrieveManipulateInformation rmi;
   private JPanel characterPanel, statsPanel;
   private JLabel selectedNameJLabel = null;
-  private int selectedIndex; // characternames[selectedIndex] = selectedName
   private String[] characterNames;
   private String selectedName = null;
   
@@ -71,7 +70,8 @@ public class CharactersLayout extends JPanel {
     JScrollPane names = new JScrollPane();
     names.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     names.add(names.createVerticalScrollBar());
-
+    names.getVerticalScrollBar().setUnitIncrement(20);
+    
     // Panel of names
     JPanel characters = new JPanel();
     characters.setBackground(Color.LIGHT_GRAY);
@@ -81,7 +81,7 @@ public class CharactersLayout extends JPanel {
     characterNames = rmi.getAllCharacterNames();
 
     // Add header
-    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Characters:" + "</H1></html>"),
+    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Characters:" + "</H1></html>", SwingUtilities.CENTER),
         BorderLayout.NORTH);
 
     // Add all labels of character names
@@ -97,7 +97,6 @@ public class CharactersLayout extends JPanel {
           label.setBackground(new Color(234,201,55));
           selectedNameJLabel = label; 
           selectedName = characterNames[x];
-          selectedIndex = x; 
           refreshStatsPanel(); 
         }
       });
@@ -136,6 +135,7 @@ public class CharactersLayout extends JPanel {
         System.out.println("Add character"); 
         new AddCharacter(rmi); 
         refreshCharacterPanel();
+        refreshStatsPanel(); 
       }
     });
     
@@ -146,6 +146,7 @@ public class CharactersLayout extends JPanel {
           failureToSelect(); 
         } else {
           new EditCharacter(rmi, selectedName); 
+          refreshCharacterPanel();
           refreshStatsPanel(); 
         }
       }
@@ -166,6 +167,8 @@ public class CharactersLayout extends JPanel {
     addUser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         new AddUser(rmi); 
+        refreshCharacterPanel();
+        refreshStatsPanel(); 
       }
     });
     
@@ -198,19 +201,19 @@ public class CharactersLayout extends JPanel {
     String[] charStats;  
     if(selectedName == null) {
       charStats = rmi.getCharacterStats(characterNames[0]);
+      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
+        BorderLayout.NORTH);
     } else {
       charStats = rmi.getCharacterStats(selectedName);
+      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
+          BorderLayout.NORTH);
     }
-    
-
-    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Stats:" + "</H1></html>"),
-        BorderLayout.NORTH);
     
     // Format strings
     String HP = charStats[1] + "/" + charStats[0] + "HP";
     String strStam = charStats[2] + " Strength " + charStats[3] + " Stamina"; 
-    String loc = rmi.getLocType(charStats[4]) + ": " + charStats[4];
-    String user = charStats[5]; 
+    String loc = "Located in: " + rmi.getLocType(charStats[4]) + ": " + charStats[4];
+    String user = "Belongs to: " + charStats[5]; 
 
     // Add JLabel
     JLabel hpLabel = new JLabel(HP, SwingConstants.CENTER);
