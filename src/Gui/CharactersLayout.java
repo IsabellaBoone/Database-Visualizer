@@ -161,8 +161,8 @@ public class CharactersLayout extends JPanel {
         if (selectedName == null) {
           failureToSelect(); 
         } else {
-//          new DeleteCharacter(rmi, selectedName); 
-//          refreshCharacterPanel(); 
+          new DeleteCharacter(rmi, selectedName); 
+          refreshCharacterPanel(); 
         }
       }
     });
