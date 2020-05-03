@@ -28,7 +28,7 @@ public class AddCharacter extends JFrame{
     setLayout(new GridLayout(0, 2)); 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null); 
-    Dimension d = new Dimension(850, 200);
+    Dimension d = new Dimension(500, 200);
     setMinimumSize(d);
     setPreferredSize(d);
     setMaximumSize(d);

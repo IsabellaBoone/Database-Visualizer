@@ -128,9 +128,7 @@ public class CharactersLayout extends JPanel {
     JButton addChar = new JButton("Add Character"), 
         editChar = new JButton("Edit Character"),
         deleteChar = new JButton("Delete Character"),
-        addUser = new JButton("Add User"),
-        editUser = new JButton("Edit User"),
-        deleteUser = new JButton("Delete User"); 
+        addUser = new JButton("Add User"); 
     
     addChar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -170,12 +168,11 @@ public class CharactersLayout extends JPanel {
       }
     });
     
+    
     panel.add(addChar);
     panel.add(editChar);
     panel.add(deleteChar);
     panel.add(addUser);
-    panel.add(editUser); 
-    panel.add(deleteUser);
     
     return panel;
   }

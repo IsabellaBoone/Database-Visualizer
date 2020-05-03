@@ -48,7 +48,6 @@ public class DeleteCharacter extends JPanel{
   
   private void delete() {
     try {
-      System.out.println("made it here");
       String statement = "DELETE FROM Characters WHERE Name = \'" + name + "\';";
       rmi.getConncetion().prepareStatement(statement).execute(statement);
     } catch (SQLException e) {
