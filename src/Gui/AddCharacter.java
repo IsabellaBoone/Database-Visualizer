@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.Statement;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -77,7 +79,7 @@ public class AddCharacter extends JFrame{
         maxHP = Integer.parseInt(txt[1].getText());
         curHP = Integer.parseInt(txt[2].getText());
         str = Integer.parseInt(txt[3].getText());
-        str = Integer.parseInt(txt[4].getText());
+        stam = Integer.parseInt(txt[4].getText());
         loc = Integer.parseInt(txt[5].getText());
         user = txt[6].getText();
         
@@ -96,29 +98,25 @@ public class AddCharacter extends JFrame{
           return;
         }
         
-        // check to make sure name is valid and doesn't exist
-        if(rmi.userNameExists(name)) {
+        if(rmi.characterExists(name)) {
+          // check to make sure name is valid and doesn't exist
           fail("Player name already exists");
           return;
-        }
-        
-        // check if the location exists
-        if(!(rmi.locationExists(String.valueOf(loc)))) {
+        } else if(!(rmi.locationExists(String.valueOf(loc)))) {
+          // check if the location exists
           fail("Location does not exist");
           return;
-        }
-        
-        // check to see if the user exists
-        if(!(rmi.playerExists(user))) {
+        } else if(!(rmi.playerExists(user))) {
+          // check to see if the user exists
           fail("Username does not exist");
           return;
+        } else {
+          // Finally, we've check all our failure conditions
+          // and can properly add what the user inputs
+          addCharacter(); 
+          dispose(); 
+          characterAddedSuccessfully(); 
         }
-        
-        // Finally, we've check all our failure conditions
-        // and can properly add what the user inputs
-        
-        
-        
       }
     });
     
@@ -177,6 +175,22 @@ public class AddCharacter extends JFrame{
     });
   }
   
+  private void addCharacter() {
+    try {
+      String insert = "INSERT INTO Characters (Name, MaxHP, CurrentHP, "
+          + "Strength, Stamina, LocationId, pUserName) VALUES ('" + name + "', " +
+        maxHP + ", " + curHP + ", " + str + ", " + stam + ", " + loc 
+        + ", '" + user + "');";
+//      System.out.println(insert);
+        java.sql.Statement stmt = rmi.getConncetion().createStatement(); 
+        stmt.execute(insert);
+        System.out.println(insert); 
+        System.out.println("Added character " + name);
+    } catch(SQLException e) {
+      e.printStackTrace();
+    }
+  }
+  
   private void fail(String reason) {
     JFrame frame = new JFrame("Error");
     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -192,5 +206,21 @@ public class AddCharacter extends JFrame{
     frame.pack();
     frame.setVisible(true);
     
+  }
+  
+  private void characterAddedSuccessfully() {
+    JFrame frame = new JFrame("Success");
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame.setSize(200,200);
+    frame.setLocationRelativeTo(null);
+    JLabel bad = new JLabel(user + "'s character '" + name + "' was added successfully!");
+    JButton cont = new JButton("Ok");
+    cont.addActionListener(e -> frame.dispose());
+    
+    frame.setLayout(new FlowLayout());
+    frame.add(bad);
+    frame.add(cont);
+    frame.pack();
+    frame.setVisible(true);
   }
 }

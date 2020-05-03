@@ -1,4 +1,3 @@
-// fuck
 
 package Gui;
 
@@ -6,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,36 +25,39 @@ import javax.swing.SwingUtilities;
 
 import database.RetrieveManipulateInformation;
 
+/**
+ * Display all characters in the database and their
+ * stats when clicked on.  Also, allows user to 
+ * add, edit or remove characters and modify stats.  
+ * @author Isabella Boone
+ *
+ */
 public class CharactersLayout extends JPanel {
   private RetrieveManipulateInformation rmi;
   private JPanel characterPanel, statsPanel;
-  private String[] characterNames;
-  private String selectedName;
   private JLabel selectedNameJLabel = null;
+  private int selectedIndex; // characternames[selectedIndex] = selectedName
+  private String[] characterNames;
+  private String selectedName = null;
+  
 
   public CharactersLayout(RetrieveManipulateInformation rmi) {
     this.rmi = rmi;
-
-    initializeJPanel();
-  }
-
-  private void initializeJPanel() {
+    
+    
     setBackground(Color.DARK_GRAY);
-    setLayout(new GridBagLayout());
+//    setLayout(new GridBagLayout());
+    setLayout(new BorderLayout()); 
     characterNames = rmi.getAllCharacterNames();
     selectedName = characterNames[0]; 
-    GridBagConstraints c = new GridBagConstraints();
-
-    c.gridx = 0;
-    c.gridy = 0;
-    c.weighty = 0.33;
-    c.weightx = 0.95;
-    characterPanel = genCharacterPanel();
-    add(characterPanel, c);
-    c.gridx++;
-    statsPanel = genStatsPanel(); 
-    add(statsPanel);
     
+    characterPanel = genCharacterPanel();
+    add(characterPanel, BorderLayout.WEST);
+    statsPanel = genStatsPanel(); 
+    add(statsPanel, BorderLayout.EAST);
+    
+    revalidate();
+    repaint();
   }
 
   private JPanel genCharacterPanel() {
@@ -131,55 +135,44 @@ public class CharactersLayout extends JPanel {
         editUser = new JButton("Edit User"),
         deleteUser = new JButton("Delete User"); 
     
+    addChar.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        System.out.println("Add character"); 
+        new AddCharacter(rmi); 
+        refreshCharacterPanel();
+      }
+    });
+    
+    editChar.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        System.out.println("Edit Character"); 
+        if(selectedName == null) {
+          failureToSelect(); 
+        } else {
+          new EditCharacter(rmi, selectedName); 
+          refreshStatsPanel(); 
+        }
+      }
+    });
+    
+    deleteChar.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        System.out.println("Delete Character");
+        if (selectedName == null) {
+          failureToSelect(); 
+        } else {
+//          new DeleteCharacter(rmi, selectedName); 
+//          refreshCharacterPanel(); 
+        }
+      }
+    });
+
     panel.add(addChar);
     panel.add(editChar);
     panel.add(deleteChar);
     panel.add(addUser);
     panel.add(editUser); 
     panel.add(deleteUser);
-    
-    addChar.addActionListener(new ActionListener() {
-      @Override 
-      public void actionPerformed(ActionEvent ae) {
-        addChar(); 
-        System.out.println("Add Character");
-      }
-    });
-    
-    editChar.addActionListener(new ActionListener() {
-      @Override 
-      public void actionPerformed(ActionEvent ae) {
-        System.out.println("Edit Character");
-      }
-    });
-    
-    deleteChar.addActionListener(new ActionListener() {
-      @Override 
-      public void actionPerformed(ActionEvent ae) {
-        System.out.println("Delete Character");
-      }
-    });
-    
-    addUser.addActionListener(new ActionListener() {
-      @Override 
-      public void actionPerformed(ActionEvent ae) {
-        System.out.println("Add User");
-      }
-    });
-    
-    editUser.addActionListener(new ActionListener() {
-      @Override 
-      public void actionPerformed(ActionEvent ae) {
-        System.out.println("Edit User");
-      }
-    });
-    
-    deleteUser.addActionListener(new ActionListener() {
-      @Override 
-      public void actionPerformed(ActionEvent ae) {
-        System.out.println("Delete User");
-      }
-    });
     
     return panel;
   }
@@ -207,7 +200,7 @@ public class CharactersLayout extends JPanel {
         BorderLayout.NORTH);
     
     // Format strings
-    String HP = charStats[0] + "/" + charStats[1] + "HP";
+    String HP = charStats[1] + "/" + charStats[0] + "HP";
     String strStam = charStats[2] + " Strength " + charStats[3] + " Stamina"; 
     String loc = rmi.getLocType(charStats[4]) + ": " + charStats[4];
     String user = charStats[5]; 
@@ -227,6 +220,13 @@ public class CharactersLayout extends JPanel {
     return panel;
   }
   
+  private void refreshCharacterPanel() {
+    characterPanel = genCharacterPanel(); 
+    SwingUtilities.updateComponentTreeUI(characterPanel);
+    
+    validate();
+    repaint();
+  }
   private void refreshStatsPanel() {
     statsPanel = genStatsPanel();
     SwingUtilities.updateComponentTreeUI(statsPanel);
@@ -242,9 +242,19 @@ public class CharactersLayout extends JPanel {
   
   // Buttons
   
-  private void addChar() {
-    if(selectedName != null) {
-      new AddCharacter(rmi); 
-    }
+  private void failureToSelect() {
+    JFrame frame = new JFrame("Error");
+    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    frame.setSize(200,200);
+    frame.setLocationRelativeTo(null);
+    JLabel bad = new JLabel("You need to select a character to edit first.");
+    JButton cont = new JButton("Ok");
+    cont.addActionListener(e -> frame.dispose());
+    
+    frame.setLayout(new FlowLayout());
+    frame.add(bad);
+    frame.add(cont);
+    frame.pack();
+    frame.setVisible(true);
   }
 }
