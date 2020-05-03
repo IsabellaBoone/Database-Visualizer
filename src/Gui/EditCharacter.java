@@ -41,11 +41,6 @@ public class EditCharacter extends JFrame {
     this.name = name; 
     
     fetchInfo();
-    
-    System.out.println(user + ": " + name + "\t" + curHP + "/" + 
-        maxHP + " " + str + " Strength " + stam  + " Stamina "
-        + rmi.getLocType(String.valueOf(loc)) + ": " + loc);
-    
     editCharacterPrompt(); 
   }
 
@@ -206,7 +201,6 @@ public class EditCharacter extends JFrame {
                           ", LocationId = " + newLoc + 
                           ", pUserName = \'" + newUser + "\'" +
                           " WHERE Name = \'" + name + "\';";
-      System.out.println(statement); 
       stmt.execute(statement); 
       
     } catch (SQLException e) {
@@ -218,7 +212,6 @@ public class EditCharacter extends JFrame {
   private void fetchInfo() {
     try {
       String insert = "SELECT * FROM Characters WHERE Name = '" + name + "';";
-      System.out.println(insert);
       PreparedStatement stmt = rmi.getConncetion().prepareStatement(insert);
       stmt.execute();
       ResultSet rs = stmt.getResultSet(); 

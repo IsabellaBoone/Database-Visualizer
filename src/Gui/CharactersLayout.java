@@ -46,7 +46,6 @@ public class CharactersLayout extends JPanel {
     
     
     setBackground(Color.DARK_GRAY);
-//    setLayout(new GridBagLayout());
     setLayout(new BorderLayout()); 
     characterNames = rmi.getAllCharacterNames();
     selectedName = characterNames[0]; 
@@ -56,8 +55,6 @@ public class CharactersLayout extends JPanel {
     statsPanel = genStatsPanel(); 
     add(statsPanel, BorderLayout.EAST);
     
-    revalidate();
-    repaint();
   }
 
   private JPanel genCharacterPanel() {
@@ -167,7 +164,11 @@ public class CharactersLayout extends JPanel {
       }
     });
 
-    
+    addUser.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        new AddUser(rmi); 
+      }
+    });
     
     panel.add(addChar);
     panel.add(editChar);

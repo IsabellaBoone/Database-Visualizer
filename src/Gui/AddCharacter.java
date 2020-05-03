@@ -178,11 +178,8 @@ public class AddCharacter extends JFrame{
           + "Strength, Stamina, LocationId, pUserName) VALUES ('" + name + "', " +
         maxHP + ", " + curHP + ", " + str + ", " + stam + ", " + loc 
         + ", '" + user + "');";
-//      System.out.println(insert);
         java.sql.Statement stmt = rmi.getConncetion().createStatement(); 
         stmt.execute(insert);
-        System.out.println(insert); 
-        System.out.println("Added character " + name);
     } catch(SQLException e) {
       e.printStackTrace();
     }
