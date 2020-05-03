@@ -44,11 +44,9 @@ public class CharactersLayout extends JPanel {
   public CharactersLayout(RetrieveManipulateInformation rmi) {
     this.rmi = rmi;
     
-    
+    // Initialize JPanel settings
     setBackground(Color.DARK_GRAY);
     setLayout(new BorderLayout()); 
-    characterNames = rmi.getAllCharacterNames();
-    selectedName = characterNames[0]; 
     
     characterPanel = genCharacterPanel();
     add(characterPanel, BorderLayout.WEST);
@@ -63,7 +61,7 @@ public class CharactersLayout extends JPanel {
     panel.setBackground(Color.DARK_GRAY);
     panel.setLayout(new BorderLayout());
     
-    // Size for each panel
+    // Size for panel
     Dimension d = new Dimension(450, 650);
     panel.setMinimumSize(d);
     panel.setPreferredSize(d);
@@ -99,6 +97,7 @@ public class CharactersLayout extends JPanel {
           label.setBackground(new Color(234,201,55));
           selectedNameJLabel = label; 
           selectedName = characterNames[x];
+          selectedIndex = x; 
           refreshStatsPanel(); 
         }
       });
@@ -116,9 +115,11 @@ public class CharactersLayout extends JPanel {
    * @return
    */
   private JPanel addCharacterButtons() {
+    // JPanel settings
     JPanel panel = new JPanel(); 
-    panel.setLayout(new GridLayout(2, 3));
+    panel.setLayout(new GridLayout(0, 2));
     
+    // Dimensions
     Dimension d = new Dimension(450, 75);
     panel.setMinimumSize(d);
     panel.setPreferredSize(d);
@@ -182,7 +183,7 @@ public class CharactersLayout extends JPanel {
     panel.setBackground(Color.DARK_GRAY);
     panel.setLayout(new BorderLayout());
     
-    // Size for each panel
+    // Size for panel
     Dimension d = new Dimension(450, 700);
     panel.setMinimumSize(d);
     panel.setPreferredSize(d);
@@ -194,7 +195,13 @@ public class CharactersLayout extends JPanel {
     stats.setLayout(new GridLayout(5, 1));
 
     // Fetch stats
-    String[] charStats = rmi.getCharacterStats(selectedName);
+    String[] charStats;  
+    if(selectedName == null) {
+      charStats = rmi.getCharacterStats(characterNames[0]);
+    } else {
+      charStats = rmi.getCharacterStats(selectedName);
+    }
+    
 
     panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Stats:" + "</H1></html>"),
         BorderLayout.NORTH);
@@ -211,24 +218,30 @@ public class CharactersLayout extends JPanel {
     JLabel locLabel = new JLabel(loc, SwingConstants.CENTER);
     JLabel userLabel = new JLabel(user, SwingConstants.CENTER);
     
+    // Add all stats to panel
     stats.add(hpLabel);
     stats.add(strStamLabel);
     stats.add(locLabel);
     stats.add(userLabel);
     
     panel.add(stats, BorderLayout.CENTER);
+    
     return panel;
   }
   
   private void refreshCharacterPanel() {
+    remove(characterPanel);
     characterPanel = genCharacterPanel(); 
     SwingUtilities.updateComponentTreeUI(characterPanel);
-    
+    add(characterPanel, BorderLayout.WEST);
     validate();
     repaint();
   }
+  
   private void refreshStatsPanel() {
+    remove(statsPanel);
     statsPanel = genStatsPanel();
+    add(statsPanel, BorderLayout.EAST);
     SwingUtilities.updateComponentTreeUI(statsPanel);
 
     validate();
