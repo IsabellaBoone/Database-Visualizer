@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -116,7 +118,7 @@ public class CharactersLayout extends JPanel {
   private JPanel addCharacterButtons() {
     // JPanel settings
     JPanel panel = new JPanel(); 
-    panel.setLayout(new GridLayout(0, 2));
+    panel.setLayout(new GridLayout(0, 3));
     
     // Dimensions
     Dimension d = new Dimension(450, 75);
@@ -128,13 +130,19 @@ public class CharactersLayout extends JPanel {
     JButton addChar = new JButton("Add Character"), 
         editChar = new JButton("Edit Character"),
         deleteChar = new JButton("Delete Character"),
-        addUser = new JButton("Add User"); 
+        addUser = new JButton("Add User"),
+        deleteUser = new JButton("Delete User"),
+        refresh = new JButton("Refresh"); 
     
     addChar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         System.out.println("Add character"); 
-        new AddCharacter(rmi); 
-        refresh();
+        new AddCharacter(rmi).addWindowListener(new WindowAdapter() {
+          public void windowClosed(WindowEvent arg0) {
+            System.out.println("addchar closed");
+            refresh();
+          }
+        });; 
       }
     });
     
@@ -144,8 +152,12 @@ public class CharactersLayout extends JPanel {
         if(selectedName == null) {
           failureToSelect(); 
         } else {
-          new EditCharacter(rmi, selectedName); 
-          refresh();
+          new EditCharacter(rmi, selectedName).addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent arg0) {
+              System.out.println("editchar adduser"); 
+              refresh();
+            }
+          });
         }
       }
     });
@@ -156,7 +168,8 @@ public class CharactersLayout extends JPanel {
         if (selectedName == null) {
           failureToSelect(); 
         } else {
-          new DeleteCharacter(rmi, selectedName); 
+          new DeleteCharacter(rmi, selectedName);
+          selectedName = null; 
           refresh(); 
         }
       }
@@ -164,7 +177,18 @@ public class CharactersLayout extends JPanel {
 
     addUser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new AddUser(rmi); 
+        new AddUser(rmi);
+      }
+    });
+    
+    deleteUser.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        System.out.println(); 
+      }
+    });
+    
+    refresh.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
         refresh();
       }
     });
@@ -174,7 +198,7 @@ public class CharactersLayout extends JPanel {
     panel.add(editChar);
     panel.add(deleteChar);
     panel.add(addUser);
-    
+    panel.add(refresh);
     return panel;
   }
   private JPanel genStatsPanel() {
@@ -193,14 +217,15 @@ public class CharactersLayout extends JPanel {
     JPanel stats = new JPanel();
     stats.setBackground(Color.LIGHT_GRAY);
     stats.setLayout(new GridLayout(5, 1));
-
+    
     // Fetch stats
     String[] charStats;  
     if(selectedName == null) {
       charStats = rmi.getCharacterStats(characterNames[0]);
       panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
-        BorderLayout.NORTH);
+          BorderLayout.NORTH);
     } else {
+      System.out.println(selectedName); 
       charStats = rmi.getCharacterStats(selectedName);
       panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
           BorderLayout.NORTH);

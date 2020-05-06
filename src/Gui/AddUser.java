@@ -16,11 +16,15 @@ import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
 
-public class AddUser extends JFrame {
-  RetrieveManipulateInformation rmi = null;
+/**
+ * 
+ * @author Isabella
+ *
+ */
+public class AddUser extends Panels {
   private String username, email, password; 
   public AddUser(RetrieveManipulateInformation rmi) {
-    this.rmi = rmi; 
+    setRMI(rmi); 
     
     setLayout(new GridLayout(0, 2)); 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -69,7 +73,7 @@ public class AddUser extends JFrame {
         } else {
           addUser(); 
           dispose();
-          userAddedSuccessfully();
+          success(username + " added succesfully!");
         }
       }
     });
@@ -85,36 +89,5 @@ public class AddUser extends JFrame {
       e.printStackTrace();
     }
   }
-  private void fail(String reason) {
-    JFrame frame = new JFrame("Error");
-    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel("Add failed - " + reason);
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-    
-  }
   
-  private void userAddedSuccessfully() {
-    JFrame frame = new JFrame("Success");
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel(username + " was added successfully!");
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-  }
 }

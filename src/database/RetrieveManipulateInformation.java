@@ -494,7 +494,7 @@ public class RetrieveManipulateInformation {
       ResultSet rs = stmt.getResultSet();
 
       rs.next();
-
+      
       stats[0] = String.valueOf(rs.getInt("MaxHP"));
       stats[1] = String.valueOf(rs.getInt("CurrentHP"));
       stats[2] = String.valueOf(rs.getInt("Strength"));
@@ -596,12 +596,13 @@ public class RetrieveManipulateInformation {
     String select = "SELECT Count(*) from Player WHERE Username = '" + username + "';";
     try {
       PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      
       stmt.execute();
-
+      
       ResultSet rs = stmt.getResultSet();
-
+      
       rs.next();
-
+      
       if (rs.getInt(1) > 0) {
         return true;
       } else {
