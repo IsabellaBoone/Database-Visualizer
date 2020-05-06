@@ -100,7 +100,7 @@ public class ItemsLayout extends JPanel{
               selected = label;
               selectedId = itemsList[x];
           }
-      });
+      }); 
       data.add(label);
     }
     return data;
