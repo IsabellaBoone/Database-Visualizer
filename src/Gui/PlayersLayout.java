@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,7 +28,7 @@ import database.RetrieveManipulateInformation;
 //Author: Joshua J
 public class PlayersLayout extends JPanel{
 	  private RetrieveManipulateInformation rmi;
-	  private JPanel characterPanel, statsPanel;
+	  private JPanel characterPanel, statsPanel, itemsPanel;
 	  private JLabel selectedNameJLabel = null;
 	  private String[] characterNames;
 	  private String selectedName = null;
@@ -38,13 +39,20 @@ public class PlayersLayout extends JPanel{
 	        
 	        // Initialize JPanel settings
 	    setBackground(Color.DARK_GRAY);
-	    setLayout(new BorderLayout()); 
+	    setLayout(new BorderLayout());
+	    itemsPanel = genItemsPanel();
+	    add(itemsPanel, BorderLayout.CENTER);
         characterPanel = genCharacterPanel();
 	    add(characterPanel, BorderLayout.WEST);
 	    statsPanel = genStatsPanel(); 
 	    add(statsPanel, BorderLayout.EAST);
+	    
 	  }
 	  
+	  /**
+	   * Generates a character panel
+	   * @return
+	   */
 	  private JPanel genCharacterPanel() {
 		    // Entire panel, that will have header and panel of names
 		    JPanel panel = new JPanel();
@@ -52,7 +60,7 @@ public class PlayersLayout extends JPanel{
 		    panel.setLayout(new BorderLayout());
 		    
 		    // Size for panel
-		    Dimension d = new Dimension(450, 650);
+		    Dimension d = new Dimension(350, 650);
 		    panel.setMinimumSize(d);
 		    panel.setPreferredSize(d);
 		    panel.setMaximumSize(d);
@@ -68,7 +76,7 @@ public class PlayersLayout extends JPanel{
 		    characters.setBackground(Color.LIGHT_GRAY);
 		    characters.setLayout(new GridLayout(rmi.getNumCharacters(), 1));
 
-		    // Initialize character names
+		    // Initialize character names in character panel
 		    characterNames = rmi.getAllCharacterNames();
 
 		    // Add header
@@ -168,6 +176,11 @@ public class PlayersLayout extends JPanel{
 	    
 	    return panel;
 	  }
+	  
+	  /**
+	   * Generage a stat panel
+	   * @return
+	   */
 	  private JPanel genStatsPanel() {
 	    // Entire panel, that will have header and panel of names
 	    JPanel panel = new JPanel();
@@ -175,7 +188,7 @@ public class PlayersLayout extends JPanel{
 	    panel.setLayout(new BorderLayout());
 	    
 	    // Size for panel
-	    Dimension d = new Dimension(450, 700);
+	    Dimension d = new Dimension(300, 500);
 	    panel.setMinimumSize(d);
 	    panel.setPreferredSize(d);
 	    panel.setMaximumSize(d);
@@ -220,6 +233,78 @@ public class PlayersLayout extends JPanel{
 	    return panel;
 	  }
 	  
+	  /**
+	   * Generate an items panel
+	   * @return
+	   */
+	  private JPanel genItemsPanel() {
+		    // Entire panel, that will have header and panel of names
+		    JPanel panel = new JPanel();
+		    panel.setBackground(Color.WHITE);
+		    panel.setLayout(new BorderLayout());
+		    
+		    // Size for panel
+		    Dimension d = new Dimension(300, 700);
+		    panel.setMinimumSize(d);
+		    panel.setPreferredSize(d);
+		    panel.setMaximumSize(d);
+
+		    // Panel of stats
+		    JPanel items = new JPanel();
+		    items.setBackground(Color.LIGHT_GRAY);
+		    items.setLayout(new GridLayout(5, 1));
+
+		    
+		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
+			        BorderLayout.NORTH);
+		    
+		 // Fetch items from characters
+		    String[] itemStats;  
+		    if(selectedName == null) {
+		      itemStats = rmi.getAllItems(characterNames[0]);
+		      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Items:" + "</H1></html>", SwingUtilities.CENTER),
+		        BorderLayout.NORTH);
+		    } else {
+		      itemStats = rmi.getCharacterStats(selectedName);
+		      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Items:" + "</H1></html>", SwingUtilities.CENTER),
+		          BorderLayout.NORTH);
+		    }
+		    
+//		    // Format strings
+//		    String HP = itemStats[1] + "/" + itemStats[0] + "HP";
+//		    String strStam = itemStats[2] + " Strength " + itemStats[3] + " Stamina"; 
+//		    String loc = "Located in: " + rmi.getLocType(itemStats[4]) + ": " + itemStats[4];
+//		    String user = "Belongs to: " + itemStats[5]; 
+
+//		    // Add JLabel
+//		    JLabel hpLabel = new JLabel(HP, SwingConstants.CENTER);
+//		    JLabel strStamLabel = new JLabel(strStam, SwingConstants.CENTER);
+//		    JLabel locLabel = new JLabel(loc, SwingConstants.CENTER);
+//		    JLabel userLabel = new JLabel(user, SwingConstants.CENTER);
+//		    
+
+		    return panel;
+		  }
+	  
+//	  private void updateContents() {
+//
+//		    Dimension d = new Dimension(350, 30);
+//		    ResultSet rs = null;
+//		    try {
+//		      // items
+//		      rs = RetrieveManipulateInformation.getConnection().createStatement()
+//		          .executeQuery("SELECT ItemId FROM ITEM WHERE ITEM.LocationId = " + locationIDs[selectedLocationIndex]);
+//		      while (rs.next()) {
+//		        JLabel item = new JLabel(
+//		            "<html><br style = \"font-size:2px;\"><p style = \"color:white; font-size:15px;\">ItemId = "
+//		                + rs.getInt("ItemId") + "</p><br style = \"font-size:2px;\"></html>");
+//		        
+//		        item.setMinimumSize(d);
+//		        item.setPreferredSize(d);
+//		        item.setMaximumSize(d);
+//		      }
+//		    }
+//	  }
 	  
 	  private void refresh() {
 	    remove(characterPanel);

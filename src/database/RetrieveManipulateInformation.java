@@ -350,6 +350,59 @@ public class RetrieveManipulateInformation {
     return names;
   }
 
+  
+  /**
+   * Retrieve all items from a specific character. Utilizes store
+   * procedure.
+   * 
+   * @param character holding items
+   * @return String[] of all items the character has.
+   */
+  public String[] getAllItemIDFromChars(String charname) {
+    String call = "CALL " + procedureNames[2] + "(?);";
+    String[] items = new String[getNumItemsFromChar(charname)];
+    try {
+      CallableStatement stmt = m_dbConn.prepareCall(call);
+      stmt.setString(1, charname);
+      stmt.execute();
+
+      ResultSet rs = stmt.getResultSet();
+
+      int i = 0;
+      while ((rs.next()) && (i < items.length)) {
+        items[i] = rs.getString("Name");
+        i++;
+      }
+
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+      System.out.println("Syntax error (probably, dunno)");
+    }
+
+    return items;
+  }
+  
+  /**
+   * Gets the number of items from a specific character
+   * @param charname
+   * @return String[] of the items held by the characrer
+   */
+  public int getNumItemsFromChar(String charname) {
+	    try {
+	      Statement stmt = m_dbConn.createStatement();
+	      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Item WHERE ///// = '" + charname + "'; ");
+	      // Count how many items the character has
+
+	      r.next();
+	      return r.getInt("count(*)");
+
+	    } catch (SQLException e) {
+//	      e.printStackTrace();
+	      return -1; // If this number is actually accidentally used, it will throw an error.
+	    }
+	  }
+  
+  
   /**
    * Fetch all character names in the database
    * @return String[] of all character names
