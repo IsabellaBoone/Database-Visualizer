@@ -270,7 +270,7 @@ public class AddItem extends JFrame{
   
   private void addNewItem() {
     try {
-      Statement stmt = RetrieveManipulateInformation.getConncetion().createStatement();
+      Statement stmt = RetrieveManipulateInformation.getConnection().createStatement();
       stmt.execute("INSERT INTO ITEM VALUES (" + id + ", " + weight + ", " + volume + ", " + location + ", "
           + (character.equals("(Optional)") ? "null" : character)  + ");");
     } catch (SQLException e) {

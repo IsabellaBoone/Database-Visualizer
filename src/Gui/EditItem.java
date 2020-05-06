@@ -129,7 +129,7 @@ public class EditItem extends JFrame{
     }
     
     try {
-      Statement stmt = rmi.getConncetion().createStatement();
+      Statement stmt = rmi.getConnection().createStatement();
       
       stmt.execute("UPDATE ITEM SET ITEMID = " + id + ", VOLUME = " + volume + ", WEIGHT = " + weight + ", LOCATIONID = " + loc + ", cName = " + 
       (cName.equals("") || cName.equals("null")? "null" : "\'" + cName + "\'")

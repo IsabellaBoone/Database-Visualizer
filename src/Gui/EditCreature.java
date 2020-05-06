@@ -135,7 +135,7 @@ public class EditCreature extends JFrame {
     locId = Integer.parseInt(locTxt.getText().strip());
 
     try {
-      Statement stmt = RetrieveManipulateInformation.getConncetion().createStatement();
+      Statement stmt = RetrieveManipulateInformation.getConnection().createStatement();
 
       stmt.execute("UPDATE Creature SET IdNumber = " + id + ", CurrentHP =" + curHP + ", MaxHP = " + MaxHP + ", Stamina = " + Stamina + ", Strength = " + Strength
           + ", Protection = " + Protection + ", LocationId = " + locId + " WHERE IdNumber = " + oldId + ";");

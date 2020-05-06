@@ -163,7 +163,7 @@ public class AddCreature extends JFrame {
 
   private void addNewItem() {
     try {
-      Statement stmt = RetrieveManipulateInformation.getConncetion().createStatement();
+      Statement stmt = RetrieveManipulateInformation.getConnection().createStatement();
       stmt.execute("INSERT INTO Creature VALUES (" + id + ", " + curHP + ", " + MaxHP + ", " + Stamina + ", " + Strength
           + ", " + Protection + ", " + (location.equals("(Optional)") ? "null" : location) + ");");
     } catch (SQLException e) {

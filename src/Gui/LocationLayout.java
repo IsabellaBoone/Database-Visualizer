@@ -1,7 +1,6 @@
 package Gui;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -24,19 +23,22 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import database.RetrieveManipulateInformation;
-import javax.swing.JPanel;
 
 //AUTHOR Joel Gingrich
 //TODO add edit and add options
 public class LocationLayout extends JPanel {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private RetrieveManipulateInformation rmi;
   private JPanel locationPanel, contentPanel;
   private JLabel selectedLocation, selectedContent;
   private JLabel[] locationLabels;
   private ArrayList<JLabel> locationContents = new ArrayList<JLabel>();
   private String[] locationAreaTypes;
-  private int selectedLocationIndex, selectedContentIndex;
+  private int selectedLocationIndex, type;
   private int[] locationIDs;
 
   public LocationLayout(RetrieveManipulateInformation rmi) {
@@ -173,7 +175,6 @@ public class LocationLayout extends JPanel {
           for (int j = 0; j < locationContents.size(); j++) {
             if (e.getSource() == locationContents.get(j)) {
               selectedContent = locationContents.get(j);
-              selectedContentIndex = j;
 
               locationContents.get(j).setOpaque(true);
               locationContents.get(j).setBackground(new Color(234, 201, 55));
@@ -223,7 +224,7 @@ public class LocationLayout extends JPanel {
     delete.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        deleteItem();
+        delete(1);
         
       }
     });
@@ -231,7 +232,7 @@ public class LocationLayout extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        edit();
+        edit(1);
       }
 
     });
@@ -251,7 +252,7 @@ public class LocationLayout extends JPanel {
     deleteC.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        deleteItem();
+        delete(2);
 
       }
     });
@@ -259,7 +260,7 @@ public class LocationLayout extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent arg0) {
-        edit();
+        edit(2);
       }
 
     });
@@ -290,7 +291,7 @@ public class LocationLayout extends JPanel {
     ResultSet rs = null;
     try {
       // items
-      rs = RetrieveManipulateInformation.getConncetion().createStatement()
+      rs = RetrieveManipulateInformation.getConnection().createStatement()
           .executeQuery("SELECT ItemId FROM ITEM WHERE ITEM.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
@@ -304,7 +305,7 @@ public class LocationLayout extends JPanel {
       }
 
       // creatures
-      rs = RetrieveManipulateInformation.getConncetion().createStatement().executeQuery(
+      rs = RetrieveManipulateInformation.getConnection().createStatement().executeQuery(
           "SELECT IdNumber FROM Creature WHERE Creature.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
@@ -318,7 +319,7 @@ public class LocationLayout extends JPanel {
       }
 
       // character
-      rs = RetrieveManipulateInformation.getConncetion().createStatement().executeQuery(
+      rs = RetrieveManipulateInformation.getConnection().createStatement().executeQuery(
           "SELECT Name FROM Characters WHERE Characters.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
@@ -346,29 +347,29 @@ public class LocationLayout extends JPanel {
       selectedContent.setBackground(new Color(132, 132, 132));
   }
 
-  private void deleteItem() {
+  private void delete(int type) {
     String content = selectedContent.getText();
     if (content != null) {
-      if (content.contains("Item")) {
+      if (content.contains("Item") && type == 1) {
         content = content.substring(86);
         content = content.substring(0, content.indexOf("<"));
         int id = Integer.parseInt(content);
 
         try {
-          RetrieveManipulateInformation.getConncetion().createStatement()
+          RetrieveManipulateInformation.getConnection().createStatement()
               .execute("DELETE FROM ITEM WHERE ItemId = " + id);
           selectedContent = null;
         } catch (SQLException e) {
           e.printStackTrace();
         }
         refreshContentPanel();
-      } else if (content.contains("Creature")) {
+      } else if (content.contains("Creature") && type == 2) {
         content = content.substring(91);
         content = content.substring(0, content.indexOf("<"));
         int id = Integer.parseInt(content);
 
         try {
-          RetrieveManipulateInformation.getConncetion().createStatement()
+          RetrieveManipulateInformation.getConnection().createStatement()
               .execute("DELETE FROM Creature WHERE IdNumber = " + id);
           selectedContent = null;
         } catch (SQLException e) {
@@ -379,17 +380,17 @@ public class LocationLayout extends JPanel {
     }
   }
 
-  private void edit() {
+  private void edit(int type) {
     ResultSet rs = null;
     String content = selectedContent.getText();
     // if item
-    if (content.contains("Item")) {
+    if (content.contains("Item") && type == 1) {
       content = content.substring(86);
       content = content.substring(0, content.indexOf("<"));
       int id = Integer.parseInt(content);
 
       try {
-        rs = RetrieveManipulateInformation.getConncetion().createStatement()
+        rs = RetrieveManipulateInformation.getConnection().createStatement()
             .executeQuery("SELECT * FROM Item WHERE Item.ItemId = " + id);
         rs.next();
       } catch (SQLException e) {
@@ -401,14 +402,14 @@ public class LocationLayout extends JPanel {
           refreshContentPanel();
         }
       });
-    } else if (content.contains("Creature")) {
+    } else if (content.contains("Creature") && type == 2) {
 
       content = content.substring(91);
       content = content.substring(0, content.indexOf("<"));
       int id = Integer.parseInt(content);
 
       try {
-        rs = RetrieveManipulateInformation.getConncetion().createStatement()
+        rs = RetrieveManipulateInformation.getConnection().createStatement()
             .executeQuery("SELECT * FROM Creature WHERE Creature.IdNumber = " + id);
         rs.next();
       } catch (SQLException e) {
