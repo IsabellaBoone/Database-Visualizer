@@ -122,7 +122,7 @@ public class EditItem extends JFrame{
     cName = cNameTxt.getText();  
     String loc;
     try {
-      locId = Integer.parseInt(locTxt.getText());
+      locId = Integer.parseInt(locTxt.getText().substring(0, locTxt.getText().indexOf(" ") == -1 ? locTxt.getText().length() : locTxt.getText().indexOf(" ")));
       loc = "" +locId;
     }catch(NullPointerException e) {
       loc = "null";
