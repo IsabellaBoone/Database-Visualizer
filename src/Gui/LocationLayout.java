@@ -25,12 +25,9 @@ import javax.swing.SwingConstants;
 import database.RetrieveManipulateInformation;
 
 //AUTHOR Joel Gingrich
-//TODO add edit and add options
+//TODO add comments
 public class LocationLayout extends JPanel {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
   private RetrieveManipulateInformation rmi;
   private JPanel locationPanel, contentPanel;
@@ -47,6 +44,9 @@ public class LocationLayout extends JPanel {
     initializeJPanel();
   }
 
+  /**
+   * Initial construction of all JPanels
+   */
   private void initializeJPanel() {
     setBackground(Color.DARK_GRAY);
     setLayout(new GridBagLayout());
@@ -64,6 +64,11 @@ public class LocationLayout extends JPanel {
 
   }
 
+  /**
+   * builds the panel that shows the list of locations
+   * 
+   * @return completed panel
+   */
   private JPanel buildLocationPanel() {
     JPanel panel = new JPanel();
     panel.setBackground(new Color(132, 132, 132));
@@ -93,7 +98,7 @@ public class LocationLayout extends JPanel {
 
     panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 30px\">" + "Locations:" + "</H1></html>"),
         BorderLayout.NORTH);
-
+    // adds creates JLabels with mouse listeners for all locations
     for (int i = 0; i < locationAreaTypes.length; i++) {
       String areaType = "<html><body style = \"color:white; font-size: 22px\">" + locationAreaTypes[i] + ": "
           + locationIDs[i] + "</body></html>";
@@ -103,8 +108,6 @@ public class LocationLayout extends JPanel {
       locationLabels[i].setMinimumSize(d);
       locationLabels[i].setPreferredSize(d);
       locationLabels[i].setMaximumSize(d);
-
-      // locationLabels[i].setMinimumSize(new Dimension(400,100));
 
       locationLabels[i].addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
@@ -135,6 +138,11 @@ public class LocationLayout extends JPanel {
     return panel;
   }
 
+  /**
+   * builds the panel that shows the list of items, creatures and characters
+   * 
+   * @return completed panel
+   */
   private JPanel buildObjListPanel() {
     JPanel panel = new JPanel();
     Dimension d = new Dimension(415, 480);
@@ -161,10 +169,8 @@ public class LocationLayout extends JPanel {
     c.gridy = 0;
     c.weightx = 0.95;
     c.ipady = 20;
-
+    // for all contents apply action listeners
     for (int i = 0; i < locationContents.size(); i++) {
-
-      // locationLabels[i].setMinimumSize(new Dimension(400,100));
 
       locationContents.get(i).addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
@@ -196,6 +202,11 @@ public class LocationLayout extends JPanel {
     return panel;
   }
 
+  /**
+   * constructs the buttons
+   * 
+   * @return finished buttons
+   */
   private JPanel buttons() {
     JPanel subPanel = new JPanel(), subSubPanel = new JPanel(), panel = new JPanel(new BorderLayout());
     JButton add = new JButton("Add Item"), edit = new JButton("Edit Item"), delete = new JButton("Delete Item");
@@ -209,6 +220,7 @@ public class LocationLayout extends JPanel {
     subSubPanel.add(addC);
     subSubPanel.add(editC);
     subSubPanel.add(deleteC);
+
     add.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent ae) {
@@ -221,13 +233,15 @@ public class LocationLayout extends JPanel {
         });
       }
     });
+
     delete.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
         delete(1);
-        
+
       }
     });
+
     edit.addActionListener(new ActionListener() {
 
       @Override
@@ -249,6 +263,7 @@ public class LocationLayout extends JPanel {
         });
       }
     });
+
     deleteC.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent arg0) {
@@ -256,6 +271,7 @@ public class LocationLayout extends JPanel {
 
       }
     });
+
     editC.addActionListener(new ActionListener() {
 
       @Override
@@ -270,6 +286,9 @@ public class LocationLayout extends JPanel {
     return panel;
   }
 
+  /**
+   * rebuilds the panels and updates the information in them
+   */
   private void refreshContentPanel() {
     updateContents();
     GridBagConstraints c = new GridBagConstraints();
@@ -285,6 +304,9 @@ public class LocationLayout extends JPanel {
     repaint();
   }
 
+  /*
+   * updates the contents of a location
+   */
   private void updateContents() {
     locationContents.clear();
     Dimension d = new Dimension(350, 30);
@@ -348,80 +370,88 @@ public class LocationLayout extends JPanel {
   }
 
   private void delete(int type) {
-    String content = selectedContent.getText();
-    if (content != null) {
+    if (selectedContent != null) {
+      String content = selectedContent.getText();
+      if (content != null) {
+
+        // for item
+        if (content.contains("Item") && type == 1) {
+          content = content.substring(86);
+          content = content.substring(0, content.indexOf("<"));
+          int id = Integer.parseInt(content);
+
+          try {
+            RetrieveManipulateInformation.getConnection().createStatement()
+                .execute("DELETE FROM ITEM WHERE ItemId = " + id);
+            selectedContent = null;
+          } catch (SQLException e) {
+            e.printStackTrace();
+          }
+          refreshContentPanel();
+
+          // for creatures
+        } else if (content.contains("Creature") && type == 2) {
+          content = content.substring(91);
+          content = content.substring(0, content.indexOf("<"));
+          int id = Integer.parseInt(content);
+
+          try {
+            RetrieveManipulateInformation.getConnection().createStatement()
+                .execute("DELETE FROM Creature WHERE IdNumber = " + id);
+            selectedContent = null;
+          } catch (SQLException e) {
+            e.printStackTrace();
+          }
+          refreshContentPanel();
+        }
+      }
+    }
+  }
+
+  private void edit(int type) {
+    if (selectedContent != null) {
+      ResultSet rs = null;
+      String content = selectedContent.getText();
+      // if item
       if (content.contains("Item") && type == 1) {
         content = content.substring(86);
         content = content.substring(0, content.indexOf("<"));
         int id = Integer.parseInt(content);
 
         try {
-          RetrieveManipulateInformation.getConnection().createStatement()
-              .execute("DELETE FROM ITEM WHERE ItemId = " + id);
-          selectedContent = null;
+          rs = RetrieveManipulateInformation.getConnection().createStatement()
+              .executeQuery("SELECT * FROM Item WHERE Item.ItemId = " + id);
+          rs.next();
         } catch (SQLException e) {
           e.printStackTrace();
         }
-        refreshContentPanel();
+
+        new EditItem(rs, rmi).addWindowListener(new WindowAdapter() {
+          public void windowClosed(WindowEvent arg0) {
+            refreshContentPanel();
+          }
+        });
+        // if creature
       } else if (content.contains("Creature") && type == 2) {
+
         content = content.substring(91);
         content = content.substring(0, content.indexOf("<"));
         int id = Integer.parseInt(content);
 
         try {
-          RetrieveManipulateInformation.getConnection().createStatement()
-              .execute("DELETE FROM Creature WHERE IdNumber = " + id);
-          selectedContent = null;
+          rs = RetrieveManipulateInformation.getConnection().createStatement()
+              .executeQuery("SELECT * FROM Creature WHERE Creature.IdNumber = " + id);
+          rs.next();
         } catch (SQLException e) {
           e.printStackTrace();
         }
-        refreshContentPanel();
+
+        new EditCreature(rs, rmi).addWindowListener(new WindowAdapter() {
+          public void windowClosed(WindowEvent arg0) {
+            refreshContentPanel();
+          }
+        });
       }
     }
-  }
-
-  private void edit(int type) {
-    ResultSet rs = null;
-    String content = selectedContent.getText();
-    // if item
-    if (content.contains("Item") && type == 1) {
-      content = content.substring(86);
-      content = content.substring(0, content.indexOf("<"));
-      int id = Integer.parseInt(content);
-
-      try {
-        rs = RetrieveManipulateInformation.getConnection().createStatement()
-            .executeQuery("SELECT * FROM Item WHERE Item.ItemId = " + id);
-        rs.next();
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-
-      new EditItem(rs, rmi).addWindowListener(new WindowAdapter() {
-        public void windowClosed(WindowEvent arg0) {
-          refreshContentPanel();
-        }
-      });
-    } else if (content.contains("Creature") && type == 2) {
-
-      content = content.substring(91);
-      content = content.substring(0, content.indexOf("<"));
-      int id = Integer.parseInt(content);
-
-      try {
-        rs = RetrieveManipulateInformation.getConnection().createStatement()
-            .executeQuery("SELECT * FROM Creature WHERE Creature.IdNumber = " + id);
-        rs.next();
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-
-      new EditCreature(rs, rmi).addWindowListener(new WindowAdapter() {
-        public void windowClosed(WindowEvent arg0) {
-          refreshContentPanel();
-        }
-      });
-    }
-
   }
 }

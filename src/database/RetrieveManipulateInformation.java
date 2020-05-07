@@ -21,21 +21,21 @@ public class RetrieveManipulateInformation {
 
   final int playerUsernames = 0, allItems = 1, charNames = 2, locIdNums = 3, locAreaTypes = 4, charStats = 5,
       characterNames = 6, characterItems = 7;
-  String[] procedures = { "CREATE PROCEDURE get_all_player_usernames()" + " SELECT Username FROM Player;",
+  String[] procedures = { "CREATE PROCEDURE get_all_player_usernames()" + " SELECT Username FROM Player;",  //Isabella
 
-      "CREATE PROCEDURE get_all_items() " + "SELECT ItemId from Item;",
+      "CREATE PROCEDURE get_all_items() " + "SELECT ItemId from Item;", //Chase
 
-      "CREATE PROCEDURE get_character_names(IN n varchar(20))" + "SELECT Name FROM Characters WHERE pUserName = n;",
+      "CREATE PROCEDURE get_character_names(IN n varchar(20))" + "SELECT Name FROM Characters WHERE pUserName = n;",  //Isabella
+      
+      "CREATE PROCEDURE get_all_location_idNumbers() " + "SELECT IdNumber from Location;",  //Joel
 
-      "CREATE PROCEDURE get_all_location_idNumbers() " + "SELECT IdNumber from Location;",
+      "CREATE PROCEDURE get_all_location_AreaTypes() " + "SELECT AreaType from Location;",  //Joel
 
-      "CREATE PROCEDURE get_all_location_AreaTypes() " + "SELECT AreaType from Location;",
+      "CREATE PROCEDURE get_character_stats(IN n varchar(20)) " + "SELECT * From Characters WHERE Name = n;", //Isabella
 
-      "CREATE PROCEDURE get_character_stats(IN n varchar(20)) " + "SELECT * From Characters WHERE Name = n;",
+      "CREATE PROCEDURE get_all_character_names() " + "SELECT Name FROM Characters;", //Isabella
 
-      "CREATE PROCEDURE get_all_character_names() " + "SELECT Name FROM Characters;",
-
-      "CREATE PROCEDURE get_all_character_items(IN n varchar(20)) " + "SELECT ItemId FROM Item WHERE cName = n;"
+      "CREATE PROCEDURE get_all_character_items(IN n varchar(20)) " + "SELECT ItemId FROM Item WHERE cName = n;"  //Josh
     		  
   }, procedureNames = { "get_all_player_usernames", "get_all_items", "get_character_names",
       "get_all_location_idNumbers", "get_all_location_AreaTypes", "get_character_stats", "get_all_character_names", "get_all_character_items"};
