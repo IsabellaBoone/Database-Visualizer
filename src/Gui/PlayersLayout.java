@@ -30,7 +30,7 @@ public class PlayersLayout extends JPanel{
 	  private RetrieveManipulateInformation rmi;
 	  private JPanel characterPanel, statsPanel, itemsPanel;
 	  private JLabel selectedNameJLabel = null;
-	  private String[] characterNames;
+	  private String[] characterNames, itemsWithChar; 
 	  private String selectedName = null;
 	  
 	  
@@ -41,12 +41,16 @@ public class PlayersLayout extends JPanel{
 	    setBackground(Color.DARK_GRAY);
 	    setLayout(new BorderLayout());
 	    itemsPanel = genItemsPanel();
-	    add(itemsPanel, BorderLayout.CENTER);
+
+	    //char -> border layout west
         characterPanel = genCharacterPanel();
 	    add(characterPanel, BorderLayout.WEST);
+	    //items -> border layout center
+	    itemsPanel = genItemsPanel();
+	    add(itemsPanel, BorderLayout.CENTER);
+	    //stats -> east border
 	    statsPanel = genStatsPanel(); 
 	    add(statsPanel, BorderLayout.EAST);
-	    
 	  }
 	  
 	  /**
@@ -104,79 +108,73 @@ public class PlayersLayout extends JPanel{
 		    
 		    names.setViewportView(characters);
 		    panel.add(names, BorderLayout.CENTER);
-		    panel.add(addCharacterButtons(), BorderLayout.SOUTH);
 		    return panel;
 		  }
+
 	  
-	  /**
-	   * Add character, remove character, modify character
+	  /** because there is one already made
+	   * Generates a Items panel
 	   * @return
 	   */
-	  private JPanel addCharacterButtons() {
-	    // JPanel settings
-	    JPanel panel = new JPanel(); 
-	    panel.setLayout(new GridLayout(0, 2));
-	    
-	    // Dimensions
-	    Dimension d = new Dimension(450, 75);
-	    panel.setMinimumSize(d);
-	    panel.setPreferredSize(d);
-	    panel.setMaximumSize(d);
-	    
-	    // Buttons
-	    JButton addChar = new JButton("Add Character"), 
-	        editChar = new JButton("Edit Character"),
-	        deleteChar = new JButton("Delete Character"),
-	        addUser = new JButton("Add User"); 
-	    
-	    addChar.addActionListener(new ActionListener() {
-	      public void actionPerformed(ActionEvent e) {
-	        System.out.println("Add character"); 
-	        new AddCharacter(rmi); 
-	        refresh();
-	      }
-	    });
-	    
-	    editChar.addActionListener(new ActionListener() {
-	      public void actionPerformed(ActionEvent e) {
-	        System.out.println("Edit Character"); 
-	        if(selectedName == null) {
-	          failureToSelect(); 
-	        } else {
-	          new EditCharacter(rmi, selectedName); 
-	          refresh();
-	        }
-	      }
-	    });
-	    
-	    deleteChar.addActionListener(new ActionListener() {
-	      public void actionPerformed(ActionEvent e) {
-	        System.out.println("Delete Character");
-	        if (selectedName == null) {
-	          failureToSelect(); 
-	        } else {
-	          new DeleteCharacter(rmi, selectedName); 
-	          refresh(); 
-	        }
-	      }
-	    });
+	  private JPanel genItemsPanel() {
+		    // Entire panel, that will have header and panel of names
+		    JPanel panel = new JPanel();
+		    panel.setBackground(Color.DARK_GRAY);
+		    panel.setLayout(new BorderLayout());
+		    
+		    // Size for panel
+		    Dimension d = new Dimension(350, 650);
+		    panel.setMinimumSize(d);
+		    panel.setPreferredSize(d);
+		    panel.setMaximumSize(d);
 
-	    addUser.addActionListener(new ActionListener() {
-	      public void actionPerformed(ActionEvent e) {
-	        new AddUser(rmi); 
-	        refresh();
-	      }
-	    });
-	    
-	    
-	    panel.add(addChar);
-	    panel.add(editChar);
-	    panel.add(deleteChar);
-	    panel.add(addUser);
-	    
-	    return panel;
-	  }
-	  
+		    // Scrollbar 
+		    JScrollPane names = new JScrollPane();
+		    names.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		    names.add(names.createVerticalScrollBar());
+		    names.getVerticalScrollBar().setUnitIncrement(20);
+		    
+		    // Panel of names
+		    JPanel items = new JPanel();
+		    items.setBackground(Color.LIGHT_GRAY);
+//		    if(selectedName == null) {
+//			    items.setLayout(new GridLayout(rmi.getNumItemsFromChar(characterNames[0]), 1)); 
+//		    }
+//		    else {
+//		    	items.setLayout(new GridLayout(rmi.getNumItemsFromChar(selectedName), 1));
+//		    }
+		    items.setLayout(new GridLayout(10, 1));
+		
+		    // Initialize item names in item panel
+		    itemsWithChar = rmi.getAllCharItems(selectedName);
+
+		    // Add header
+		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
+		        BorderLayout.NORTH);
+
+		    // Add all labels of items held by character
+		    for (int i = 0; i < itemsWithChar.length; i++) {
+		      final int x = i;
+		      String format = "<html><body style = \"color:black; font-size: 20px\">" + itemsWithChar[i] + "</body></html>";
+		      JLabel label = new JLabel(format, SwingConstants.CENTER);
+		      label.setOpaque(true);
+		      label.setBackground(Color.LIGHT_GRAY);
+		      label.addMouseListener(new MouseAdapter() {
+		        public void mouseClicked(MouseEvent e) {
+		          removeSelectedBackgroundChars(); 
+		          label.setBackground(new Color(234,201,55));
+		          selectedNameJLabel = label; 
+		          selectedName = characterNames[x];
+		          refreshStatsPanel(); 
+		        }
+		      });
+		      items.add(label); 
+		    } 
+		    
+		    names.setViewportView(items);
+		    panel.add(names, BorderLayout.CENTER);
+		    return panel;
+		  }	  
 	  /**
 	   * Generage a stat panel
 	   * @return
@@ -232,59 +230,7 @@ public class PlayersLayout extends JPanel{
 	    
 	    return panel;
 	  }
-	  
-	  /**
-	   * Generate an items panel
-	   * @return
-	   */
-	  private JPanel genItemsPanel() {
-		    // Entire panel, that will have header and panel of names
-		    JPanel panel = new JPanel();
-		    panel.setBackground(Color.WHITE);
-		    panel.setLayout(new BorderLayout());
-		    
-		    // Size for panel
-		    Dimension d = new Dimension(300, 700);
-		    panel.setMinimumSize(d);
-		    panel.setPreferredSize(d);
-		    panel.setMaximumSize(d);
 
-		    // Panel of stats
-		    JPanel items = new JPanel();
-		    items.setBackground(Color.LIGHT_GRAY);
-		    items.setLayout(new GridLayout(5, 1));
-
-		    
-		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
-			        BorderLayout.NORTH);
-		    
-		 // Fetch items from characters
-		    String[] itemStats;  
-		    if(selectedName == null) {
-		      itemStats = rmi.getAllItems(characterNames[0]);
-		      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Items:" + "</H1></html>", SwingUtilities.CENTER),
-		        BorderLayout.NORTH);
-		    } else {
-		      itemStats = rmi.getCharacterStats(selectedName);
-		      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Items:" + "</H1></html>", SwingUtilities.CENTER),
-		          BorderLayout.NORTH);
-		    }
-		    
-//		    // Format strings
-//		    String HP = itemStats[1] + "/" + itemStats[0] + "HP";
-//		    String strStam = itemStats[2] + " Strength " + itemStats[3] + " Stamina"; 
-//		    String loc = "Located in: " + rmi.getLocType(itemStats[4]) + ": " + itemStats[4];
-//		    String user = "Belongs to: " + itemStats[5]; 
-
-//		    // Add JLabel
-//		    JLabel hpLabel = new JLabel(HP, SwingConstants.CENTER);
-//		    JLabel strStamLabel = new JLabel(strStam, SwingConstants.CENTER);
-//		    JLabel locLabel = new JLabel(loc, SwingConstants.CENTER);
-//		    JLabel userLabel = new JLabel(user, SwingConstants.CENTER);
-//		    
-
-		    return panel;
-		  }
 	  
 //	  private void updateContents() {
 //

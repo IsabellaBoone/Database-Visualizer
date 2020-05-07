@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // fuck me daddy
+=======
+
+>>>>>>> 1afe1faa550ffc07c57afcbb79d73d8b0a0ebfcc
 
 package Gui;
 
