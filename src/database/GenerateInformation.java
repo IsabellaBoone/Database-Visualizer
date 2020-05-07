@@ -190,8 +190,8 @@ public class GenerateInformation {
   private void populateTables() {
     generatePlayers(); 
     generateLocations();
-    generateItems(); 
     generateCharacters(); 
+    generateItems(); 
     generateCreatures();
   }
   
@@ -477,11 +477,6 @@ public class GenerateInformation {
       int[] listIds = r.getAllItems();
       int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
       
-
-      if(DEBUG == 1) {
-        System.out.print(listIds[i] + " " + types[type]);
-      }
-      
       switch (type) {
       case (0): // Weapon
         insert += "Weapon VALUES (" + listIds[i] + "); ";
@@ -497,7 +492,7 @@ public class GenerateInformation {
         insert += "Armor VALUES (" + listIds[i] + ", '" + aLoc + "');";
         break;
       }
-
+      
       try {
 //        System.out.print(insert);
         PreparedStatement stmt = m_dbConn.prepareStatement(insert);
@@ -518,6 +513,9 @@ public class GenerateInformation {
    */
   private void generateItem() {
     generate g = new generate(); 
+    int flag = -1; 
+    int location = 0;
+    String user = null; 
 //    String insert = "INSERT INTO Item (Id, Weight, Volume, LocationId, cName) VALUES (?,?,?,?,?);";
     String insert = "INSERT INTO Item VALUES (?,?,?,?,?);";
     try {
@@ -525,9 +523,17 @@ public class GenerateInformation {
       int idNum = g.randomIdNum(), volume = ((int) (Math.floor((Math.random()) * MAX_VOL))),
         weight = ((int) (Math.floor((Math.random()) * MAX_WEIGHT)));
       
-      // Choose a random location
-      int[] loc = r.getAllLocationIds();
-      int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
+      // Choose a random location or character
+      if(Math.random() > 0.5) {
+        flag = 0;
+        String[] names = r.getAllCharacterNames(); 
+        user = names[(int) (Math.floor(Math.random() * names.length))];
+      } else {
+        flag = 1;
+        int[] loc = r.getAllLocationIds();
+        location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
+      }
+      
 
       if(DEBUG == 1) {
         System.out.print("i:" + idNum + "  w:" + weight + "  v:" + volume + "  l:" + location + "\t");
@@ -536,8 +542,15 @@ public class GenerateInformation {
       statement.setInt(1, idNum);
       statement.setInt(2, weight);
       statement.setInt(3, volume);
-      statement.setInt(4, location);
-      statement.setNull(5, java.sql.Types.VARCHAR);
+      if(flag == 0) {
+        statement.setNull(4, java.sql.Types.INTEGER);
+        statement.setString(5, user);
+      } else if (flag == 1) {
+        statement.setInt(4, location);
+        statement.setNull(5, java.sql.Types.VARCHAR);
+      }
+      
+      
       try {
         statement.execute();
       } catch (SQLException e) {
