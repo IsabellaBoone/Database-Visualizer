@@ -20,7 +20,7 @@ public class RetrieveManipulateInformation {
   static RetrieveManipulateInformation rmi;
 
   final int playerUsernames = 0, allItems = 1, charNames = 2, locIdNums = 3, locAreaTypes = 4, charStats = 5,
-      characterNames = 6;
+      characterNames = 6, characterItems = 7;
   String[] procedures = { "CREATE PROCEDURE get_all_player_usernames()" + " SELECT Username FROM Player;",
 
       "CREATE PROCEDURE get_all_items() " + "SELECT ItemId from Item;",
@@ -33,10 +33,12 @@ public class RetrieveManipulateInformation {
 
       "CREATE PROCEDURE get_character_stats(IN n varchar(20)) " + "SELECT * From Characters WHERE Name = n;",
 
-      "CREATE PROCEDURE get_all_character_names() " + "SELECT Name FROM Characters;"
+      "CREATE PROCEDURE get_all_character_names() " + "SELECT Name FROM Characters;",
 
+      "CREATE PROCEDURE get_all_character_items(IN n varchar(20)) " + "SELECT ItemId FROM Item WHERE cName = n;"
+    		  
   }, procedureNames = { "get_all_player_usernames", "get_all_items", "get_character_names",
-      "get_all_location_idNumbers", "get_all_location_AreaTypes", "get_character_stats", "get_all_character_names" };
+      "get_all_location_idNumbers", "get_all_location_AreaTypes", "get_character_stats", "get_all_character_names", "get_all_character_items"};
 
   private RetrieveManipulateInformation(Connection con) {
     this.m_dbConn = con;
@@ -350,38 +352,6 @@ public class RetrieveManipulateInformation {
     return names;
   }
 
-  
-  /**
-   * Retrieve all items from a specific character. Utilizes store
-   * procedure.
-   * 
-   * @param character holding items
-   * @return String[] of all items the character has.
-   */
-  public String[] getAllItemIDFromChars(String charname) {
-    String call = "CALL " + procedureNames[2] + "(?);";
-    String[] items = new String[getNumItemsFromChar(charname)];
-    try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
-      stmt.setString(1, charname);
-      stmt.execute();
-
-      ResultSet rs = stmt.getResultSet();
-
-      int i = 0;
-      while ((rs.next()) && (i < items.length)) {
-        items[i] = rs.getString("Name");
-        i++;
-      }
-
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-      System.out.println("Syntax error (probably, dunno)");
-    }
-
-    return items;
-  }
-  
   /**
    * Gets the number of items from a specific character
    * @param charname
@@ -390,7 +360,7 @@ public class RetrieveManipulateInformation {
   public int getNumItemsFromChar(String charname) {
 	    try {
 	      Statement stmt = m_dbConn.createStatement();
-	      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Item WHERE ///// = '" + charname + "'; ");
+	      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Item WHERE cName = '" + charname + "'; ");
 	      // Count how many items the character has
 
 	      r.next();
@@ -429,6 +399,33 @@ public class RetrieveManipulateInformation {
     return names;
   }
 
+  /**
+   * Fetch all character names in the database
+   * @return String[] of all character names
+   */
+  public String[] getAllCharItems(String name) {
+    String call = "CALL " + procedureNames[characterItems] + "(?);";
+    String[] names = new String[getNumItemsFromChar(name)];
+    try {
+      CallableStatement stmt = m_dbConn.prepareCall(call);
+      stmt.setString(1, name);
+      stmt.execute();
+
+      ResultSet rs = stmt.getResultSet();
+
+      int i = 0;
+      while (rs.next()) {
+        names[i] = "" + rs.getInt("ItemId");
+        i++;
+      }
+
+    } catch (SQLException e1) {
+      e1.printStackTrace();
+    }
+
+    return names;
+  }
+  
   /**
    * Fetch the number of chacters in the database.
    * @return int number of characters
@@ -531,7 +528,7 @@ public class RetrieveManipulateInformation {
     }
     return areatype;
   }
-
+  
   /**
    * Checks to see if the character exists given character name
    * 
