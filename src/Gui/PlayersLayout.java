@@ -134,16 +134,47 @@ public class PlayersLayout extends JPanel{
 		    names.add(names.createVerticalScrollBar());
 		    names.getVerticalScrollBar().setUnitIncrement(20);
 		    
-		    // Panel of names
+		    // Panel of items
+		    JPanel items = new JPanel(); 
+		    
+		    // check if selectedName == null, if so, check if characterNames[0] has items or not
+		    if(selectedName == null) {
+		      int numItems = rmi.getNumItemsFromChar(characterNames[0]);
+		      if(numItems == 0) {
+		        // If selectedName is null and characterNames[0] 
+		        items.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
+                BorderLayout.NORTH);
+            items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
+            return items; 
+		      } else {
+		        // If selectedName is null but it also contains items
+		        
+		      }
+		      
+		    } else {
+		      // check if selectedName has item or not
+		      
+		    }
+		    
 		    JPanel items = new JPanel();
 		    items.setBackground(Color.LIGHT_GRAY);
-//		    if(selectedName == null) {
-//			    items.setLayout(new GridLayout(rmi.getNumItemsFromChar(characterNames[0]), 1)); 
-//		    }
-//		    else {
-//		    	items.setLayout(new GridLayout(rmi.getNumItemsFromChar(selectedName), 1));
-//		    }
-		    items.setLayout(new GridLayout(10, 1));
+		    if(selectedName == null) {
+		      int num = rmi.getNumItemsFromChar(characterNames[0]);
+		      if(num == 0) {
+		        // If there is no selected name and characterNames[0] has no items
+		        panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
+		            BorderLayout.NORTH);
+		        items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
+		        return items; 
+		      } else {
+		        // If there is no selected name and characterNames[0] does have items
+		        
+		      }
+		    } else {
+		      // check if selectedName has 0 
+		      
+		    }
+//		    items.setLayout(new GridLayout(10, 1));
 		
 		    // Initialize item names in item panel
 		    itemsWithChar = rmi.getAllCharItems(selectedName);
@@ -175,6 +206,11 @@ public class PlayersLayout extends JPanel{
 		    panel.add(names, BorderLayout.CENTER);
 		    return panel;
 		  }	  
+	  
+	  private void noItems() {
+	    
+	  }
+	  
 	  /**
 	   * Generage a stat panel
 	   * @return
