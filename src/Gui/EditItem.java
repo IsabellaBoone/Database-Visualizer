@@ -117,12 +117,12 @@ public class EditItem extends JFrame{
   
   private void change() {
     id = Integer.parseInt(itemId.getText());
-    volume = Integer.parseInt(vTxt.getText().substring(0, vTxt.getText().indexOf(" ")));
-    weight = Integer.parseInt(wTxt.getText().substring(0, wTxt.getText().indexOf(" ")));
+    volume = Integer.parseInt(vTxt.getText().substring(0, vTxt.getText().indexOf(" ") == -1 ? vTxt.getText().length() : vTxt.getText().indexOf(" ")));
+    weight = Integer.parseInt(wTxt.getText().substring(0, wTxt.getText().indexOf(" ") == -1 ? wTxt.getText().length() : wTxt.getText().indexOf(" ")));
     cName = cNameTxt.getText();  
     String loc;
     try {
-      locId = Integer.parseInt(locTxt.getText());
+      locId = Integer.parseInt(locTxt.getText().substring(0, locTxt.getText().indexOf(" ") == -1 ? locTxt.getText().length() : locTxt.getText().indexOf(" ")));
       loc = "" +locId;
     }catch(NullPointerException e) {
       loc = "null";
