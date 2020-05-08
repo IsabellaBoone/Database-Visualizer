@@ -19,7 +19,7 @@
 	    stats.setBackground(Color.LIGHT_GRAY);
 	    stats.setLayout(new GridLayout(5, 1));
 
-	    // Fetch stats
+	    // Fetch stats pog
 	    String[] charStats;  
 	    if(selectedName == null) {
 	      charStats = rmi.getCharacterStats(characterNames[0]);
