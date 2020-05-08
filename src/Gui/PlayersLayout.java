@@ -12,7 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,10 +32,11 @@ import database.AccessDatabase;
 public class PlayersLayout extends JPanel{
 	  private AccessDatabase rmi;
 	  private JPanel characterPanel, statsPanel, itemsPanel;
-	  private JLabel selectedNameJLabel = null;
+	  private JLabel selectedNameJLabel = null, selectedItemJLabel = null;
 	  private String[] characterNames, itemsWithChar;
 	  private int[] itemIDs;
-	  private String selectedName = null;
+	  private String selectedName = null, selectedItem = null;
+	  JScrollPane items = new JScrollPane();
 	  
 	  
 	  public PlayersLayout(AccessDatabase rmi) {
@@ -138,10 +142,9 @@ public class PlayersLayout extends JPanel{
 		    panel.setMaximumSize(d);
 
 		    // Scrollbar 
-		    JScrollPane names = new JScrollPane();
-		    names.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		    names.add(names.createVerticalScrollBar());
-		    names.getVerticalScrollBar().setUnitIncrement(20);
+		    items.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		    items.add(items.createVerticalScrollBar());
+		    items.getVerticalScrollBar().setUnitIncrement(20);
 		    
 		    // Panel of items
 		    JPanel items = new JPanel(); 
@@ -184,25 +187,87 @@ public class PlayersLayout extends JPanel{
 		      label.setBackground(Color.LIGHT_GRAY);
 		      label.addMouseListener(new MouseAdapter() {
 		        public void mouseClicked(MouseEvent e) {
-		          removeSelectedBackgroundChars(); 
+		          removeSelectedBackgroundItems(); 
 		          label.setBackground(new Color(234,201,55));
-		          selectedNameJLabel = label; 
-		          selectedName = characterNames[x];
-		          refresh();
+		          selectedItemJLabel = label; 
+		          selectedItem = itemsWithChar[x];
 		        }
 		      });
 		      items.add(label); 
 		    } 
 		    
-		    names.setViewportView(items);
-		    panel.add(names, BorderLayout.CENTER);
+		    this.items.setViewportView(items);
+		    panel.add(this.items, BorderLayout.CENTER);
 		    return panel;
-		  }	  
+		  }	 
 	  
-	  private void noItems() {
-	    
+	  public void removeSelectedBackgroundItems() {
+		  if(selectedItemJLabel == null) {
+			  selectedItemJLabel.setBackground(Color.LIGHT_GRAY);
+		  }
 	  }
 	  
+	  /**
+	   * Add Item, remove Item
+	   * @return
+	   */
+	  private JPanel addItemButtons() {
+	    // JPanel settings
+	    JPanel panel = new JPanel(); 
+	    panel.setLayout(new GridLayout(0, 3));
+	    
+	    // Dimensions
+	    Dimension d = new Dimension(450, 75);
+	    panel.setMinimumSize(d);
+	    panel.setPreferredSize(d);
+	    panel.setMaximumSize(d);
+	    
+	    // Buttons
+	    JButton addItem = new JButton("Add Item"), 
+	        deleteItem = new JButton("Delete Item");
+	    
+		 // Add all buttons to panel
+	    panel.add(addItem);
+	    panel.add(deleteItem);
+	    addItem.addActionListener(new ActionListener() {
+	    // Add Item button
+	    @Override
+	      public void actionPerformed(ActionEvent ae) {
+	        System.out.println("Add Item");
+	        new AddItem(rmi).addWindowListener(new WindowAdapter() {
+	          @Override
+	          public void windowClosed(WindowEvent arg0) {
+	            items.setViewportView(genItemsPanel());
+	          }
+	        });
+	      }
+	    });
+	    deleteItem.addActionListener(new ActionListener() {
+	      @Override
+	      public void actionPerformed(ActionEvent arg0) {
+	        deleteItem();
+	      }
+	    });
+	    
+	    return panel;
+	  }
+	  
+	  /**
+	   * Used for deleting a specific item from the database
+	   */
+	  private void deleteItem() {
+		    if(selectedItemJLabel != null) {
+		      try {
+		        rmi.getConnection().createStatement().execute("DELETE FROM ITEM WHERE ItemId = " + selectedItem);
+		        selectedItemJLabel = null;
+		      }catch(SQLException e) {
+		        e.printStackTrace();
+		      }
+		      items.setViewportView(genItemsPanel());
+		    }
+		  }
+	  
+	
 	  /**
 	   * Generage a stat panel
 	   * @return
