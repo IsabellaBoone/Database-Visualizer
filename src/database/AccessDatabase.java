@@ -15,9 +15,9 @@ import java.sql.Statement;
  *
  */
 public class AccessDatabase {
-  static Connection m_dbConn = null;
+  static Connection conn = null;
 
-  static AccessDatabase rmi;
+  static AccessDatabase access;
 
   final int playerUsernames = 0, allItems = 1, charNames = 2, locIdNums = 3, locAreaTypes = 4, charStats = 5,
       characterNames = 6, characterItems = 7;
@@ -40,29 +40,42 @@ public class AccessDatabase {
   }, procedureNames = { "get_all_player_usernames", "get_all_items", "get_character_names",
       "get_all_location_idNumbers", "get_all_location_AreaTypes", "get_character_stats", "get_all_character_names", "get_all_character_items"};
 
-  private AccessDatabase(Connection con) {
-    this.m_dbConn = con;
+  private AccessDatabase(Connection conn) {
+    AccessDatabase.conn = conn;
     createProcedures();
   }
 
-  public static AccessDatabase createRetrieveManipulateInformation(Connection conn) {
-    if (rmi != null) {
-      return rmi;
+  /**
+   * Create access to the database
+   * @param conn - Connection to database
+   * @return connection to the database
+   */
+  public static AccessDatabase createAccessDatabase(Connection conn) {
+    if (access != null) {
+      return access;
     }
 
     return new AccessDatabase(conn);
   }
 
-  public void setConncetion(Connection con) {
-    m_dbConn = con;
-  }
-
-  public static Connection getConnection() {
-    return m_dbConn;
+  /**
+   * Set the connection to the database
+   * @param conn - connection to database
+   */
+  public void setConncetion(Connection conn) {
+    AccessDatabase.conn = conn;
   }
 
   /**
-   * Create all procedures
+   * Retrieve current connection to database
+   * @return current connection to database
+   */
+  public static Connection getConnection() {
+    return conn;
+  }
+
+  /**
+   * Create all stored procedures
    */
   private void createProcedures() {
     /*
@@ -71,38 +84,31 @@ public class AccessDatabase {
      */
     dropProcedures();
 
-    PreparedStatement stmt;
-    // Call statement to create procedures
     for (int i = 0; i < procedures.length; i++) {
       try {
-        stmt = m_dbConn.prepareStatement(procedures[i]);
-        stmt.execute();
-//        System.out.println("SQL Statement CREATED -- " + procedures[i]);
+        PreparedStatement stmt = conn.prepareStatement(procedures[i]);
+        stmt.execute(); // create procedures
       } catch (SQLException e) {
-//        e.printStackTrace();
         System.out.println("Stored procedure already exists -- " + procedures[i]);
       }
     }
   }
 
   /**
-   * Drop all procedures maybe
+   * Drop all procedures
    */
   public void dropProcedures() {
     for (int i = 0; i < procedureNames.length; i++) {
       String drop = "DROP PROCEDURE IF EXISTS " + procedureNames[i] + ";";
       try {
-        PreparedStatement stmt = m_dbConn.prepareStatement(drop);
+        PreparedStatement stmt = conn.prepareStatement(drop);
         stmt.execute();
-//        System.out.println("Table dropped -- " + procedureNames[i]);
       } catch (SQLException e) {
-//        e.printStackTrace();
         System.out.println("Failed to drop " + procedures[i]);
       }
     }
   }
 
-  // Location Methods
   /**
    * Get the number of total locations in the database.
    * 
@@ -110,7 +116,7 @@ public class AccessDatabase {
    */
   public int getNumLocations() {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Location;");
       // Count how many locations are in the database
 
@@ -119,7 +125,7 @@ public class AccessDatabase {
 
     } catch (SQLException e) {
       e.printStackTrace();
-      return -1; // If this number is actually accidentally used, it will throw an error.
+      return -1; 
     }
   }
 
@@ -132,7 +138,7 @@ public class AccessDatabase {
     String call = "CALL " + procedureNames[locIdNums] + "();";
     int[] locationIds = new int[getNumLocations()];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
+      CallableStatement stmt = conn.prepareCall(call);
       stmt.execute();
 
       ResultSet rs = stmt.getResultSet();
@@ -142,9 +148,7 @@ public class AccessDatabase {
         locationIds[i] = rs.getInt("IdNumber");
         i++;
       }
-
     } catch (SQLException e1) {
-//      e1.printStackTrace();
       System.out.println("getAllLocationIds failed");
     }
 
@@ -154,17 +158,20 @@ public class AccessDatabase {
   /**
    * Retrieve all location AreaTypes, utilizing stored procedure
    * 
-   * @return String array of all location AreaTypes
+   * @return String[] of all location AreaTypes
    */
   public String[] getAllAreaTypes() {
+    // create our call statement by getting the correct procedure
     String call = "CALL " + procedureNames[locAreaTypes] + "();";
     String[] types = new String[getNumLocations()];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
-      stmt.execute();
+      CallableStatement stmt = conn.prepareCall(call);
+      stmt.execute(); // Execute
 
+      // Get results
       ResultSet rs = stmt.getResultSet();
 
+      // Put all results in String[]
       int i = 0;
       while (rs.next()) {
         types[i] = rs.getString("AreaType");
@@ -173,27 +180,29 @@ public class AccessDatabase {
 
     } catch (SQLException e1) {
       e1.printStackTrace();
-      System.out.println("Syntax error (probably, dunno)");
+      System.out.println("Connection failed");
     }
 
     return types;
   }
 
-  // Item Manipulation Methods
   /**
    * Get the ItemId of every item in the database , utilizing stored procedure
    * 
-   * @return int array of every item id
+   * @return int[] of every item id
    */
   public int[] getAllItems() {
+    // create our call statement by getting the correct procedure
     String call = "CALL " + procedureNames[1] + "();";
     int[] itemIds = new int[getNumItems()];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
-      stmt.execute();
-
+      CallableStatement stmt = conn.prepareCall(call);
+      stmt.execute(); // Execute
+      
+      // Get our results
       ResultSet rs = stmt.getResultSet();
 
+      // Put all results into int[]
       int i = 0;
       while (rs.next()) {
         itemIds[i] = rs.getInt("ItemId");
@@ -215,8 +224,9 @@ public class AccessDatabase {
    */
   public int getNumItems() {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Item");
+      
       // Count how many items we have
 
       r.next();
@@ -236,7 +246,7 @@ public class AccessDatabase {
    */
   public String getItemType(String itemId) {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       ResultSet[] rs = { stmt.executeQuery("SELECT COUNT(*) FROM Armor WHERE ArmorId = " + itemId + ";"),
           stmt.executeQuery("SELECT COUNT(*) FROM Container WHERE ContId = " + itemId + ";"),
           stmt.executeQuery("SELECT COUNT(*) FROM Weapon WHERE WepId = " + itemId + ";") };
@@ -252,33 +262,18 @@ public class AccessDatabase {
             return "Container";
           case (2):
             return "Weapon";
+          default: 
+            return null;
           }
         }
       }
-      return null; // shouldnt get here but ya know
 
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("Error in syntax or ");
-      return null; // If there is an error we return null to exit, and if it is used it will cause
-                   // an error
+      System.out.println("Connection failed");
     }
+    return null;
   }
-
-// TODO: Implement these methods
-//  pubilc String[] getArmorInfo(String itemId) {
-//    
-//  }
-//  
-//  pubilc String[] getWeaponInfo(String itemId) {
-//    
-//  }
-//  
-//  pubilc String[] getContainerInfo(String itemId) {
-//    
-//  }
-
-  // Character Layout Information
 
   /**
    * Determine how many characters a user has
@@ -288,7 +283,7 @@ public class AccessDatabase {
    */
   public int getNumChars(String username) {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Characters WHERE pUserName = '" + username + "'; ");
       // Count how many characters a user has
 
@@ -308,7 +303,7 @@ public class AccessDatabase {
    */
   public int getNumPlayers() {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Player");
       // Count how many players we have
 
@@ -316,7 +311,7 @@ public class AccessDatabase {
       return r.getInt("count(*)");
 
     } catch (SQLException e) {
-//      e.printStackTrace();
+      e.printStackTrace();
       return -1; // If this number is actually accidentally used, it will throw an error.
     }
   }
@@ -329,15 +324,18 @@ public class AccessDatabase {
    * @return String[] of all character names that username has.
    */
   public String[] getAllCharacterNamesFromUser(String username) {
+    // create our call statement by getting the correct procedure
     String call = "CALL " + procedureNames[2] + "(?);";
     String[] names = new String[getNumChars(username)];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
-      stmt.setString(1, username);
+      CallableStatement stmt = conn.prepareCall(call);
+      stmt.setString(1, username); // Set variable to username
       stmt.execute();
 
+      // Get results
       ResultSet rs = stmt.getResultSet();
 
+      // Add all character names from resultset to names[]
       int i = 0;
       while ((rs.next()) && (i < names.length)) {
         names[i] = rs.getString("Name");
@@ -354,38 +352,41 @@ public class AccessDatabase {
 
   /**
    * Gets the number of items from a specific character
+   * 
    * @param charname
    * @return String[] of the items held by the characrer
    */
   public int getNumItemsFromChar(String charname) {
-	    try {
-	      Statement stmt = m_dbConn.createStatement();
-	      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Item WHERE cName = '" + charname + "'; ");
-	      // Count how many items the character has
-
-	      r.next();
-	      return r.getInt("count(*)");
-
-	    } catch (SQLException e) {
-//	      e.printStackTrace();
-	      return -1; // If this number is actually accidentally used, it will throw an error.
-	    }
-	  }
-  
+    try {
+      Statement stmt = conn.createStatement();
+      ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Item WHERE cName = '" + charname + "'; ");
+      // Count how many items the character has
+      
+      r.next();
+      return r.getInt("count(*)");
+      
+    } catch (SQLException e) {
+      return -1; // If this number is actually accidentally used, it will throw an error.
+    }
+  }
   
   /**
    * Fetch all character names in the database
+   * 
    * @return String[] of all character names
    */
   public String[] getAllCharacterNames() {
+    // create our call statement by getting the correct procedure
     String call = "CALL " + procedureNames[characterNames] + "();";
     String[] names = new String[getNumCharacters()];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
+      CallableStatement stmt = conn.prepareCall(call);
       stmt.execute();
 
+      // Get result set
       ResultSet rs = stmt.getResultSet();
 
+      // Add all results to names
       int i = 0;
       while (rs.next()) {
         names[i] = rs.getString("Name");
@@ -401,21 +402,25 @@ public class AccessDatabase {
 
   /**
    * Fetch all character names in the database
+   * 
    * @return String[] of all character names
    */
   public String[] getAllCharItems(String name) {
+    // create our call statement by getting the correct procedure
     String call = "CALL " + procedureNames[characterItems] + "(?);";
-    String[] names = new String[getNumItemsFromChar(name)];
+    String[] itemIds = new String[getNumItemsFromChar(name)];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
+      CallableStatement stmt = conn.prepareCall(call);
       stmt.setString(1, name);
       stmt.execute();
 
+      // Get result set
       ResultSet rs = stmt.getResultSet();
 
+      // Add all results to itemIds[]
       int i = 0;
       while (rs.next()) {
-        names[i] = "" + rs.getInt("ItemId");
+        itemIds[i] = "" + rs.getInt("ItemId");
         i++;
       }
 
@@ -423,18 +428,19 @@ public class AccessDatabase {
       e1.printStackTrace();
     }
 
-    return names;
+    return itemIds;
   }
   
   /**
    * Fetch the number of chacters in the database.
+   * 
    * @return int number of characters
    */
   public int getNumCharacters() {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM Characters");
-      // Count how many players we have
+      // Count how many characters we have
 
       r.next();
       return r.getInt("count(*)");
@@ -448,17 +454,20 @@ public class AccessDatabase {
   /**
    * Retrieve all player usernames, utilizing stored procedure
    * 
-   * @return String array of all player usernames
+   * @return String[] of all player usernames
    */
   public String[] getAllPlayerUsernames() {
+    // create our call statement by getting the correct procedure
     String call = "CALL " + procedureNames[playerUsernames] + "();";
     String[] usernames = new String[getNumPlayers()];
     try {
-      CallableStatement stmt = m_dbConn.prepareCall(call);
+      CallableStatement stmt = conn.prepareCall(call);
       stmt.execute();
-
+      
+      // Get result set
       ResultSet rs = stmt.getResultSet();
 
+      // Add all results to usernames
       int i = 0;
       while (rs.next()) {
         usernames[i] = rs.getString("Username");
@@ -485,13 +494,15 @@ public class AccessDatabase {
     String call = "SELECT * FROM Characters WHERE Name = '" + characterName + "';";
     String[] stats = new String[6];
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(call);
+      PreparedStatement stmt = conn.prepareStatement(call);
       stmt.execute();
 
+      // Get result set
       ResultSet rs = stmt.getResultSet();
 
       rs.next();
       
+      // Add all results to stats
       stats[0] = String.valueOf(rs.getInt("MaxHP"));
       stats[1] = String.valueOf(rs.getInt("CurrentHP"));
       stats[2] = String.valueOf(rs.getInt("Strength"));
@@ -515,12 +526,14 @@ public class AccessDatabase {
     String select = "SELECT AreaType FROM Location WHERE IdNumber = '" + idNumber + "';";
     String areatype = null;
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      PreparedStatement stmt = conn.prepareStatement(select);
       stmt.execute();
 
+      // Get result set
       ResultSet rs = stmt.getResultSet();
 
-      rs.next();
+      // Add results to an areatype
+      rs.next(); 
       areatype = rs.getString("AreaType");
 
     } catch (SQLException e) {
@@ -538,13 +551,14 @@ public class AccessDatabase {
   public boolean characterExists(String name) {
     String select = "SELECT Count(*) from Characters WHERE Name = '" + name + "';";
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      PreparedStatement stmt = conn.prepareStatement(select);
       stmt.execute();
 
+      // Get result set
       ResultSet rs = stmt.getResultSet();
 
       rs.next();
-
+      // Return whether or not the character exists (if count > 1) 
       if (rs.getInt(1) > 0) {
         return true;
       } else {
@@ -565,13 +579,14 @@ public class AccessDatabase {
   public boolean locationExists(String loc) {
     String select = "SELECT Count(*) from Location WHERE IdNumber = '" + loc + "';";
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      PreparedStatement stmt = conn.prepareStatement(select);
       stmt.execute();
 
       ResultSet rs = stmt.getResultSet();
 
       rs.next();
 
+      // return whether or not the location exists, if count > 1
       if (rs.getInt(1) > 0) {
         return true;
       } else {
@@ -592,12 +607,14 @@ public class AccessDatabase {
   public boolean playerExists(String username) {
     String select = "SELECT Count(*) from Player WHERE Username = '" + username + "';";
     try {
-      PreparedStatement stmt = m_dbConn.prepareStatement(select);
+      PreparedStatement stmt = conn.prepareStatement(select);
       
       stmt.execute();
       
+      // Get result set
       ResultSet rs = stmt.getResultSet();
       
+      // Return whether or not the player exists (if count > 1) 
       rs.next();
       
       if (rs.getInt(1) > 0) {

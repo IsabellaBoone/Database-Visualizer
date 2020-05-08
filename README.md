@@ -4,13 +4,12 @@
 ## Part 2
 - Populate the tables with randomly generated tables.  
 
-TO-DO: generateModerator(), generateManage(), generateCommands(), generateCreature(), generateAbilities(), generateHatedPlayers(), generateLikedPlayers(), generateHatedCreature(), generateLikedCreature(), generateAreasWillingToGo() 
-
 ## Part 3
-- Implement a user interface to display data
-- Implement buttons to change data in the database.  
 
--- Panel 1: 
--- Panel 2: Refactor code cuz its bad
--- Panel 3: 
--- Panel 4: 
+-- Panel 1: DONE
+
+-- Panel 2: DONE
+
+-- Panel 3: DONE
+
+-- Panel 4: almost DONE
