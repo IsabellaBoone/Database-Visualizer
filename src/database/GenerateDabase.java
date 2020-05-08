@@ -9,7 +9,7 @@ import java.sql.*;
  *
  */
 
-public class GenerateInformation {
+public class GenerateDabase {
   
   // Global Variables 
   
@@ -20,7 +20,7 @@ public class GenerateInformation {
   private final int MAX_VOL = 80;     // Max volume for items
   private final int MAX_STATS = 50; // Max value for stats
   private int DEBUG = 0; 
-  RetrieveManipulateInformation r;
+  AccessDatabase r;
   /**
    * List of all table names.
    */
@@ -176,9 +176,9 @@ public class GenerateInformation {
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
   
-  public GenerateInformation(Connection con) {
+  public GenerateDabase(Connection con) {
     this.m_dbConn = con; 
-    r = RetrieveManipulateInformation.createRetrieveManipulateInformation(m_dbConn);
+    r = AccessDatabase.createRetrieveManipulateInformation(m_dbConn);
     dropAllTables();  // Drop tables before creating 
     createTable();    // Create tables 
     populateTables(); // Populate the tables
@@ -264,7 +264,7 @@ public class GenerateInformation {
 	 * Generate a single player
 	 */
   private void generatePlayer() {
-	  generate g = new generate();
+	  Generate g = new Generate();
 	  // Generate user, email, password
 	  String insert = "INSERT INTO Player (Username, Email, Password) VALUES (?,?,?);", user, email, pass;
 	  user = g.randomUser();
@@ -318,7 +318,7 @@ public class GenerateInformation {
 	 * Generate a single location. 
 	 */
   private void generateLocation() {
-	  generate g = new generate(); 
+	  Generate g = new Generate(); 
 	  int IdNumber;
 	  String insert = "INSERT INTO Location (IdNumber, Size, AreaType) VALUES (?,?,?);", Size, AreaType;
 //	  System.out.println(insert);
@@ -382,7 +382,7 @@ public class GenerateInformation {
 	 * @param player 
    */
   private void generateCharacter(String player) {
-    generate g = new generate(); 
+    Generate g = new Generate(); 
     // Our insert statements and data being generated. 
     String insert = "INSERT INTO Characters (Name, MaxHP, CurrentHP, Strength, Stamina, LocationID, pUserName) VALUES (?,?,?,?,?,?,?);", 
         name  = g.randomName(); 
@@ -429,30 +429,6 @@ public class GenerateInformation {
   }
   
   /**
-   * TODO: Implement
-   * Generate random moderators
-   */
-  private void generateModerator() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random managers
-   */
-  private void generateManager() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random commands for existing manager/moderator
-   */
-  private void generateCommands() {
-    
-  }
-  
-  /**
    * Generate a bunch of items, which can be a weapon, 
    * armor or container
    */
@@ -488,7 +464,7 @@ public class GenerateInformation {
         insert += "Container VALUES (" + listIds[i] + ", " + maxW + ", " + vol + ");";
         break;
       case (2):// Armor
-        String aLoc = (new generate().randomArmorLoc());
+        String aLoc = (new Generate().randomArmorLoc());
         insert += "Armor VALUES (" + listIds[i] + ", '" + aLoc + "');";
         break;
       }
@@ -512,7 +488,7 @@ public class GenerateInformation {
    * items, or just do a random number check and take it from there. 
    */
   private void generateItem() {
-    generate g = new generate(); 
+    Generate g = new Generate(); 
     int flag = -1; 
     int location = 0;
     String user = null; 
@@ -588,7 +564,7 @@ public class GenerateInformation {
    * Generate single creature
    */
   private void generateCreature() {
-    generate g = new generate(); 
+    Generate g = new Generate(); 
     //  String insert = "INSERT INTO Item (Id, curHP, MaxHP, Stamina, Strength, Protection, LocationId) VALUES (?,?,?,?,?);";
     String insert = "INSERT INTO Creature VALUES (?,?,?,?,?,?,?);";
     int idNum = g.randomIdNum(),
@@ -634,55 +610,6 @@ public class GenerateInformation {
       e.printStackTrace();
       System.out.print("connection closed prob idk" );
     }
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random abilities for creatures
-   */
-  private void generateAbilities() {
-    
-  }
-  
-  
-  /**
-   * TODO: Implement
-   * Generate random hated players for existing creature
-   */
-  private void generateHatedPlayer() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random liked players for existing creatures
-   */
-  private void generateLikedPlayer() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random hated creatures for existing creatures
-   */
-  private void generateHatedCreature() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random liked creatures for existing creatures
-   */
-  private void generateLikedCreature() {
-    
-  }
-  
-  /**
-   * TODO: Implement
-   * Generate random areas willing to go for existing creatures
-   */
-  private void generateAreasWillingToGo() {
-    
   }
   
 }

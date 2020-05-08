@@ -9,18 +9,18 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 // TODO: Add buttons for add item, edit item, and delete item.
 public class ItemsLayout extends JPanel{
   
-  RetrieveManipulateInformation rmi;
+  AccessDatabase rmi;
   JScrollPane item = new JScrollPane();
   JLabel selected = null;
   int selectedId;
   int[] itemsList;
   
-  public ItemsLayout(RetrieveManipulateInformation rmi){
+  public ItemsLayout(AccessDatabase rmi){
     this.rmi = rmi;
     
     setLayout(new BorderLayout());

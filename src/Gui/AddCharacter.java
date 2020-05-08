@@ -16,12 +16,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class AddCharacter extends Panels {
   String name, user;
   int maxHP, curHP, str, stam, loc;
-  public AddCharacter(RetrieveManipulateInformation rmi) {
+  public AddCharacter(AccessDatabase rmi) {
     setRMI(rmi); 
     
     // Add Labels & Buttons

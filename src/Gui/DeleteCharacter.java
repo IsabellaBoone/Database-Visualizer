@@ -10,12 +10,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class DeleteCharacter extends JPanel{
-  private RetrieveManipulateInformation rmi = null;
+  private AccessDatabase rmi = null;
   private String name = null; 
-  public DeleteCharacter(RetrieveManipulateInformation rmi, String name) {
+  public DeleteCharacter(AccessDatabase rmi, String name) {
     this.rmi = rmi;
     this.name = name; 
     

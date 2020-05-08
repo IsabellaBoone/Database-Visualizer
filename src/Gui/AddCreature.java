@@ -16,7 +16,7 @@ import java.awt.Frame.*;
 
 import javax.swing.*;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 /**
  * TODO: gridbaglayout on all frames, TODO: button functionality for all buttons
@@ -27,7 +27,7 @@ import database.RetrieveManipulateInformation;
  */
 public class AddCreature extends JFrame {
 //(Id, curHP, MaxHP, Stamina, Strength, Protection, LocationId)
-  RetrieveManipulateInformation rmi;
+  AccessDatabase rmi;
   int id, curHP, MaxHP, Stamina, Strength, Protection;
 
   String location = null;
@@ -35,12 +35,12 @@ public class AddCreature extends JFrame {
   // prompt for item type & item number
   // prompt for specifics of item type
 
-  public AddCreature(RetrieveManipulateInformation rmi) {
+  public AddCreature(AccessDatabase rmi) {
     this.rmi = rmi;
     initializeP1();
   }
 
-  public AddCreature(RetrieveManipulateInformation rmi, int location) {
+  public AddCreature(AccessDatabase rmi, int location) {
     this.rmi = rmi;
     this.location = Integer.toString(location);
     locationGiven = true;
@@ -163,7 +163,7 @@ public class AddCreature extends JFrame {
 
   private void addNewItem() {
     try {
-      Statement stmt = RetrieveManipulateInformation.getConnection().createStatement();
+      Statement stmt = AccessDatabase.getConnection().createStatement();
       stmt.execute("INSERT INTO Creature VALUES (" + id + ", " + curHP + ", " + MaxHP + ", " + Stamina + ", " + Strength
           + ", " + Protection + ", " + (location.equals("(Optional)") ? "null" : location) + ");");
     } catch (SQLException e) {

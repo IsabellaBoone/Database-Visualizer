@@ -22,14 +22,14 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 //AUTHOR Joel Gingrich
 //TODO add comments
 public class LocationLayout extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  private RetrieveManipulateInformation rmi;
+  private AccessDatabase rmi;
   private JPanel locationPanel, contentPanel;
   private JLabel selectedLocation, selectedContent;
   private JLabel[] locationLabels;
@@ -38,7 +38,7 @@ public class LocationLayout extends JPanel {
   private int selectedLocationIndex, type;
   private int[] locationIDs;
 
-  public LocationLayout(RetrieveManipulateInformation rmi) {
+  public LocationLayout(AccessDatabase rmi) {
     this.rmi = rmi;
 
     initializeJPanel();
@@ -313,7 +313,7 @@ public class LocationLayout extends JPanel {
     ResultSet rs = null;
     try {
       // items
-      rs = RetrieveManipulateInformation.getConnection().createStatement()
+      rs = AccessDatabase.getConnection().createStatement()
           .executeQuery("SELECT ItemId FROM ITEM WHERE ITEM.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
@@ -327,7 +327,7 @@ public class LocationLayout extends JPanel {
       }
 
       // creatures
-      rs = RetrieveManipulateInformation.getConnection().createStatement().executeQuery(
+      rs = AccessDatabase.getConnection().createStatement().executeQuery(
           "SELECT IdNumber FROM Creature WHERE Creature.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
@@ -341,7 +341,7 @@ public class LocationLayout extends JPanel {
       }
 
       // character
-      rs = RetrieveManipulateInformation.getConnection().createStatement().executeQuery(
+      rs = AccessDatabase.getConnection().createStatement().executeQuery(
           "SELECT Name FROM Characters WHERE Characters.LocationId = " + locationIDs[selectedLocationIndex]);
       while (rs.next()) {
         JLabel item = new JLabel(
@@ -381,7 +381,7 @@ public class LocationLayout extends JPanel {
           int id = Integer.parseInt(content);
 
           try {
-            RetrieveManipulateInformation.getConnection().createStatement()
+            AccessDatabase.getConnection().createStatement()
                 .execute("DELETE FROM ITEM WHERE ItemId = " + id);
             selectedContent = null;
           } catch (SQLException e) {
@@ -396,7 +396,7 @@ public class LocationLayout extends JPanel {
           int id = Integer.parseInt(content);
 
           try {
-            RetrieveManipulateInformation.getConnection().createStatement()
+            AccessDatabase.getConnection().createStatement()
                 .execute("DELETE FROM Creature WHERE IdNumber = " + id);
             selectedContent = null;
           } catch (SQLException e) {
@@ -419,7 +419,7 @@ public class LocationLayout extends JPanel {
         int id = Integer.parseInt(content);
 
         try {
-          rs = RetrieveManipulateInformation.getConnection().createStatement()
+          rs = AccessDatabase.getConnection().createStatement()
               .executeQuery("SELECT * FROM Item WHERE Item.ItemId = " + id);
           rs.next();
         } catch (SQLException e) {
@@ -439,7 +439,7 @@ public class LocationLayout extends JPanel {
         int id = Integer.parseInt(content);
 
         try {
-          rs = RetrieveManipulateInformation.getConnection().createStatement()
+          rs = AccessDatabase.getConnection().createStatement()
               .executeQuery("SELECT * FROM Creature WHERE Creature.IdNumber = " + id);
           rs.next();
         } catch (SQLException e) {

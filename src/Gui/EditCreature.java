@@ -17,12 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class EditCreature extends JFrame {
 
   private ResultSet rs;
-  private RetrieveManipulateInformation rmi;
+  private AccessDatabase rmi;
   private int id, oldId, curHP, MaxHP, Stamina, Strength, Protection, locId;
   private String cName;
 
@@ -34,7 +34,7 @@ public class EditCreature extends JFrame {
   JTextField locTxt;
   JTextField crTxt;
 
-  public EditCreature(ResultSet rs, RetrieveManipulateInformation r) {
+  public EditCreature(ResultSet rs, AccessDatabase r) {
     this.rs = rs;
     rmi = r;
     try {
@@ -135,7 +135,7 @@ public class EditCreature extends JFrame {
     locId = Integer.parseInt(locTxt.getText().strip());
 
     try {
-      Statement stmt = RetrieveManipulateInformation.getConnection().createStatement();
+      Statement stmt = AccessDatabase.getConnection().createStatement();
 
       stmt.execute("UPDATE Creature SET IdNumber = " + id + ", CurrentHP =" + curHP + ", MaxHP = " + MaxHP + ", Stamina = " + Stamina + ", Strength = " + Strength
           + ", Protection = " + Protection + ", LocationId = " + locId + " WHERE IdNumber = " + oldId + ";");

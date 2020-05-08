@@ -3,10 +3,10 @@ package Gui;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class DeleteUser extends Panels {
-  public DeleteUser(RetrieveManipulateInformation rmi) {
+  public DeleteUser(AccessDatabase rmi) {
     setRMI(rmi); 
     
     //prompt for username

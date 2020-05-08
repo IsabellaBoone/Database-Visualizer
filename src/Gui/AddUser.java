@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 /**
  * 
@@ -23,7 +23,7 @@ import database.RetrieveManipulateInformation;
  */
 public class AddUser extends Panels {
   private String username, email, password; 
-  public AddUser(RetrieveManipulateInformation rmi) {
+  public AddUser(AccessDatabase rmi) {
     setRMI(rmi); 
     
     setLayout(new GridLayout(0, 2)); 

@@ -17,12 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class EditItem extends JFrame{
   
   private ResultSet rs;
-  private RetrieveManipulateInformation rmi;
+  private AccessDatabase rmi;
   private int oldId;
   private int id;
   private int volume;
@@ -37,7 +37,7 @@ public class EditItem extends JFrame{
   JTextField itemId;
   JTextField cNameTxt; 
   
-  public EditItem(ResultSet rs, RetrieveManipulateInformation r) {
+  public EditItem(ResultSet rs, AccessDatabase r) {
     this.rs = rs;
     rmi = r;
     try {

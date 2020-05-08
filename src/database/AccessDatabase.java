@@ -14,10 +14,10 @@ import java.sql.Statement;
  * @author Isabella Boone, Chase Banyai, Joel Gingrich, Joshua Jackson
  *
  */
-public class RetrieveManipulateInformation {
+public class AccessDatabase {
   static Connection m_dbConn = null;
 
-  static RetrieveManipulateInformation rmi;
+  static AccessDatabase rmi;
 
   final int playerUsernames = 0, allItems = 1, charNames = 2, locIdNums = 3, locAreaTypes = 4, charStats = 5,
       characterNames = 6, characterItems = 7;
@@ -40,17 +40,17 @@ public class RetrieveManipulateInformation {
   }, procedureNames = { "get_all_player_usernames", "get_all_items", "get_character_names",
       "get_all_location_idNumbers", "get_all_location_AreaTypes", "get_character_stats", "get_all_character_names", "get_all_character_items"};
 
-  private RetrieveManipulateInformation(Connection con) {
+  private AccessDatabase(Connection con) {
     this.m_dbConn = con;
     createProcedures();
   }
 
-  public static RetrieveManipulateInformation createRetrieveManipulateInformation(Connection conn) {
+  public static AccessDatabase createRetrieveManipulateInformation(Connection conn) {
     if (rmi != null) {
       return rmi;
     }
 
-    return new RetrieveManipulateInformation(conn);
+    return new AccessDatabase(conn);
   }
 
   public void setConncetion(Connection con) {

@@ -10,10 +10,10 @@ import java.sql.SQLException;
 
 import javax.swing.*;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class Gui extends JFrame{
-  RetrieveManipulateInformation rmi;
+  AccessDatabase rmi;
   JPanel buttons;
   JPanel view = null;
   GridBagConstraints gbc = new GridBagConstraints(); 
@@ -22,7 +22,7 @@ public class Gui extends JFrame{
   JButton playerLayout = new JButton("Players");
   JButton locationLayout = new JButton("Locations");
   
-  public Gui(RetrieveManipulateInformation getInfo) {
+  public Gui(AccessDatabase getInfo) {
     rmi = getInfo; 
     initJFrame();
     setButtons();
@@ -39,7 +39,7 @@ public class Gui extends JFrame{
       public void windowClosing(WindowEvent arg0) {
         try {
           rmi.dropProcedures();
-          RetrieveManipulateInformation.getConnection().close();
+          AccessDatabase.getConnection().close();
           System.out.println("Connection Closed");
         } catch (SQLException e) {
           e.printStackTrace();

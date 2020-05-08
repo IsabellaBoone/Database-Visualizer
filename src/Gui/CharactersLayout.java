@@ -1,14 +1,9 @@
-// fuck me daddy
-
 package Gui;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +21,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 /**
  * Display all characters in the database and their
@@ -36,14 +31,14 @@ import database.RetrieveManipulateInformation;
  *
  */
 public class CharactersLayout extends JPanel {
-  private RetrieveManipulateInformation rmi;
+  private AccessDatabase rmi;
   private JPanel characterPanel, statsPanel;
   private JLabel selectedNameJLabel = null;
   private String[] characterNames;
   private String selectedName = null;
   
 
-  public CharactersLayout(RetrieveManipulateInformation rmi) {
+  public CharactersLayout(AccessDatabase rmi) {
     this.rmi = rmi;
     
     // Initialize JPanel settings
@@ -140,7 +135,6 @@ public class CharactersLayout extends JPanel {
         System.out.println("Add character"); 
         new AddCharacter(rmi).addWindowListener(new WindowAdapter() {
           public void windowClosed(WindowEvent arg0) {
-            System.out.println("addchar closed");
             refresh();
           }
         });; 
@@ -149,13 +143,12 @@ public class CharactersLayout extends JPanel {
     
     editChar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        System.out.println("Edit Character"); 
         if(selectedName == null) {
           failureToSelect(); 
         } else {
           new EditCharacter(rmi, selectedName).addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent arg0) {
-              System.out.println("editchar adduser"); 
+              selectedName = null; 
               refresh();
             }
           });

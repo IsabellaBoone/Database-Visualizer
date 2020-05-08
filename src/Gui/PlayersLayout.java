@@ -23,11 +23,11 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 //Author: Joshua J
 public class PlayersLayout extends JPanel{
-	  private RetrieveManipulateInformation rmi;
+	  private AccessDatabase rmi;
 	  private JPanel characterPanel, statsPanel, itemsPanel;
 	  private JLabel selectedNameJLabel = null;
 	  private String[] characterNames, itemsWithChar;
@@ -35,7 +35,7 @@ public class PlayersLayout extends JPanel{
 	  private String selectedName = null;
 	  
 	  
-	  public PlayersLayout(RetrieveManipulateInformation rmi) {
+	  public PlayersLayout(AccessDatabase rmi) {
 	    this.rmi = rmi;
 	    
 	    // Initialize character names in character panel

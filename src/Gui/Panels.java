@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 /**
  * This is definitely a bad name for this class. 
@@ -18,7 +18,7 @@ import database.RetrieveManipulateInformation;
  *
  */
 public abstract class Panels extends JFrame{
-  RetrieveManipulateInformation rmi = null;
+  AccessDatabase rmi = null;
   public Panels() {
     setLayout(new GridLayout(0, 2)); 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -29,7 +29,7 @@ public abstract class Panels extends JFrame{
     setMaximumSize(d);
   }
   
-  public void setRMI(RetrieveManipulateInformation rmi) {
+  public void setRMI(AccessDatabase rmi) {
     this.rmi = rmi; 
   }
   

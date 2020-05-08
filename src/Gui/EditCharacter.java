@@ -18,13 +18,13 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 public class EditCharacter extends Panels {
   String[] oldInfo = new String[7], 
       newInfo = new String[7]; 
   
-  public EditCharacter(RetrieveManipulateInformation rmi, String name) {
+  public EditCharacter(AccessDatabase rmi, String name) {
     setRMI(rmi); 
     
     String select = "SELECT * FROM Characters WHERE Name = '" + name + "';",

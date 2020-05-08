@@ -9,7 +9,7 @@ import java.util.Random;
  * @author Isabella Boone, Chase Banyai, Joel Gingrich, Joshua Jackson
  *
  */
-public class generate {
+public class Generate {
   
   // feel free to add to this :) 
   private String[] prefix = { "Rat", "Cat", "King", "Legend", "The",

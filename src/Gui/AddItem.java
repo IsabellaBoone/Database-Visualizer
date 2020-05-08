@@ -16,7 +16,7 @@ import java.awt.Frame.*;
 
 import javax.swing.*;
 
-import database.RetrieveManipulateInformation;
+import database.AccessDatabase;
 
 /**
  * TODO: gridbaglayout on all frames,
@@ -26,7 +26,7 @@ import database.RetrieveManipulateInformation;
  *
  */
 public class AddItem extends JFrame{
-  RetrieveManipulateInformation rmi;
+  AccessDatabase rmi;
   int itemType = -1; 
   int id; 
   int volume;
@@ -37,12 +37,12 @@ public class AddItem extends JFrame{
   // prompt for item type & item number
   // prompt for specifics of item type
   
-  public AddItem(RetrieveManipulateInformation rmi) {
+  public AddItem(AccessDatabase rmi) {
     this.rmi = rmi;
     initializeP1();
   }
   
-  public AddItem(RetrieveManipulateInformation rmi, int location) {
+  public AddItem(AccessDatabase rmi, int location) {
     this.rmi = rmi;
     this.location = Integer.toString(location);
     locationGiven = true;
@@ -270,7 +270,7 @@ public class AddItem extends JFrame{
   
   private void addNewItem() {
     try {
-      Statement stmt = RetrieveManipulateInformation.getConnection().createStatement();
+      Statement stmt = AccessDatabase.getConnection().createStatement();
       stmt.execute("INSERT INTO ITEM VALUES (" + id + ", " + weight + ", " + volume + ", " + location + ", "
           + (character.equals("(Optional)") ? "null" : character)  + ");");
     } catch (SQLException e) {
