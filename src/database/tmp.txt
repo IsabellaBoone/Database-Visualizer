@@ -1,0 +1,55 @@
+/**
+	   * Generage a stat panel
+	   * @return
+	   */
+	  private JPanel genStatsPanel() {
+	    // Entire panel, that will have header and panel of names
+	    JPanel panel = new JPanel();
+	    panel.setBackground(Color.DARK_GRAY);
+	    panel.setLayout(new BorderLayout());
+	    
+	    // Size for panel
+	    Dimension d = new Dimension(300, 500);
+	    panel.setMinimumSize(d);
+	    panel.setPreferredSize(d);
+	    panel.setMaximumSize(d);
+
+	    // Panel of stats
+	    JPanel stats = new JPanel();
+	    stats.setBackground(Color.LIGHT_GRAY);
+	    stats.setLayout(new GridLayout(5, 1));
+
+	    // Fetch stats
+	    String[] charStats;  
+	    if(selectedName == null) {
+	      charStats = rmi.getCharacterStats(characterNames[0]);
+	      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
+	        BorderLayout.NORTH);
+	    } else {
+	      charStats = rmi.getCharacterStats(selectedName);
+	      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
+	          BorderLayout.NORTH);
+	    }
+	    
+	    // Format strings
+	    String HP = charStats[1] + "/" + charStats[0] + "HP";
+	    String strStam = charStats[2] + " Strength " + charStats[3] + " Stamina"; 
+	    String loc = "Located in: " + rmi.getLocType(charStats[4]) + ": " + charStats[4];
+	    String user = "Belongs to: " + charStats[5]; 
+
+	    // Add JLabel
+	    JLabel hpLabel = new JLabel(HP, SwingConstants.CENTER);
+	    JLabel strStamLabel = new JLabel(strStam, SwingConstants.CENTER);
+	    JLabel locLabel = new JLabel(loc, SwingConstants.CENTER);
+	    JLabel userLabel = new JLabel(user, SwingConstants.CENTER);
+	    
+	    // Add all stats to panel
+	    stats.add(hpLabel);
+	    stats.add(strStamLabel);
+	    stats.add(locLabel);
+	    stats.add(userLabel);
+	    
+	    panel.add(stats, BorderLayout.CENTER);
+	    
+	    return panel;
+	  }
