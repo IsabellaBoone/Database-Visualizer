@@ -18,7 +18,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import database.AccessDatabase;
-
+/*
+ * @author Joel Gingrich
+ */
 public class EditCreature extends JFrame {
 
   private ResultSet rs;
