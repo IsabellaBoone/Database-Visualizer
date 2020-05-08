@@ -37,8 +37,8 @@ public class Runner {
       return;
     }
     
-    GenerateDabase insert = new GenerateDabase(m_dbConn);
-    AccessDatabase getInfo = AccessDatabase.createRetrieveManipulateInformation(m_dbConn);
+    GenerateDatabase insert = new GenerateDatabase(m_dbConn);
+    AccessDatabase getInfo = AccessDatabase.createAccessDatabase(m_dbConn);
     Gui gui = new Gui(getInfo);
     
   }

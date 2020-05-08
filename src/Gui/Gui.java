@@ -12,6 +12,7 @@ import javax.swing.*;
 
 import database.AccessDatabase;
 
+@SuppressWarnings("serial")
 public class Gui extends JFrame{
   AccessDatabase rmi;
   JPanel buttons;
@@ -26,6 +27,7 @@ public class Gui extends JFrame{
     rmi = getInfo; 
     initJFrame();
     setButtons();
+    setItemView();
     setVisible(true);
   }
 
@@ -102,6 +104,7 @@ public class Gui extends JFrame{
     gbc.weighty = 1;
     buttons.setBackground(Color.GRAY);
     add(buttons, gbc);
+    
     
   }
   //channges gui to items view

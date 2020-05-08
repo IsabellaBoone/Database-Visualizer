@@ -9,18 +9,18 @@ import java.sql.*;
  *
  */
 
-public class GenerateDabase {
+public class GenerateDatabase {
   
   // Global Variables 
   
-  Connection m_dbConn = null;         // Connection to the database 
+  Connection conn = null;         // Connection to the database 
   private final int GEN_MIN = 5;      // Min num of entries for each table
   private final int GEN_MAX = 10;     // Max num of entries for each table
   private final int MAX_WEIGHT = 80;  // Max weight for items
   private final int MAX_VOL = 80;     // Max volume for items
   private final int MAX_STATS = 50; // Max value for stats
   private int DEBUG = 0; 
-  AccessDatabase r;
+  AccessDatabase access;
   /**
    * List of all table names.
    */
@@ -176,9 +176,9 @@ public class GenerateDabase {
           + "FOREIGN KEY (LocationId) REFERENCES Location(IdNumber)" 
           + "); " };
   
-  public GenerateDabase(Connection con) {
-    this.m_dbConn = con; 
-    r = AccessDatabase.createRetrieveManipulateInformation(m_dbConn);
+  public GenerateDatabase(Connection con) {
+    this.conn = con; 
+    access = AccessDatabase.createAccessDatabase(conn);
     dropAllTables();  // Drop tables before creating 
     createTable();    // Create tables 
     populateTables(); // Populate the tables
@@ -200,7 +200,7 @@ public class GenerateDabase {
    */
   private void createTable() {
     try {
-      Statement stmt = m_dbConn.createStatement();
+      Statement stmt = conn.createStatement();
       for(int i = 0; i < statements.length; i++) {
         try {
           stmt.executeUpdate(statements[i]);
@@ -224,7 +224,7 @@ public class GenerateDabase {
 	  String drop = "DROP TABLE ", syntax = ";";
 	  
 	  try {
-	    Statement stmt = m_dbConn.createStatement();
+	    Statement stmt = conn.createStatement();
 	    
 	    for(int i = tableNames.length - 1; i > 0; i--) {
 	    try {
@@ -272,7 +272,7 @@ public class GenerateDabase {
 	  pass = g.randomStr((int) Math.floor(Math.random() * 8 + 8));
 	  
 	  try {
-		  PreparedStatement statement = m_dbConn.prepareStatement(insert);
+		  PreparedStatement statement = conn.prepareStatement(insert);
 		
 		  if(DEBUG == 1) {
 		    System.out.print(user + " | " + email + " | " + pass + "\t");
@@ -329,7 +329,7 @@ public class GenerateDabase {
 	  AreaType = g.randomAreaType(); 
     
     try {
-      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      PreparedStatement statement = conn.prepareStatement(insert);
       // Print data and add it to statement
       if(DEBUG == 1) {
         System.out.print(IdNumber + " | " + Size + " | " + AreaType + "\t");
@@ -363,8 +363,8 @@ public class GenerateDabase {
    */
   private void generateCharacters() {
     
-    String[] player = r.getAllPlayerUsernames(); 
-    for(int i = 0; i < r.getNumPlayers(); i++) {
+    String[] player = access.getAllPlayerUsernames(); 
+    for(int i = 0; i < access.getNumPlayers(); i++) {
       // Generate a random number of characters for every player
       int randNumChars = (int) (Math.floor(Math.random() * (GEN_MAX - GEN_MIN) + GEN_MIN));
       if(DEBUG == 1 ) {
@@ -391,11 +391,11 @@ public class GenerateDabase {
         str   = ((int) (Math.floor((Math.random()) * MAX_STATS))), 
         stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
 
-    int[] loc = r.getAllLocationIds();
+    int[] loc = access.getAllLocationIds();
     int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
         
     try {
-      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      PreparedStatement statement = conn.prepareStatement(insert);
       if(DEBUG == 1) {
         System.out.print(name + ", ");
         
@@ -450,7 +450,7 @@ public class GenerateDabase {
     for(int i = 0; i < numItems; i++) {
       String insert = "INSERT INTO ";
       String[] types = {"Weapon", "Container", "Armor"};
-      int[] listIds = r.getAllItems();
+      int[] listIds = access.getAllItems();
       int type = (int) Math.floor(Math.random() * 3); // 0 = wep, 1 = armor, 2 = container
       
       switch (type) {
@@ -471,7 +471,7 @@ public class GenerateDabase {
       
       try {
 //        System.out.print(insert);
-        PreparedStatement stmt = m_dbConn.prepareStatement(insert);
+        PreparedStatement stmt = conn.prepareStatement(insert);
         stmt.execute();
       } catch (SQLException e) {
         System.out.print("Error with: " + insert);
@@ -495,18 +495,18 @@ public class GenerateDabase {
 //    String insert = "INSERT INTO Item (Id, Weight, Volume, LocationId, cName) VALUES (?,?,?,?,?);";
     String insert = "INSERT INTO Item VALUES (?,?,?,?,?);";
     try {
-      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      PreparedStatement statement = conn.prepareStatement(insert);
       int idNum = g.randomIdNum(), volume = ((int) (Math.floor((Math.random()) * MAX_VOL))),
         weight = ((int) (Math.floor((Math.random()) * MAX_WEIGHT)));
       
       // Choose a random location or character
       if(Math.random() > 0.5) {
         flag = 0;
-        String[] names = r.getAllCharacterNames(); 
+        String[] names = access.getAllCharacterNames(); 
         user = names[(int) (Math.floor(Math.random() * names.length))];
       } else {
         flag = 1;
-        int[] loc = r.getAllLocationIds();
+        int[] loc = access.getAllLocationIds();
         location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
       }
       
@@ -574,11 +574,11 @@ public class GenerateDabase {
         stam  = ((int) (Math.floor((Math.random()) * MAX_STATS))),
         prot = stam  = ((int) (Math.floor((Math.random()) * MAX_STATS)));
 
-    int[] loc = r.getAllLocationIds();
+    int[] loc = access.getAllLocationIds();
     int location = loc[(int) (Math.floor(Math.random() * (loc.length)))];
         
     try {
-      PreparedStatement statement = m_dbConn.prepareStatement(insert);
+      PreparedStatement statement = conn.prepareStatement(insert);
       if(DEBUG == 1) {
         System.out.print(idNum + ", ");
         
