@@ -91,7 +91,7 @@ public class PlayersLayout extends JPanel{
 
 
 		    // Add header
-		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Characters:" + "</H1></html>", SwingUtilities.CENTER),
+		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 20px\">" + "Characters:" + "</H1></html>", SwingUtilities.CENTER),
 		        BorderLayout.NORTH);
 
 		    // Add all labels of character names
@@ -132,7 +132,7 @@ public class PlayersLayout extends JPanel{
 		    panel.setLayout(new BorderLayout());
 		    
 		    // Size for panel
-		    Dimension d = new Dimension(350, 650);
+		    Dimension d = new Dimension(300, 650);
 		    panel.setMinimumSize(d);
 		    panel.setPreferredSize(d);
 		    panel.setMaximumSize(d);
@@ -145,63 +145,35 @@ public class PlayersLayout extends JPanel{
 		    
 		    // Panel of items
 		    JPanel items = new JPanel(); 
+		    items.setBackground(Color.LIGHT_GRAY);
+		    items.setLayout(new GridLayout(10, 1));
 		    int numItems; 
-
+		    
+		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 20px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
+	                BorderLayout.NORTH);
+		    
 		    // check if selectedName == null, if so, check if characterNames[0] has items or not
 		    if(selectedName == null) {
 		    	numItems = rmi.getNumItemsFromChar(characterNames[0]);
 		    	if(numItems == 0) {
 		        // If selectedName is null and characterNames[0] 
-		        items.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
-                BorderLayout.NORTH);
 		        items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
-		        return items; 
-		      } else {
-		        // If selectedName is null but it also contains items
-		        
-		      }
+		        panel.add(items, BorderLayout.CENTER);
+		        return panel; 
+		        }
 		      
 		    } else {
 		      // check if selectedName has item or not
 		    	numItems = rmi.getNumItemsFromChar(selectedName);
 		    	if(numItems == 0) {		    	
-		    		items.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
-		                BorderLayout.NORTH);
 				    items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
-				    return items; 
-				      } else {
-				        // If selectedName is null but it also contains items
-				        
-				      }
-
-		      
+				    panel.add(items, BorderLayout.CENTER);
+				    return panel; 
+		    	}
 		    }
 		    
-		    items.setBackground(Color.LIGHT_GRAY);
-		    if(selectedName == null) {
-		      int num = rmi.getNumItemsFromChar(characterNames[0]);
-		      if(num == 0) {
-		        // If there is no selected name and characterNames[0] has no items
-		        panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
-		            BorderLayout.NORTH);
-		        items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
-		        return items; 
-		      } else {
-		        // If there is no selected name and characterNames[0] does have items
-		        
-		      }
-		    } else {
-		      // check if selectedName has 0 
-		      
-		    }
-		    items.setLayout(new GridLayout(10, 1));
-		
 		    // Initialize item names in item panel
 		    itemsWithChar = rmi.getAllCharItems(selectedName);
-
-		    // Add header
-		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
-		        BorderLayout.NORTH);
 
 		    // Add all labels of items held by character
 		    for (int i = 0; i < itemsWithChar.length; i++) {
@@ -216,7 +188,6 @@ public class PlayersLayout extends JPanel{
 		          label.setBackground(new Color(234,201,55));
 		          selectedNameJLabel = label; 
 		          selectedName = characterNames[x];
-		          refreshStatsPanel(); 
 		          refresh();
 		        }
 		      });
@@ -243,7 +214,7 @@ public class PlayersLayout extends JPanel{
 	    panel.setLayout(new BorderLayout());
 	    
 	    // Size for panel
-	    Dimension d = new Dimension(300, 500);
+	    Dimension d = new Dimension(350, 500);
 	    panel.setMinimumSize(d);
 	    panel.setPreferredSize(d);
 	    panel.setMaximumSize(d);
@@ -257,11 +228,11 @@ public class PlayersLayout extends JPanel{
 	    String[] charStats;  
 	    if(selectedName == null) {
 	      charStats = rmi.getCharacterStats(characterNames[0]);
-	      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
+	      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 20px\">" + characterNames[0] + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
 	        BorderLayout.NORTH);
 	    } else {
 	      charStats = rmi.getCharacterStats(selectedName);
-	      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
+	      panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 20px\">" + selectedName + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
 	          BorderLayout.NORTH);
 	    }
 	    
@@ -316,7 +287,7 @@ public class PlayersLayout extends JPanel{
 	    add(characterPanel, BorderLayout.WEST);
 	    
 	    remove(itemsPanel);
-	    itemsPanel = genCharacterPanel(); 
+	    itemsPanel = genItemsPanel(); 
 	    SwingUtilities.updateComponentTreeUI(itemsPanel);
 	    add(itemsPanel, BorderLayout.CENTER);
 	    
