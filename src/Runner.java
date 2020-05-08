@@ -9,8 +9,8 @@ public class Runner {
 
   // These credentials are to log into a locally hosted mysql server
   public static final String DB_LOCATION = "jdbc:mysql://localhost:3306/csc371";
-  public static final String LOGIN_NAME = "jg2446";
-  public static final String PASSWORD = "password1";
+  public static final String LOGIN_NAME = "root";
+  public static final String PASSWORD = "password";
 
   /* sorry i had to move this in here it do be kinda ugly
    * public static final String DB_LOCATION =

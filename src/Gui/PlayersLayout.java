@@ -30,12 +30,21 @@ public class PlayersLayout extends JPanel{
 	  private RetrieveManipulateInformation rmi;
 	  private JPanel characterPanel, statsPanel, itemsPanel;
 	  private JLabel selectedNameJLabel = null;
-	  private String[] characterNames, itemsWithChar; 
+	  private String[] characterNames, itemsWithChar;
+	  private int[] itemIDs;
 	  private String selectedName = null;
 	  
 	  
 	  public PlayersLayout(RetrieveManipulateInformation rmi) {
 	    this.rmi = rmi;
+	    
+	    // Initialize character names in character panel
+	    characterNames = rmi.getAllCharacterNames();
+	    if(selectedName == null) {
+	    	rmi.getAllCharItems(characterNames[0]);
+	    } else {
+	    	rmi.getAllCharItems(selectedName);
+	    }
 	        
 	        // Initialize JPanel settings
 	    setBackground(Color.DARK_GRAY);
@@ -80,8 +89,6 @@ public class PlayersLayout extends JPanel{
 		    characters.setBackground(Color.LIGHT_GRAY);
 		    characters.setLayout(new GridLayout(rmi.getNumCharacters(), 1));
 
-		    // Initialize character names in character panel
-		    characterNames = rmi.getAllCharacterNames();
 
 		    // Add header
 		    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Characters:" + "</H1></html>", SwingUtilities.CENTER),
@@ -100,8 +107,10 @@ public class PlayersLayout extends JPanel{
 		          label.setBackground(new Color(234,201,55));
 		          selectedNameJLabel = label; 
 		          selectedName = characterNames[x];
+		          refreshItemsPanel();
 		          refreshStatsPanel(); 
 		        }
+
 		      });
 		      characters.add(label); 
 		    }
@@ -136,16 +145,17 @@ public class PlayersLayout extends JPanel{
 		    
 		    // Panel of items
 		    JPanel items = new JPanel(); 
-		    
+		    int numItems; 
+
 		    // check if selectedName == null, if so, check if characterNames[0] has items or not
 		    if(selectedName == null) {
-		      int numItems = rmi.getNumItemsFromChar(characterNames[0]);
-		      if(numItems == 0) {
+		    	numItems = rmi.getNumItemsFromChar(characterNames[0]);
+		    	if(numItems == 0) {
 		        // If selectedName is null and characterNames[0] 
 		        items.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
                 BorderLayout.NORTH);
-            items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
-            return items; 
+		        items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
+		        return items; 
 		      } else {
 		        // If selectedName is null but it also contains items
 		        
@@ -153,10 +163,20 @@ public class PlayersLayout extends JPanel{
 		      
 		    } else {
 		      // check if selectedName has item or not
+		    	numItems = rmi.getNumItemsFromChar(selectedName);
+		    	if(numItems == 0) {		    	
+		    		items.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Items:" + "</H1></html>", SwingUtilities.CENTER),
+		                BorderLayout.NORTH);
+				    items.add(new JLabel("No items found", SwingUtilities.CENTER), BorderLayout.CENTER);
+				    return items; 
+				      } else {
+				        // If selectedName is null but it also contains items
+				        
+				      }
+
 		      
 		    }
 		    
-		    JPanel items = new JPanel();
 		    items.setBackground(Color.LIGHT_GRAY);
 		    if(selectedName == null) {
 		      int num = rmi.getNumItemsFromChar(characterNames[0]);
@@ -174,7 +194,7 @@ public class PlayersLayout extends JPanel{
 		      // check if selectedName has 0 
 		      
 		    }
-//		    items.setLayout(new GridLayout(10, 1));
+		    items.setLayout(new GridLayout(10, 1));
 		
 		    // Initialize item names in item panel
 		    itemsWithChar = rmi.getAllCharItems(selectedName);
@@ -197,6 +217,7 @@ public class PlayersLayout extends JPanel{
 		          selectedNameJLabel = label; 
 		          selectedName = characterNames[x];
 		          refreshStatsPanel(); 
+		          refresh();
 		        }
 		      });
 		      items.add(label); 
@@ -294,6 +315,11 @@ public class PlayersLayout extends JPanel{
 	    SwingUtilities.updateComponentTreeUI(characterPanel);
 	    add(characterPanel, BorderLayout.WEST);
 	    
+	    remove(itemsPanel);
+	    itemsPanel = genCharacterPanel(); 
+	    SwingUtilities.updateComponentTreeUI(itemsPanel);
+	    add(itemsPanel, BorderLayout.CENTER);
+	    
 	    remove(statsPanel);
 	    statsPanel = genStatsPanel();
 	    add(statsPanel, BorderLayout.EAST);
@@ -302,6 +328,14 @@ public class PlayersLayout extends JPanel{
 	    validate();
 	    repaint();
 	  }
+	  
+	  private void refreshItemsPanel() {
+		  remove(itemsPanel);
+		  itemsPanel = genItemsPanel(); 
+		  SwingUtilities.updateComponentTreeUI(itemsPanel);
+		  add(itemsPanel, BorderLayout.CENTER);
+	  }
+	  
 	  private void refreshStatsPanel() {
 	    remove(statsPanel);
 	    statsPanel = genStatsPanel();
