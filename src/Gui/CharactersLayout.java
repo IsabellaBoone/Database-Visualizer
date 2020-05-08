@@ -30,14 +30,15 @@ import database.AccessDatabase;
  * @author Isabella Boone
  *
  */
+@SuppressWarnings("serial")
 public class CharactersLayout extends JPanel {
-  private AccessDatabase access;
-  private JPanel characterPanel, statsPanel;
-  private JLabel selectedNameJLabel = null;
-  private String[] characterNames;
-  private String selectedName = null;
+  private AccessDatabase access; // our database access
+  private JPanel characterPanel, // Panel that displays our character names
+    statsPanel; // Panel that displays selected characters stats
+  private String[] characterNames;          // all character names in the database. 
+  private JLabel selectedNameJLabel = null; // currently selected character
+  private String selectedName = null;       // currently selected character name
   
-
   /**
    * Initialize our JPanel, set background, layout, and
    * add our character panel and stats panel.

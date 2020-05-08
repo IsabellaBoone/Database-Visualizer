@@ -1,32 +1,32 @@
 package Gui;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import database.AccessDatabase;
 
+/**
+ * Edit a character in the database
+ * @author Isabella Boone
+ */
+@SuppressWarnings("serial")
 public class EditCharacter extends Panels {
+  // Characters have 7 different fields, so we store
+  // two arrays of [7] to hold old and new data.
   String[] oldInfo = new String[7], 
       newInfo = new String[7]; 
   
   public EditCharacter(AccessDatabase rmi, String name) {
-    setRMI(rmi); 
+    setAccess(rmi); 
     
+    // Get information about 'name' 
     String select = "SELECT * FROM Characters WHERE Name = '" + name + "';",
           toGet[] = {"Name", "MaxHP", "CurrentHP", "Strength", 
               "Stamina", "LocationId", "pUserName"};
@@ -96,15 +96,15 @@ public class EditCharacter extends Panels {
         }
 
         // Check to make sure player exists
-        if (!(rmi.playerExists(newInfo[6]))) {
+        if (!(access.playerExists(newInfo[6]))) {
           fail("Username does not exist.  "
               + "Create a new player with that username before "
               + "linking characters to the username.");
           return;
-        } else if (!(rmi.locationExists(newInfo[5]))) {
+        } else if (!(access.locationExists(newInfo[5]))) {
           fail("Location does not exist");
           return;
-        } else if (!(oldInfo[0].contentEquals(newInfo[0])) && (rmi.characterExists(newInfo[0]))) {
+        } else if (!(oldInfo[0].contentEquals(newInfo[0])) && (access.characterExists(newInfo[0]))) {
           fail("Name does not exist");
           return;
         } else {
@@ -118,9 +118,12 @@ public class EditCharacter extends Panels {
     });
   }
   
+  /**
+   * Edit character, replacing old info with new info.  
+   */
   private void editCharacter() {
     try {
-      Statement stmt = rmi.getConnection().createStatement();
+      Statement stmt = AccessDatabase.getConnection().createStatement();
       String statement = "UPDATE Characters SET Name = \'" + newInfo[0] + "\'" +
                           ", MaxHP = " + newInfo[1] + 
                           ", CurrentHP = " + newInfo[2] + 

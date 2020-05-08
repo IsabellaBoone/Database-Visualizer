@@ -19,11 +19,7 @@ import javax.swing.*;
 import database.AccessDatabase;
 
 /**
- * TODO: gridbaglayout on all frames, TODO: button functionality for all buttons
- * TODO: create item
- * 
- * @author Isabella (Joel)
- *
+ * @author Joel Gingrich
  */
 public class AddCreature extends JFrame {
 //(Id, curHP, MaxHP, Stamina, Strength, Protection, LocationId)

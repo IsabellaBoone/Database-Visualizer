@@ -1,30 +1,33 @@
 package Gui;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.Statement;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import database.AccessDatabase;
 
+/**
+ * Add a character to the database
+ * @author Isabella Boone
+ *
+ */
+@SuppressWarnings("serial")
 public class AddCharacter extends Panels {
   String name, user;
   int maxHP, curHP, str, stam, loc;
   public AddCharacter(AccessDatabase rmi) {
-    setRMI(rmi); 
+    setAccess(rmi); 
+    
+    setLocationRelativeTo(null); 
     
     // Add Labels & Buttons
+    
+    // All prompts
     JLabel[] prompt = {
         new JLabel("Enter Character Name:", SwingConstants.CENTER),
         new JLabel("Enter MaxHP: ", SwingConstants.CENTER),
@@ -35,6 +38,7 @@ public class AddCharacter extends Panels {
         new JLabel("Enter username: ", SwingConstants.CENTER)
     };
     
+    // Textfields with default values
     JTextField[] txt = {
         new JTextField("Name"),
         new JTextField("000"),
@@ -50,17 +54,23 @@ public class AddCharacter extends Panels {
       add(txt[i]);
     }
     
+    // Continue button
     JButton cont = new JButton("Continue");
     add(cont); 
     
-    addButtons(txt, cont);
+    addListeners(txt, cont);
     
     pack(); 
     setVisible(true);
     
   }
   
-  private void addButtons(JTextField[] txt, JButton b) {
+  /**
+   * Add actionlistener to the buttons
+   * @param txt - needed to get text from textfields
+   * @param b - button to add actionlistener to
+   */
+  private void addListeners(JTextField[] txt, JButton b) {
     b.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         name = txt[0].getText();
@@ -86,15 +96,20 @@ public class AddCharacter extends Panels {
           return;
         }
         
-        if(rmi.characterExists(name)) {
+        if(maxHP < curHP) {
+          fail("Current HP cannot be greater than Max HP");
+          return;
+        }
+        
+        if(access.characterExists(name)) {
           // check to make sure name is valid and doesn't exist
           fail("Player name already exists");
           return;
-        } else if(!(rmi.locationExists(String.valueOf(loc)))) {
+        } else if(!(access.locationExists(String.valueOf(loc)))) {
           // check if the location exists
           fail("Location does not exist");
           return;
-        } else if(!(rmi.playerExists(user))) {
+        } else if(!(access.playerExists(user))) {
           // check to see if the user exists
           fail("Username does not exist");
           return;
@@ -109,16 +124,21 @@ public class AddCharacter extends Panels {
     });
   }
   
+  /**
+   * Add the character to the database after we
+   * get input from the user that is valid.
+   */
   private void addCharacter() {
     try {
       String insert = "INSERT INTO Characters (Name, MaxHP, CurrentHP, "
           + "Strength, Stamina, LocationId, pUserName) VALUES ('" + name + "', " +
         maxHP + ", " + curHP + ", " + str + ", " + stam + ", " + loc 
         + ", '" + user + "');";
-        java.sql.Statement stmt = rmi.getConnection().createStatement(); 
+        java.sql.Statement stmt = AccessDatabase.getConnection().createStatement(); 
         stmt.execute(insert);
     } catch(SQLException e) {
       e.printStackTrace();
+      System.out.println("Error adding character");
     }
   }
   

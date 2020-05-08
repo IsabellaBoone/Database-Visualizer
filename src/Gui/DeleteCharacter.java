@@ -8,15 +8,19 @@ import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import database.AccessDatabase;
 
-public class DeleteCharacter extends JPanel{
-  private AccessDatabase rmi = null;
+/**
+ * Delete a character in the database
+ * @author Isabella Boone
+ *
+ */
+@SuppressWarnings("serial")
+public class DeleteCharacter extends Panels{
   private String name = null; 
+  
   public DeleteCharacter(AccessDatabase rmi, String name) {
-    this.rmi = rmi;
+    setAccess(rmi); 
     this.name = name; 
     
     confirmation(); 
@@ -49,7 +53,7 @@ public class DeleteCharacter extends JPanel{
   private void delete() {
     try {
       String statement = "DELETE FROM Characters WHERE Name = \'" + name + "\';";
-      rmi.getConnection().prepareStatement(statement).execute(statement);
+      AccessDatabase.getConnection().prepareStatement(statement).execute(statement);
     } catch (SQLException e) {
       e.printStackTrace();
     }

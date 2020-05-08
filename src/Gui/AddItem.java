@@ -19,10 +19,7 @@ import javax.swing.*;
 import database.AccessDatabase;
 
 /**
- * TODO: gridbaglayout on all frames,
- * TODO: button functionality for all buttons
- * TODO: create item 
- * @author Isabella
+ * @author Chase Banyai
  *
  */
 public class AddItem extends JFrame{

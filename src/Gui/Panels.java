@@ -13,12 +13,20 @@ import javax.swing.JLabel;
 import database.AccessDatabase;
 
 /**
- * This is definitely a bad name for this class. 
+ * Contains essentials for adding, removing, and deleting 
+ * information from the database.  
+ * 
+ * Contains fail, success, and fetchInfo.
  * @author Isabella Boone
  *
  */
+@SuppressWarnings("serial")
 public abstract class Panels extends JFrame{
-  AccessDatabase rmi = null;
+  AccessDatabase access = null;
+  
+  /*
+   * Initialize the panel
+   */
   public Panels() {
     setLayout(new GridLayout(0, 2)); 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -29,11 +37,23 @@ public abstract class Panels extends JFrame{
     setMaximumSize(d);
   }
   
-  public void setRMI(AccessDatabase rmi) {
-    this.rmi = rmi; 
+  /**
+   * Set access to database
+   * @param access = connection to database
+   */
+  public void setAccess(AccessDatabase access) {
+    this.access = access; 
   }
   
-  void fail(String reason) {
+  /**
+   * If a user enters some sort of invalid input, 
+   * calling this function with a reason will
+   * display to the user that they have input 
+   * incorrect information and tell them why
+   * it failed.  
+   * @param reason - reason for fail, ex primary key already exists
+   */
+  public void fail(String reason) {
     JFrame frame = new JFrame("Error");
     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     frame.setSize(200,200);
@@ -49,7 +69,13 @@ public abstract class Panels extends JFrame{
     frame.setVisible(true);
   }
   
-  void success(String statement) {
+  /**
+   * If a user has input correct input and we were successfully
+   * able to add the information to the database, call this
+   * with "statement" to display exactly what they added.  
+   * @param statement - how they succeeded.  ex - "Username's Character succesfully added." 
+   */
+  public void success(String statement) {
     JFrame frame = new JFrame("Success");
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame.setSize(200,200);
@@ -66,7 +92,7 @@ public abstract class Panels extends JFrame{
   }
   
   /**
-   * 
+   * Fetch info from the database.  Very versatile function.
    * @param select Select statement to query the database with.
    * @param toGet Column names to get, ex {"Username", "Email", "Password"}
    * @return String[] of every result from what toGet gave. 
@@ -74,7 +100,7 @@ public abstract class Panels extends JFrame{
   String[] fetchInfo(String select, String[] toGet) {
     String[] ret = new String[toGet.length];
     try {
-      ResultSet rs = rmi.getConnection().prepareStatement(select).executeQuery(select);
+      ResultSet rs = AccessDatabase.getConnection().prepareStatement(select).executeQuery(select);
       rs.next(); 
       for(int i = 0; i < toGet.length; i++) {
         ret[i] = "" + rs.getObject(toGet[i]);
@@ -86,22 +112,4 @@ public abstract class Panels extends JFrame{
     return ret;
   }
   
-  /**
-   * Failure to select
-   */
-  void failureToSelect() {
-    JFrame frame = new JFrame("Error");
-    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    frame.setSize(200,200);
-    frame.setLocationRelativeTo(null);
-    JLabel bad = new JLabel("You need to select a character to edit first.");
-    JButton cont = new JButton("Ok");
-    cont.addActionListener(e -> frame.dispose());
-    
-    frame.setLayout(new FlowLayout());
-    frame.add(bad);
-    frame.add(cont);
-    frame.pack();
-    frame.setVisible(true);
-  }
 }
