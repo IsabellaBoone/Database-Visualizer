@@ -85,4 +85,23 @@ public abstract class Panels extends JFrame{
     }
     return ret;
   }
+  
+  /**
+   * Failure to select
+   */
+  void failureToSelect() {
+    JFrame frame = new JFrame("Error");
+    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    frame.setSize(200,200);
+    frame.setLocationRelativeTo(null);
+    JLabel bad = new JLabel("You need to select a character to edit first.");
+    JButton cont = new JButton("Ok");
+    cont.addActionListener(e -> frame.dispose());
+    
+    frame.setLayout(new FlowLayout());
+    frame.add(bad);
+    frame.add(cont);
+    frame.pack();
+    frame.setVisible(true);
+  }
 }

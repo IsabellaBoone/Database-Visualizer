@@ -31,24 +31,29 @@ import database.AccessDatabase;
  *
  */
 public class CharactersLayout extends JPanel {
-  private AccessDatabase rmi;
+  private AccessDatabase access;
   private JPanel characterPanel, statsPanel;
   private JLabel selectedNameJLabel = null;
   private String[] characterNames;
   private String selectedName = null;
   
 
-  public CharactersLayout(AccessDatabase rmi) {
-    this.rmi = rmi;
+  /**
+   * Initialize our JPanel, set background, layout, and
+   * add our character panel and stats panel.
+   * @param access
+   */
+  public CharactersLayout(AccessDatabase access) {
+    this.access = access;
     
     // Initialize JPanel settings
     setBackground(Color.DARK_GRAY);
-    setLayout(new BorderLayout()); 
+    setLayout(new GridLayout(1, 2)); 
     
     characterPanel = genCharacterPanel();
-    add(characterPanel, BorderLayout.WEST);
+    add(characterPanel);
     statsPanel = genStatsPanel(); 
-    add(statsPanel, BorderLayout.EAST);
+    add(statsPanel);
     
   }
 
@@ -73,37 +78,42 @@ public class CharactersLayout extends JPanel {
     // Panel of names
     JPanel characters = new JPanel();
     characters.setBackground(Color.LIGHT_GRAY);
-    characters.setLayout(new GridLayout(rmi.getNumCharacters(), 1));
+    characters.setLayout(new GridLayout(access.getNumCharacters(), 1));
 
     // Initialize character names
-    characterNames = rmi.getAllCharacterNames();
+    characterNames = access.getAllCharacterNames();
 
     // Add header
-    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + "Characters:" + "</H1></html>", SwingUtilities.CENTER),
-        BorderLayout.NORTH);
+    panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" 
+        + "Characters:" + "</H1></html>", SwingUtilities.CENTER), BorderLayout.NORTH);
 
     // Add all labels of character names
     for (int i = 0; i < characterNames.length; i++) {
       final int x = i;
-      String format = "<html><body style = \"color:black; font-size: 20px\">" + characterNames[i] + "</body></html>";
+      String format = "<html><body style = \"color:black; font-size: 20px\">" 
+          + characterNames[i] + "</body></html>";
       JLabel label = new JLabel(format, SwingConstants.CENTER);
-      label.setOpaque(true);
+      label.setOpaque(true); 
       label.setBackground(Color.LIGHT_GRAY);
       label.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
-          removeSelectedBackgroundChars(); 
-          label.setBackground(new Color(234,201,55));
-          selectedNameJLabel = label; 
-          selectedName = characterNames[x];
-          refreshStatsPanel(); 
+          // Mouseclick = selecting new character
+          removeSelectedBackgroundChars(); // remove old selected background
+          label.setBackground(new Color(234,201,55)); // set to yellow to indicate selection
+          selectedNameJLabel = label; // Store JLabel for changing background later
+          selectedName = characterNames[x]; // Store new selectedName
+          refreshStatsPanel(); // Because we have a new selectedName
         }
       });
       characters.add(label); 
     }
     
+    // Set scrollbar onto names JPanel, and add names to enitre panel
     names.setViewportView(characters);
     panel.add(names, BorderLayout.CENTER);
     panel.add(addCharacterButtons(), BorderLayout.SOUTH);
+    
+    // Return entire panel
     return panel;
   }
 
@@ -127,13 +137,13 @@ public class CharactersLayout extends JPanel {
         editChar = new JButton("Edit Character"),
         deleteChar = new JButton("Delete Character"),
         addUser = new JButton("Add User"),
-        deleteUser = new JButton("Delete User"),
         refresh = new JButton("Refresh"); 
     
+    // Add character button
     addChar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         System.out.println("Add character"); 
-        new AddCharacter(rmi).addWindowListener(new WindowAdapter() {
+        new AddCharacter(access).addWindowListener(new WindowAdapter() {
           public void windowClosed(WindowEvent arg0) {
             refresh();
           }
@@ -141,60 +151,66 @@ public class CharactersLayout extends JPanel {
       }
     });
     
+    // Edit character button
     editChar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if(selectedName == null) {
+          // Cannot edit a character that we aren't selecting
           failureToSelect(); 
         } else {
-          new EditCharacter(rmi, selectedName).addWindowListener(new WindowAdapter() {
+          new EditCharacter(access, selectedName).addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent arg0) {
               selectedName = null; 
-              refresh();
+              // Otherwise, try to generate a stat panel for a character that doesn't exist
             }
           });
         }
       }
     });
     
+    // Delete character button 
     deleteChar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         System.out.println("Delete Character");
         if (selectedName == null) {
           failureToSelect(); 
         } else {
-          new DeleteCharacter(rmi, selectedName);
-          selectedName = null; 
-          refresh(); 
+          new DeleteCharacter(access, selectedName);
+          selectedName = null; // name is no longer in database
         }
       }
     });
 
+    // Add user button
     addUser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new AddUser(rmi);
+        new AddUser(access);
       }
     });
     
-    deleteUser.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        System.out.println(); 
-      }
-    });
-    
+    // Manual refresh button
     refresh.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         refresh();
       }
     });
     
-    
+    // Add all buttons to panel
     panel.add(addChar);
     panel.add(editChar);
     panel.add(deleteChar);
     panel.add(addUser);
     panel.add(refresh);
+    
+    // Return entire panel
     return panel;
   }
+  
+  /**
+   * Generate stats panel.  Works by grabbing the stats on the
+   * currently selectedName, filtering them and adding to a panel.
+   * @return JPanel of stats for selectedName
+   */
   private JPanel genStatsPanel() {
     // Entire panel, that will have header and panel of names
     JPanel panel = new JPanel();
@@ -215,12 +231,12 @@ public class CharactersLayout extends JPanel {
     // Fetch stats
     String[] charStats;  
     if(selectedName == null) {
-      charStats = rmi.getCharacterStats(characterNames[0]);
+      charStats = access.getCharacterStats(characterNames[0]);
       panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + characterNames[0] + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
           BorderLayout.NORTH);
     } else {
       System.out.println(selectedName); 
-      charStats = rmi.getCharacterStats(selectedName);
+      charStats = access.getCharacterStats(selectedName);
       panel.add(new JLabel("<html><H1 Style = \"color:white; font-size: 25px\">" + selectedName + "'s Stats:" + "</H1></html>", SwingUtilities.CENTER),
           BorderLayout.NORTH);
     }
@@ -228,7 +244,7 @@ public class CharactersLayout extends JPanel {
     // Format strings
     String HP = charStats[1] + "/" + charStats[0] + "HP";
     String strStam = charStats[2] + " Strength " + charStats[3] + " Stamina"; 
-    String loc = "Located in: " + rmi.getLocType(charStats[4]) + ": " + charStats[4];
+    String loc = "Located in: " + access.getLocType(charStats[4]) + ": " + charStats[4];
     String user = "Belongs to: " + charStats[5]; 
 
     // Add JLabel
@@ -243,26 +259,36 @@ public class CharactersLayout extends JPanel {
     stats.add(locLabel);
     stats.add(userLabel);
     
+    // Add to the center
     panel.add(stats, BorderLayout.CENTER);
     
+    // Return entire panel
     return panel;
   }
   
-  
+  /**
+   * Refresh all panels by removing them, generating new ones,
+   * adding them, validate and repainting.  
+   */
   private void refresh() {
     remove(characterPanel);
     characterPanel = genCharacterPanel(); 
     SwingUtilities.updateComponentTreeUI(characterPanel);
-    add(characterPanel, BorderLayout.WEST);
+    add(characterPanel);
     
     remove(statsPanel);
     statsPanel = genStatsPanel();
-    add(statsPanel, BorderLayout.EAST);
+    add(statsPanel);
     SwingUtilities.updateComponentTreeUI(statsPanel);
 
     validate();
     repaint();
   }
+  
+  /**
+   * Refresh the stats panel by removing it, generating a new one,
+   * adding it, updating, validating and repainting.
+   */
   private void refreshStatsPanel() {
     remove(statsPanel);
     statsPanel = genStatsPanel();
@@ -273,13 +299,17 @@ public class CharactersLayout extends JPanel {
     repaint();
   }
   
+  /**
+   * Remove the background on the currently selected JLabel.
+   */
   private void removeSelectedBackgroundChars() {
     if (selectedNameJLabel != null)
       selectedNameJLabel.setBackground(Color.LIGHT_GRAY);
   } 
-  
-  // Buttons
-  
+
+  /**
+   * Failure to select
+   */
   private void failureToSelect() {
     JFrame frame = new JFrame("Error");
     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
