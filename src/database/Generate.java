@@ -27,7 +27,7 @@ public class Generate {
           "Java", "Water", "Chicken", "Scheme", "Consumer", "Fish",
           "Toast", "Bird", "Riot", "Sunday"},
       
-      domains = {"OW", "WOW", "yeet", "poptart", "corsair", "amd"},
+      domains = {"alphabet", "razer", "yeet", "piggy", "corsair", "amd"},
       armorLoc = {"Head", "Chest", "Legs", "Feet"} ;
   String nums = "1234567890";
   /*

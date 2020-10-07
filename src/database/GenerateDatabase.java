@@ -21,6 +21,7 @@ public class GenerateDatabase {
   private final int MAX_STATS = 50; // Max value for stats
   private int DEBUG = 0; 
   AccessDatabase access;
+  
   /**
    * List of all table names.
    */

@@ -12,7 +12,7 @@ public class Runner {
   public static final String LOGIN_NAME = "root";
   public static final String PASSWORD = "password";
 
-  /* sorry i had to move this in here it do be kinda ugly
+  /* These credentials log into schools locally hosted server
    * public static final String DB_LOCATION =
    * "jdbc:mysql://db.cs.ship.edu:3306/csc371_##"; public static final String
    * LOGIN_NAME = "csc371_##"; public static final String PASSWORD = "Password##";
@@ -20,6 +20,10 @@ public class Runner {
 
   protected static Connection m_dbConn = null;
 
+  /**
+   * Establish a connection to the database
+   * @return whether or not the connection was successfully established
+   */
   public static boolean establishConnection() {
     try {
       DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver()); // activate jdbc line
@@ -37,12 +41,10 @@ public class Runner {
       return;
     }
     
-    GenerateDatabase insert = new GenerateDatabase(m_dbConn);
-    AccessDatabase getInfo = AccessDatabase.createAccessDatabase(m_dbConn);
-    Gui gui = new Gui(getInfo);
+    GenerateDatabase insert = new GenerateDatabase(m_dbConn); // insert randomly generated information
+    AccessDatabase getInfo = AccessDatabase.createAccessDatabase(m_dbConn); // manipulate information in database
+    Gui gui = new Gui(getInfo); // display 
     
   }
-  
-  
   
 }

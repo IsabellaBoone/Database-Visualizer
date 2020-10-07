@@ -22,9 +22,8 @@ public class AddCharacter extends Panels {
   int maxHP, curHP, str, stam, loc;
   public AddCharacter(AccessDatabase rmi) {
     setAccess(rmi); 
-    
-    setLocationRelativeTo(null); 
-    
+    setLocationRelativeTo(null); // Center
+     
     // Add Labels & Buttons
     
     // All prompts
@@ -49,6 +48,7 @@ public class AddCharacter extends Panels {
         new JTextField("Username")
     };
     
+    // Add prompt and textfields
     for(int i = 0; i < prompt.length; i++) {
       add(prompt[i]);
       add(txt[i]);
@@ -140,6 +140,7 @@ public class AddCharacter extends Panels {
       e.printStackTrace();
       System.out.println("Error adding character");
     }
+    
   }
   
 }
