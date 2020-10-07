@@ -1,2 +1,2 @@
 # Database Visualizer
-This program will initialize a database, add randomly generated information into it, and then create a graphical user interface to add, edit, and remove individual pieces of data inside each table.
+This database is used to store information regarding players, creatures, items, and locations, and could be used in an MMO/RPG game.  The program will initialize the database, and add randomly generated information to the database.  Then, it will create a graphical user interfact that allows adding, editing, or deleting anything inside the database.  
