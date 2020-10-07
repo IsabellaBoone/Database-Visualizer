@@ -1,15 +1,2 @@
-## Part 1 - COMPLETE
-- Get create table/drop table working 
-
-## Part 2
-- Populate the tables with randomly generated tables.  
-
-## Part 3
-
--- Panel 1: DONE
-
--- Panel 2: DONE
-
--- Panel 3: DONE
-
--- Panel 4: DONE 
+# Database Visualizer
+This program will initialize a database, add randomly generated information into it, and then create a graphical user interface to add, edit, and remove individual pieces of data inside each table.
